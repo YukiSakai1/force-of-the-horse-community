@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公認イベント申請 - Force of the Horse</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">FORCE OF THE HORSE</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">TOP</a></li>
+                    <li><a href="certified-event-system.html" class="nav-link active">公認イベント制度</a></li>
+                    <li><a href="event-calendar-page.html" class="nav-link">イベントカレンダー</a></li>
+                    <li><a href="faq.html" class="nav-link">FAQ</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" aria-label="メニュー">☰</button>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="index.html">TOP</a>
+        <span class="breadcrumb-sep">&gt;</span>
+        <a href="certified-event-system.html">公認イベント制度について</a>
+        <span class="breadcrumb-sep">&gt;</span>
+        <span>公認イベント申請</span>
+    </div>
+
+    <div class="page-head">
+        <p class="page-eyebrow">APPLICATION</p>
+        <h1 class="page-title">Force of the Horse 公認イベント申請</h1>
+        <p class="page-desc">Force of the Horseの公認イベント・交流会・大会の開催申請フォームです。必要事項をご入力の上、申請してください。</p>
+    </div>
+
+    <main class="form-card" id="apply-form-wrap">
+        <form id="apply-form">
+            <div class="form-section">
+                <h2>1. 主催者情報</h2>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>主催者名（ハンドルネーム可）<span class="req">必須</span></label>
+                        <input type="text" required>
+                    </div>
+                    <div class="form-field">
+                        <label>メールアドレス<span class="req">必須</span></label>
+                        <input type="email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>Xアカウント（推奨）</label>
+                        <input type="text">
+                    </div>
+                    <div class="form-field">
+                        <label>Discord ID（推奨）</label>
+                        <input type="text">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>2. イベント基本情報</h2>
+                <div class="form-field">
+                    <label>イベント名<span class="req">必須</span></label>
+                    <input type="text" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>開催日<span class="req">必須</span></label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-field">
+                        <label>開始時間<span class="req">必須</span></label>
+                        <input type="time" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>終了予定時間<span class="req">必須</span></label>
+                        <input type="time" required>
+                    </div>
+                    <div class="form-field">
+                        <label>開催場所<span class="req">必須</span></label>
+                        <input type="text" placeholder="店舗名・会場名・Discordサーバー名など" required>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>開催形式<span class="req">必須</span></label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="format" required> オフライン</label>
+                        <label><input type="radio" name="format"> オンライン</label>
+                        <label><input type="radio" name="format"> ハイブリッド</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>3. イベント内容</h2>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>イベント種別<span class="req">必須</span></label>
+                        <select required>
+                            <option value="">選択してください</option>
+                            <option>公認大会</option>
+                            <option>交流会</option>
+                            <option>初心者体験会</option>
+                            <option>観戦会</option>
+                            <option>配信イベント</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>イベントの目的<span class="req">必須</span></label>
+                        <select required>
+                            <option value="">選択してください</option>
+                            <option>競技大会</option>
+                            <option>カジュアル対戦</option>
+                            <option>初心者交流</option>
+                            <option>コレクション交流</option>
+                            <option>競馬ファン交流</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>定員<span class="req">必須</span></label>
+                        <input type="number" min="0" required>
+                    </div>
+                    <div class="form-field">
+                        <label>参加費（円）<span class="req">必須</span></label>
+                        <input type="number" min="0" required>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>使用フォーマット<span class="req">必須</span></label>
+                    <select required>
+                        <option value="">選択してください</option>
+                        <option>スタンダード</option>
+                        <option>エクストラ</option>
+                        <option>その他</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label>使用レギュレーション<span class="req">必須</span></label>
+                    <textarea required></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>4. 告知情報</h2>
+                <div class="form-field">
+                    <label>告知用タイトル<span class="req">必須</span></label>
+                    <input type="text" required>
+                </div>
+                <div class="form-field">
+                    <label>イベント説明文（100〜300文字目安）<span class="req">必須</span></label>
+                    <textarea required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>告知画像URL（任意）</label>
+                        <input type="url">
+                    </div>
+                    <div class="form-field">
+                        <label>イベントページURL（任意）</label>
+                        <input type="url" placeholder="Tonamel、Discord、X投稿、Googleフォーム等">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>5. 主催者実績（任意）</h2>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label>過去開催回数</label>
+                        <input type="number" min="0">
+                    </div>
+                    <div class="form-field">
+                        <label>過去のイベントURL</label>
+                        <input type="url">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>6. 確認事項</h2>
+                <div class="check-group">
+                    <label><input type="checkbox" required> Force of the Horseコミュニティガイドラインに同意します</label>
+                    <label><input type="checkbox" required> ハラスメント行為・差別行為を禁止します</label>
+                    <label><input type="checkbox" required> 開催後にイベントレポートを提出します</label>
+                    <label><input type="checkbox" required> イベント情報が公式サイト・公式SNSで紹介される場合があることに同意します</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">申請する</button>
+        </form>
+    </main>
+
+    <main class="form-card" id="apply-complete" style="display:none;">
+        <div class="success-box">
+            <div class="s-icon">✓</div>
+            <h3>申請を受け付けました</h3>
+            <p>Force of the Horse公認イベント申請を受け付けました。内容を確認後、運営事務局よりご連絡いたします。</p>
+            <a href="index.html" class="btn btn-primary">トップへ戻る</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <p>© 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

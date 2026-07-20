@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公認大会イベントカレンダー - Force of the Horse</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">FORCE OF THE HORSE</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">TOP</a></li>
+                    <li><a href="certified-event-system.html" class="nav-link">公認イベント制度</a></li>
+                    <li><a href="event-calendar-page.html" class="nav-link active">イベントカレンダー</a></li>
+                    <li><a href="faq.html" class="nav-link">FAQ</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" aria-label="メニュー">☰</button>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="index.html">TOP</a>
+        <span class="breadcrumb-sep">&gt;</span>
+        <span>イベントカレンダー</span>
+    </div>
+
+    <div class="page-head">
+        <p class="page-eyebrow">EVENT CALENDAR</p>
+        <h1 class="page-title">公認大会イベントカレンダー</h1>
+        <p class="page-desc">公認大会・交流会の開催スケジュールです。</p>
+        <div class="legend">
+            <span class="legend-item"><span class="legend-dot area"></span>エリア予選</span>
+            <span class="legend-item"><span class="legend-dot final"></span>本戦</span>
+            <span class="legend-item"><span class="legend-dot meetup"></span>交流会</span>
+        </div>
+    </div>
+
+    <main class="calendar-page-grid">
+        <section class="panel">
+            <div class="calendar-header">
+                <button class="calendar-nav" id="page-cal-prev" aria-label="前の月">◀</button>
+                <span class="calendar-month" id="page-calendar-month"></span>
+                <button class="calendar-nav" id="page-cal-next" aria-label="次の月">▶</button>
+            </div>
+            <div class="calendar-grid" id="page-calendar-grid"></div>
+        </section>
+
+        <section class="side-events">
+            <h2 id="month-event-heading"></h2>
+            <div id="month-event-list"></div>
+
+            <div class="all-events">
+                <h2>今後の全イベント</h2>
+                <ul class="upcoming-event-list" id="all-upcoming-list"></ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <p>© 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

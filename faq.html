@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Force of the Horse</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">FORCE OF THE HORSE</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">TOP</a></li>
+                    <li><a href="certified-event-system.html" class="nav-link">公認イベント制度</a></li>
+                    <li><a href="event-calendar-page.html" class="nav-link">イベントカレンダー</a></li>
+                    <li><a href="faq.html" class="nav-link active">FAQ</a></li>
+                </ul>
+            </nav>
+            <button class="nav-toggle" aria-label="メニュー">☰</button>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="index.html">TOP</a>
+        <span class="breadcrumb-separator">&gt;</span>
+        <span>FAQ一覧</span>
+    </div>
+
+    <div class="page-head">
+        <p class="page-eyebrow">FAQ</p>
+        <h1 class="page-title">よくある質問 (FAQ)</h1>
+        <p class="page-desc">カードのルールや裁定に関するQ&Aを確認できます</p>
+    </div>
+
+    <main class="faq-overview">
+        <div class="vol-grid">
+            <a href="faq-starter.html" class="vol-card">
+                <span class="vol-label">STARTER</span>
+                <h3>スターターキット</h3>
+                <span class="vol-count">詳細を見る &gt;</span>
+            </a>
+            <a href="faq-vol1.html" class="vol-card">
+                <span class="vol-label">VOL.01</span>
+                <h3>ブースターパックVol.01 『競馬、新章』</h3>
+                <span class="vol-count">詳細を見る &gt;</span>
+            </a>
+            <a href="faq-vol2.html" class="vol-card">
+                <span class="vol-label">VOL.02</span>
+                <h3>ブースターパックVol.02 『英雄VS豪傑』</h3>
+                <span class="vol-count">詳細を見る &gt;</span>
+            </a>
+            <a href="faq-vol3.html" class="vol-card">
+                <span class="vol-label">VOL.03</span>
+                <h3>ブースターパックVol.03 『砂の王 降臨』</h3>
+                <span class="vol-count">詳細を見る &gt;</span>
+            </a>
+            <a href="faq-vol4.html" class="vol-card">
+                <span class="vol-label">VOL.04</span>
+                <h3>ブースターパックVol.04 『GO FASTER』</h3>
+                <span class="vol-count">詳細を見る &gt;</span>
+            </a>
+        </div>
+
+        <hr class="divider">
+
+        <div class="form-card">
+            <div class="form-section">
+                <h2>質問を投稿する</h2>
+                <form id="question-form">
+                    <div class="form-field">
+                        <label>対象弾</label>
+                        <select id="q-vol">
+                            <option value="">選択してください</option>
+                            <option value="starter">スターターキット</option>
+                            <option value="vol1">ブースターパックVol.01 『競馬、新章』</option>
+                            <option value="vol2">ブースターパックVol.02 『英雄VS豪傑』</option>
+                            <option value="vol3">ブースターパックVol.03 『砂の王 降臨』</option>
+                            <option value="vol4">ブースターパックVol.04 『GO FASTER』</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>カード名 (任意)</label>
+                        <input type="text" id="q-card" placeholder="例: 疾風のアルタイル">
+                    </div>
+                    <div class="form-field">
+                        <label>質問内容</label>
+                        <textarea rows="5" id="q-content" placeholder="カードのルールや裁定について質問を入力してください"></textarea>
+                    </div>
+                    <button type="button" id="confirm-post-btn" class="btn btn-primary btn-block">投稿内容を確認する</button>
+                </form>
+            </div>
+
+            <div class="notice-box">
+                <h3>ご投稿前にご確認ください</h3>
+                <ul>
+                    <li>ご質問への回答には数日〜1週間程度お時間をいただく場合があります。</li>
+                    <li>すべてのご質問に回答をお約束するものではありません。</li>
+                    <li>個人情報、誹謗中傷、公序良俗に反する内容、第三者の権利を侵害する内容、Force of the Horseに関係のない内容は掲載いたしません。</li>
+                    <li>運営判断により、投稿内容の編集・要約・非掲載・削除を行う場合があります。</li>
+                    <li>投稿内容は公式サイトや公式SNS等で紹介させていただく場合があります。</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- 投稿確認モーダル -->
+    <div id="post-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div id="post-modal-body"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <p>© 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
