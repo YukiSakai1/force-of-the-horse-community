@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>イベントカレンダー - Force of the Horse</title>
+  <meta name="description" content="Force of the Horse公認イベントカレンダー" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-size: 16px;
+      --background: #f8f8f7;
+      --foreground: #1a1a18;
+      --card: #ffffff;
+      --card-foreground: #1a1a18;
+      --popover: #ffffff;
+      --popover-foreground: #1a1a18;
+      --primary: #000000;
+      --primary-foreground: #ffffff;
+      --secondary: #eee;
+      --secondary-foreground: #1a1a18;
+      --muted: #ebebea;
+      --muted-foreground: #6b6b68;
+      --accent: #5eff00;
+      --accent-foreground: #1a1a18;
+      --destructive: #d4183d;
+      --destructive-foreground: #ffffff;
+      --border: rgba(26,26,24,0.1);
+      --input: transparent;
+      --input-background: #f3f3f5;
+      --switch-background: #cbced4;
+      --font-weight-medium: 500;
+      --font-weight-normal: 400;
+      --ring: oklch(0.708 0 0);
+      --radius: 0.625rem;
+      --tag-news: #ff0000;
+      --tag-event: #ff9000;
+      --tag-faq: #00ffbb;
+      --tag-area: #e600ff;
+      --tag-social: #ff7b00;
+      --day-sun: #ff6467;
+      --day-sat: #51a2ff;
+      --color-black: #000000;
+      --section-bg: #eee;
+      --font-jp: "Noto Sans JP", sans-serif;
+      --font-display: "Chakra Petch", sans-serif;
+      --font-logo: "Inter", sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Noto Sans JP', 'Inter', sans-serif; background-color: var(--background); color: var(--foreground); line-height: 1.5; }
+
+    .min-h-screen { min-height: 100vh; }
+    .max-w-5xl { max-width: 64rem; margin-left: auto; margin-right: auto; }
+    .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+    .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; }
+    .mb-5 { margin-bottom: 1.25rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; } .mb-10 { margin-bottom: 2.5rem; } .mb-12 { margin-bottom: 3rem; }
+    .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-3 { margin-top: 0.75rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; } .mt-8 { margin-top: 2rem; } .mt-12 { margin-top: 3rem; }
+    .mt-16 { margin-top: 4rem; }
+    .gap-1 { gap: 0.25rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-5 { gap: 1.25rem; } .gap-6 { gap: 1.5rem; }
+    .flex { display: flex; } .flex-col { flex-direction: column; } .items-center { align-items: center; } .items-start { align-items: flex-start; }
+    .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+    .grid { display: grid; } .grid-cols-1 { grid-template-columns: repeat(1, minmax(0,1fr)); }
+    .grid-cols-7 { grid-template-columns: repeat(7, minmax(0,1fr)); }
+    .hidden { display: none; } .block { display: block; } .w-full { width: 100%; }
+    .h-14 { height: 3.5rem; } .h-6 { height: 1.5rem; } .h-8 { height: 2rem; }
+    .w-6 { width: 1.5rem; } .w-8 { width: 2rem; } .w-10 { width: 2.5rem; }
+    .shrink-0 { flex-shrink: 0; }
+    .relative { position: relative; } .sticky { position: sticky; } .sticky.top-0 { top:0; } .z-50 { z-index:50; }
+    .rounded-md { border-radius: calc(var(--radius) - 2px); } .rounded-lg { border-radius: var(--radius); }
+    .border { border:1px solid var(--border); } .border-t { border-top:1px solid var(--border); }
+    .bg-background { background: var(--background); } .bg-card { background: var(--card); } .bg-secondary { background: var(--secondary); }
+    .bg-primary { background: var(--primary); }
+    .text-foreground { color: var(--foreground); } .text-primary-foreground { color: var(--primary-foreground); }
+    .text-muted-foreground { color: var(--muted-foreground); }
+    .text-xs { font-size:0.75rem; } .text-sm { font-size:0.875rem; } .text-base { font-size:1rem; } .text-2xl { font-size:1.5rem; }
+    .font-medium { font-weight: var(--font-weight-medium); } .font-semibold { font-weight:600; }
+    .tracking-widest { letter-spacing:0.1em; } .uppercase { text-transform: uppercase; }
+    .leading-relaxed { line-height:1.625; }
+    .transition-colors { transition: color, background-color, border-color 0.15s; }
+    .transition-opacity { transition: opacity 0.15s; }
+    .hover\:bg-secondary:hover { background: var(--secondary); }
+    .hover\:text-foreground:hover { color: var(--foreground); }
+    .hover\:opacity-90:hover { opacity:0.9; }
+    .focus\:outline-none:focus { outline: none; }
+    .cursor-pointer { cursor: pointer; }
+    .space-y-2 > * + * { margin-top: 0.5rem; }
+    .space-y-3 > * + * { margin-top: 0.75rem; }
+    .space-y-4 > * + * { margin-top: 1rem; }
+    .space-y-6 > * + * { margin-top: 1.5rem; }
+    .p-1 { padding:0.25rem; } .p-2 { padding:0.5rem; } .p-2\.5 { padding:0.625rem; } .p-3 { padding:0.75rem; } .p-4 { padding:1rem; } .p-5 { padding:1.25rem; } .p-6 { padding:1.5rem; }
+    .px-2 { padding-left:0.5rem; padding-right:0.5rem; } .px-3 { padding-left:0.75rem; padding-right:0.75rem; } .px-4 { padding-left:1rem; padding-right:1rem; } .px-5 { padding-left:1.25rem; padding-right:1.25rem; }
+    .py-1 { padding-top:0.25rem; padding-bottom:0.25rem; } .py-2 { padding-top:0.5rem; padding-bottom:0.5rem; } .py-2\.5 { padding-top:0.625rem; padding-bottom:0.625rem; } .py-3 { padding-top:0.75rem; padding-bottom:0.75rem; }
+    @media (min-width: 768px) {
+      .md\:flex { display: flex; }
+      .md\:hidden { display: none; }
+      .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    .sm\:flex-row { @media(min-width:640px) { flex-direction: row; } }
+
+    header.sticky { background-color: var(--color-black); border-bottom: 1px solid var(--color-black); }
+    header.sticky .text-foreground { color: #ffffff; }
+    header.sticky .hover\:text-accent:hover { color: #ffffff; opacity:0.75; }
+    header.sticky .nav-link { color: #ffffff; opacity:1; border-bottom:1px solid transparent; padding-bottom:3px; text-decoration: none; }
+    header.sticky .nav-link:hover { color:#ffffff; opacity:0.75; }
+    header.sticky .nav-link.active { color:#ffffff; border-bottom-color:#ffffff; opacity:1; }
+    header.sticky button[onclick*="toggleMobileMenu"] { color:#ffffff; }
+    #mobile-menu.mobile-menu { background-color: var(--color-black); border-top:1px solid var(--color-black); }
+    #mobile-menu.mobile-menu .nav-link { color:#ffffff; border-bottom-color: rgba(255,255,255,0.15); text-decoration: none; }
+    .nav-link { color: var(--muted-foreground); font-size:0.875rem; transition:color 0.15s; padding-bottom:0.125rem; border-bottom:none; }
+    .nav-link:hover { color: var(--foreground); }
+    .nav-link.active { color: var(--foreground); border-bottom:1px solid var(--foreground); font-weight: var(--font-weight-medium); }
+    .mobile-menu { display:none; }
+    @media(max-width:767px) { .mobile-menu.open { display:block; } }
+
+    .breadcrumb { display:flex; align-items:center; gap:0.375rem; font-size:0.75rem; color: var(--muted-foreground); margin-bottom:2rem; }
+    .breadcrumb a, .breadcrumb button { color: var(--muted-foreground); transition:color 0.15s; text-decoration: none; background:none; border:none; font:inherit; cursor:pointer; }
+    .breadcrumb a:hover, .breadcrumb button:hover { color: var(--foreground); }
+    .breadcrumb .current { color: var(--foreground); }
+
+    .calendar-day { min-height: 60px; }
+    .calendar-day.today { background-color: #fffde8; }
+    .calendar-day.other-month { color: #9ca3af; }
+    .calendar-day.sunday { color: var(--day-sun); }
+    .calendar-day.saturday { color: var(--day-sat); }
+    .event-tag { font-size: 8px; padding: 1px 4px; border-radius: 2px; font-weight: 500; display: inline-block; }
+    .event-tag.area { background-color: #e600ff; color: white; }
+    .event-tag.main { background-color: #000; color: white; }
+    .event-tag.meetup { background-color: #00ffbb; color: black; }
+    .event-chip { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+    .event-chip.area { background-color: #e600ff; color: white; }
+    .event-chip.main { background-color: #000; color: white; }
+    .event-chip.meetup { background-color: #00ffbb; color: black; }
+
+    /* -- Remove underline from all anchor tags -- */
+    a {
+        text-decoration: none;
+    }
+
+    .note-bar {
+        background: #1a1a18;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 9999px;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen bg-background text-foreground">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 bg-background border-b">
+      <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+        <a href="index.html" class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">
+          Force of the Horse
+        </a>
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="index.html" class="nav-link">TOP</a>
+          <a href="certified-event-system.html" class="nav-link">公認イベント制度</a>
+          <a href="event-calendar-page.html" class="nav-link active">イベントカレンダー</a>
+          <a href="faq.html" class="nav-link">FAQ</a>
+        </nav>
+        <button class="md:hidden p-1" onclick="toggleMobileMenu()">
+          <svg id="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg id="close-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div id="mobile-menu" class="mobile-menu md:hidden bg-background border-t">
+        <a href="index.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">TOP</a>
+        <a href="certified-event-system.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">公認イベント制度</a>
+        <a href="event-calendar-page.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link active">イベントカレンダー</a>
+        <a href="faq.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">FAQ</a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-5 py-12">
+      <div class="breadcrumb">
+        <a href="index.html">TOP</a>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+        <span class="current">イベントカレンダー</span>
+      </div>
+
+      <header class="mb-10">
+        <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Event Calendar</p>
+        <h1 class="text-2xl font-semibold text-foreground mb-2">公認大会イベントカレンダー</h1>
+        <p class="text-sm text-muted-foreground">公認大会・交流会の開催スケジュールです。</p>
+      </header>
+
+      <!-- Filter badges -->
+      <div class="flex items-center gap-3 mb-6">
+        <span class="text-xs text-muted-foreground flex items-center gap-1">
+          <span class="event-chip area">エリア予選</span>
+        </span>
+        <span class="text-xs text-muted-foreground flex items-center gap-1">
+          <span class="event-chip main">本戦</span>
+        </span>
+        <span class="text-xs text-muted-foreground flex items-center gap-1">
+          <span class="event-chip meetup">交流会</span>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Calendar Section -->
+        <div class="bg-card border rounded-lg p-5">
+          <div class="flex items-center justify-between mb-4">
+            <span id="current-month" class="font-medium text-sm">2025年7月</span>
+            <div class="flex items-center gap-1">
+              <button onclick="prevMonth()" class="p-1 hover:bg-secondary rounded-md transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <button onclick="nextMonth()" class="p-1 hover:bg-secondary rounded-md transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-7 text-center text-xs mb-2">
+            <div class="py-1 text-[var(--day-sun)]">日</div>
+            <div class="py-1">月</div>
+            <div class="py-1">火</div>
+            <div class="py-1">水</div>
+            <div class="py-1">木</div>
+            <div class="py-1">金</div>
+            <div class="py-1 text-[var(--day-sat)]">土</div>
+          </div>
+          <div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
+          <div class="mt-4 text-xs text-muted-foreground">
+            <span class="event-tag meetup">エリア予選</span>
+            <span class="event-tag main">本戦</span>
+            <span class="event-tag meetup">交流会</span>
+          </div>
+        </div>
+
+        <!-- Event List Section -->
+        <div class="space-y-8">
+          <!-- Current Month Events -->
+          <div>
+            <h3 class="text-sm font-medium mb-3" id="month-events-title">2025年7月のイベント</h3>
+            <div id="current-month-events" class="space-y-3 border-t"></div>
+          </div>
+
+          <!-- All Future Events -->
+          <div>
+            <h3 class="text-sm font-medium mb-3">今後の全イベント</h3>
+            <div id="all-events" class="space-y-3 border-t"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Note bar -->
+      <div class="mt-12 flex justify-center">
+        <div class="note-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <span>イベントの一部のみ表示中。イベントカレンダーは随時更新されます。</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t mt-16">
+      <div class="max-w-5xl mx-auto px-5 py-8">
+        <p class="text-xs text-muted-foreground text-center">
+          © 2025 Force of the Horse コミュニティ。本サイトは非公式のコミュニティサイトです。
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      menu.classList.toggle('open');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    }
+
+    const CALENDAR_EVENTS = [
+      { id: 1, title: "エリア予選 東京", date: "2025-07-06", location: "東京都千代田区", type: "area" },
+      { id: 2, title: "エリア予選 大阪", date: "2025-07-13", location: "大阪府大阪市", type: "area" },
+      { id: 3, title: "エリア予選 名古屋", date: "2025-07-20", location: "愛知県名古屋市", type: "area" },
+      { id: 4, title: "公認交流会 仙台", date: "2025-07-27", location: "宮城県仙台市", type: "meetup" },
+      { id: 5, title: "エリア予選 福岡", date: "2025-08-03", location: "福岡県福岡市", type: "area" },
+      { id: 6, title: "エリア予選 広島", date: "2025-08-10", location: "広島県広島市", type: "area" },
+      { id: 7, title: "エリア予選 札幌", date: "2025-08-17", location: "北海道札幌市", type: "area" },
+      { id: 8, title: "公認交流会 金沢", date: "2025-08-24", location: "石川県金沢市", type: "meetup" },
+      { id: 9, title: "全国選手権 本戦", date: "2025-09-07", location: "東京都港区（ビッグサイト）", type: "main" },
+      { id: 10, title: "エリア予選 福岡", date: "2026-01-05", location: "福岡県福岡市", type: "area" },
+      { id: 11, title: "エリア予選 広島", date: "2026-01-12", location: "広島県広島市", type: "area" },
+      { id: 12, title: "エリア予選 札幌", date: "2026-01-19", location: "北海道札幌市", type: "area" },
+      { id: 13, title: "公認交流会 金沢", date: "2026-01-26", location: "石川県金沢市", type: "meetup" },
+    ];
+
+    let currentDate = new Date(2025, 6, 1); // July 2025
+
+    function initCalendar() {
+      renderCalendar();
+      renderEventList();
+    }
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+      document.getElementById('current-month').textContent = `${year}年 ${monthNames[month]}`;
+      document.getElementById('month-events-title').textContent = `${year}年${monthNames[month]}のイベント`;
+
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startPadding = firstDay.getDay();
+
+      const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+      const today = new Date(2025, 6, 17); // July 17, 2025
+
+      for (let i = startPadding - 1; i >= 0; i--) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'bg-card p-1 text-xs text-muted-foreground calendar-day other-month';
+        dayEl.innerHTML = `<div class="text-right">${prevMonthLastDay - i}</div>`;
+        grid.appendChild(dayEl);
+      }
+
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayOfWeek = new Date(year, month, day).getDay();
+        const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+
+        const dayEl = document.createElement('div');
+        let classes = 'bg-card p-1 text-xs calendar-day';
+        if (isToday) classes += ' today';
+        if (dayOfWeek === 0) classes += ' sunday';
+        if (dayOfWeek === 6) classes += ' saturday';
+        dayEl.className = classes;
+
+        const eventsOnDay = CALENDAR_EVENTS.filter(e => e.date === dateStr);
+
+        let tags = '';
+        if (eventsOnDay.length > 0) {
+          tags = '<div class="flex flex-wrap gap-1 mt-1">';
+          eventsOnDay.forEach(e => tags += `<span class="event-tag ${e.type}">${e.type === 'area' ? 'エリア' : e.type === 'main' ? '本戦' : '交流'}</span>`);
+          tags += '</div>';
+        }
+
+        dayEl.innerHTML = `<div class="text-right">${day}</div>${tags}`;
+        grid.appendChild(dayEl);
+      }
+
+      const totalCells = startPadding + lastDay.getDate();
+      const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+      for (let day = 1; day <= remainingCells; day++) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'bg-card p-1 text-xs text-muted-foreground calendar-day other-month';
+        dayEl.innerHTML = `<div class="text-right">${day}</div>`;
+        grid.appendChild(dayEl);
+      }
+    }
+
+    function renderEventList() {
+      const currentMonthList = document.getElementById('current-month-events');
+      const allEventsList = document.getElementById('all-events');
+      currentMonthList.innerHTML = '';
+      allEventsList.innerHTML = '';
+
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      const currentMonthEvents = CALENDAR_EVENTS.filter(e => {
+        const d = new Date(e.date);
+        return d.getFullYear() === year && d.getMonth() === month;
+      });
+
+      const futureEvents = CALENDAR_EVENTS.filter(e => {
+        const d = new Date(e.date);
+        return d >= new Date(year, month, 1);
+      });
+
+      currentMonthEvents.forEach(event => {
+        currentMonthList.appendChild(createEventCard(event));
+      });
+
+      futureEvents.forEach(event => {
+        allEventsList.appendChild(createEventCard(event));
+      });
+    }
+
+    function createEventCard(event) {
+      const card = document.createElement('div');
+      card.className = 'py-3 border-b';
+      const typeClass = event.type;
+      const typeName = event.type === 'area' ? 'エリア予選' : event.type === 'main' ? '本戦' : '交流会';
+      card.innerHTML = `
+        <div class="flex items-start gap-3">
+          <span class="event-chip ${typeClass}">${typeName}</span>
+          <div class="flex-1">
+            <p class="text-xs text-muted-foreground">${event.date}</p>
+            <h4 class="text-sm font-medium">${event.title}</h4>
+            <p class="text-xs text-muted-foreground">${event.location}</p>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function prevMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+      renderEventList();
+    }
+
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+      renderEventList();
+    }
+
+    initCalendar();
+  </script>
+</body>
+</html>

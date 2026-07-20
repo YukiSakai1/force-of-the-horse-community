@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>公認イベント制度について - Force of the Horse</title>
+  <meta name="description" content="Provides official tournament guidelines, FAQs, and a Q&A platform for Force of the horse card game players to access and share community information." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables from sample design */
+    :root {
+      --font-size: 16px;
+      --background: #f8f8f7;
+      --foreground: #1a1a18;
+      --card: #ffffff;
+      --card-foreground: #1a1a18;
+      --popover: #ffffff;
+      --popover-foreground: #1a1a18;
+      --primary: #000000;
+      --primary-foreground: #ffffff;
+      --secondary: #eee;
+      --secondary-foreground: #1a1a18;
+      --muted: #ebebea;
+      --muted-foreground: #6b6b68;
+      --accent: #5eff00;
+      --accent-foreground: #1a1a18;
+      --destructive: #d4183d;
+      --destructive-foreground: #ffffff;
+      --border: rgba(26, 26, 24, 0.1);
+      --input: transparent;
+      --input-background: #f3f3f5;
+      --switch-background: #cbced4;
+      --font-weight-medium: 500;
+      --font-weight-normal: 400;
+      --ring: oklch(0.708 0 0);
+      --radius: 0.625rem;
+
+      /* Tag colors */
+      --tag-news: #ff0000;
+      --tag-event: #ff9000;
+      --tag-faq: #00ffbb;
+      --tag-area: #e600ff;
+      --tag-social: #ff7b00;
+      --day-sun: #ff6467;
+      --day-sat: #51a2ff;
+
+      /* Sample design tokens */
+      --color-black: #000000;
+      --section-bg: #eee;
+
+      /* Fonts */
+      --font-jp: "Noto Sans JP", sans-serif;
+      --font-display: "Chakra Petch", sans-serif;
+      --font-logo: "Inter", sans-serif;
+    }
+
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.5;
+    }
+
+    /* Utility classes converted from Tailwind */
+    .min-h-screen {
+      min-height: 100vh;
+    }
+
+    .max-w-5xl {
+      max-width: 64rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .px-5 {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .py-12 {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    .mb-1 {
+      margin-bottom: 0.25rem;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .mb-3 {
+      margin-bottom: 0.75rem;
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+
+    .mb-5 {
+      margin-bottom: 1.25rem;
+    }
+
+    .mb-6 {
+      margin-bottom: 1.5rem;
+    }
+
+    .mb-8 {
+      margin-bottom: 2rem;
+    }
+
+    .mb-10 {
+      margin-bottom: 2.5rem;
+    }
+
+    .mb-12 {
+      margin-bottom: 3rem;
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem;
+    }
+
+    .mt-3 {
+      margin-top: 0.75rem;
+    }
+
+    .mt-4 {
+      margin-top: 1rem;
+    }
+
+    .mt-6 {
+      margin-top: 1.5rem;
+    }
+
+    .mt-8 {
+      margin-top: 2rem;
+    }
+
+    .mt-12 {
+      margin-top: 3rem;
+    }
+
+    .mt-16 {
+      margin-top: 4rem;
+    }
+
+    .gap-1 {
+      gap: 0.25rem;
+    }
+
+    .gap-1\.5 {
+      gap: 0.375rem;
+    }
+
+    .gap-2 {
+      gap: 0.5rem;
+    }
+
+    .gap-3 {
+      gap: 0.75rem;
+    }
+
+    .gap-4 {
+      gap: 1rem;
+    }
+
+    .gap-6 {
+      gap: 1.5rem;
+    }
+
+    .gap-7 {
+      gap: 1.75rem;
+    }
+
+    .gap-8 {
+      gap: 2rem;
+    }
+
+    .gap-12 {
+      gap: 3rem;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .items-start {
+      align-items: flex-start;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .justify-center {
+      justify-content: center;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-left {
+      text-align: left;
+    }
+
+    .grid {
+      display: grid;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .block {
+      display: block;
+    }
+
+    .inline-block {
+      display: inline-block;
+    }
+
+    .inline-flex {
+      display: inline-flex;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    .h-full {
+      height: 100%;
+    }
+
+    .h-14 {
+      height: 3.5rem;
+    }
+
+    .h-56 {
+      height: 14rem;
+    }
+
+    .h-72 {
+      height: 18rem;
+    }
+
+    .h-8 {
+      height: 2rem;
+    }
+
+    .h-10 {
+      height: 2.5rem;
+    }
+
+    .h-6 {
+      height: 1.5rem;
+    }
+
+    .w-2\.5 {
+      width: 0.625rem;
+    }
+
+    .w-6 {
+      width: 1.5rem;
+    }
+
+    .w-8 {
+      width: 2rem;
+    }
+
+    .w-10 {
+      width: 2.5rem;
+    }
+
+    .shrink-0 {
+      flex-shrink: 0;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .fixed {
+      position: fixed;
+    }
+
+    .inset-0 {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .sticky {
+      position: sticky;
+    }
+
+    .sticky\.top-0 {
+      top: 0;
+    }
+
+    .z-10 {
+      z-index: 10;
+    }
+
+    .z-50 {
+      z-index: 50;
+    }
+
+    .rounded-lg {
+      border-radius: var(--radius);
+    }
+
+    .rounded-md {
+      border-radius: calc(var(--radius) - 2px);
+    }
+
+    .rounded-sm {
+      border-radius: calc(var(--radius) - 4px);
+    }
+
+    .rounded-full {
+      border-radius: 9999px;
+    }
+
+    .rounded-xl {
+      border-radius: calc(var(--radius) + 4px);
+    }
+
+    .border {
+      border: 1px solid var(--border);
+    }
+
+    .border-t {
+      border-top: 1px solid var(--border);
+    }
+
+    .border-b {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .border-l-2 {
+      border-left: 2px solid var(--accent);
+    }
+
+    .border-l-2-border {
+      border-left: 2px solid var(--border);
+    }
+
+    .bg-background {
+      background-color: var(--background);
+    }
+
+    .bg-card {
+      background-color: var(--card);
+    }
+
+    .bg-primary {
+      background-color: var(--primary);
+    }
+
+    .bg-secondary {
+      background-color: var(--secondary);
+    }
+
+    .bg-muted {
+      background-color: var(--muted);
+    }
+
+    .bg-accent\/20 {
+      background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .bg-accent\/30 {
+      background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    .bg-primary-foreground\/10 {
+      background-color: color-mix(in srgb, var(--primary-foreground) 10%, transparent);
+    }
+
+    .bg-foreground\/20 {
+      background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+    }
+
+    .text-foreground {
+      color: var(--foreground);
+    }
+
+    .text-primary-foreground {
+      color: var(--primary-foreground);
+    }
+
+    .text-muted-foreground {
+      color: var(--muted-foreground);
+    }
+
+    .text-accent {
+      color: var(--accent-foreground);
+    }
+
+    .text-red-400 {
+      color: #f87171;
+    }
+
+    .text-blue-400 {
+      color: #60a5fa;
+    }
+
+    .text-xs {
+      font-size: 0.75rem;
+    }
+
+    .text-10px {
+      font-size: 0.625rem;
+      line-height: 1.2;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+    }
+
+    .text-base {
+      font-size: 1rem;
+    }
+
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+
+    .text-4xl {
+      font-size: 2.25rem;
+    }
+
+    .font-medium {
+      font-weight: var(--font-weight-medium);
+    }
+
+    .font-semibold {
+      font-weight: 600;
+    }
+
+    .tracking-widest {
+      letter-spacing: 0.1em;
+    }
+
+    .uppercase {
+      text-transform: uppercase;
+    }
+
+    .leading-snug {
+      line-height: 1.375;
+    }
+
+    .leading-relaxed {
+      line-height: 1.625;
+    }
+
+    .leading-tight {
+      line-height: 1.25;
+    }
+
+    .object-cover {
+      object-fit: cover;
+    }
+
+    .opacity-20 {
+      opacity: 0.2;
+    }
+
+    .opacity-90 {
+      opacity: 0.9;
+    }
+
+    .opacity-40 {
+      opacity: 0.4;
+    }
+
+    .opacity-50 {
+      opacity: 0.5;
+    }
+
+    .opacity-70 {
+      opacity: 0.7;
+    }
+
+    .transition-colors {
+      transition-property: color, background-color, border-color;
+      transition-duration: 0.15s;
+    }
+
+    .transition-all {
+      transition-property: all;
+      transition-duration: 0.15s;
+    }
+
+    .transition-opacity {
+      transition-property: opacity;
+      transition-duration: 0.15s;
+    }
+
+    .hover\:bg-secondary:hover {
+      background-color: var(--secondary);
+    }
+
+    .hover\:text-foreground:hover {
+      color: var(--foreground);
+    }
+
+    .hover\:text-accent:hover {
+      color: var(--accent-foreground);
+    }
+
+    .hover\:border-foreground\/30:hover {
+      border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+    }
+
+    .hover\:shadow-sm:hover {
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+
+    .hover\:opacity-90:hover {
+      opacity: 0.9;
+    }
+
+    .focus\:outline-none:focus {
+      outline: none;
+    }
+
+    .focus\:ring-1:focus {
+      box-shadow: 0 0 0 1px var(--ring);
+    }
+
+    .disabled\:opacity-40:disabled {
+      opacity: 0.4;
+    }
+
+    .disabled\:cursor-not-allowed:disabled {
+      cursor: not-allowed;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .cursor-not-allowed {
+      cursor: not-allowed;
+    }
+
+    .space-y-1\.5 > * + * {
+      margin-top: 0.375rem;
+    }
+
+    .space-y-2 > * + * {
+      margin-top: 0.5rem;
+    }
+
+    .space-y-3 > * + * {
+      margin-top: 0.75rem;
+    }
+
+    .space-y-4 > * + * {
+      margin-top: 1rem;
+    }
+
+    .space-y-5 > * + * {
+      margin-top: 1.25rem;
+    }
+
+    .space-y-12 > * + * {
+      margin-top: 3rem;
+    }
+
+    .divide-y > * + * {
+      border-top: 1px solid var(--border);
+    }
+
+    .divide-b > * + * {
+      border-top: 1px solid var(--border);
+    }
+
+    .border-collapse {
+      border-collapse: collapse;
+    }
+
+    .table {
+      display: table;
+    }
+
+    .p-1 {
+      padding: 0.25rem;
+    }
+
+    .p-1\.5 {
+      padding: 0.375rem;
+    }
+
+    .p-2 {
+      padding: 0.5rem;
+    }
+
+    .p-2\.5 {
+      padding: 0.625rem;
+    }
+
+    .p-3 {
+      padding: 0.75rem;
+    }
+
+    .p-4 {
+      padding: 1rem;
+    }
+
+    .p-5 {
+      padding: 1.25rem;
+    }
+
+    .p-6 {
+      padding: 1.5rem;
+    }
+
+    .px-1 {
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+    }
+
+    .px-3 {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    .px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .px-5 {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .px-6 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    .py-0\.5 {
+      padding-top: 0.125rem;
+      padding-bottom: 0.125rem;
+    }
+
+    .py-1 {
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .py-1\.5 {
+      padding-top: 0.375rem;
+      padding-bottom: 0.375rem;
+    }
+
+    .py-2 {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .py-2\.5 {
+      padding-top: 0.625rem;
+      padding-bottom: 0.625rem;
+    }
+
+    .py-3 {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .py-5 {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+
+    .pb-2 {
+      padding-bottom: 0.5rem;
+    }
+
+    .pb-3 {
+      padding-bottom: 0.75rem;
+    }
+
+    .pr-4 {
+      padding-right: 1rem;
+    }
+
+    .pr-8 {
+      padding-right: 2rem;
+    }
+
+    .pr-10 {
+      padding-right: 2.5rem;
+    }
+
+    .pl-4 {
+      padding-left: 1rem;
+    }
+
+    .pl-5 {
+      padding-left: 1.25rem;
+    }
+
+    .backdrop-blur-sm {
+      backdrop-filter: blur(4px);
+    }
+
+    .shadow-lg {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    .resize-none {
+      resize: none;
+    }
+
+    .truncate {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .break-all {
+      word-break: break-all;
+    }
+
+    .underline {
+      text-decoration: underline;
+    }
+
+    .underline-offset-2 {
+      text-underline-offset: 2px;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .md\:flex {
+        display: flex;
+      }
+
+      .md\:hidden {
+        display: none;
+      }
+
+      .md\:text-base {
+        font-size: 1rem;
+      }
+
+      .md\:text-4xl {
+        font-size: 2.25rem;
+      }
+
+      .md\:h-72 {
+        height: 18rem;
+      }
+
+      .md\:pr-10 {
+        padding-right: 2.5rem;
+      }
+
+      .md\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    /* Quick link cards */
+    .quick-link-card {
+      text-align: left;
+      background-color: var(--card);
+      border: none;
+      border-left: 4px solid var(--accent);
+      border-radius: 0;
+      padding: 20px 20px 20px 24px;
+      transition: all 0.15s;
+    }
+
+    .quick-link-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .quick-link-card .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 0;
+      background-color: var(--accent);
+      margin-bottom: 0.75rem;
+      color: #1a1a18;
+      transition: background-color 0.15s;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a, .breadcrumb button {
+      color: var(--muted-foreground);
+      transition: color 0.15s;
+      text-decoration: none;
+      background: none;
+      border: none;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .breadcrumb a:hover, .breadcrumb button:hover {
+      color: var(--foreground);
+    }
+
+    .breadcrumb .current {
+      color: var(--foreground);
+    }
+
+    /* Nav styles */
+    header.sticky {
+      background-color: var(--color-black);
+      border-bottom: 1px solid var(--color-black);
+    }
+    header.sticky .text-foreground {
+      color: #ffffff;
+    }
+    header.sticky .hover\:text-accent:hover {
+      color: #ffffff;
+      opacity: 0.75;
+    }
+    header.sticky .nav-link {
+      color: #ffffff;
+      opacity: 1;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 3px;
+      text-decoration: none;
+    }
+    header.sticky .nav-link:hover {
+      color: #ffffff;
+      opacity: 0.75;
+    }
+    header.sticky .nav-link.active {
+      color: #ffffff;
+      border-bottom-color: #ffffff;
+      opacity: 1;
+    }
+    header.sticky button[onclick*="toggleMobileMenu"] {
+      color: #ffffff;
+    }
+    #mobile-menu.mobile-menu {
+      background-color: var(--color-black);
+      border-top: 1px solid var(--color-black);
+    }
+    #mobile-menu.mobile-menu .nav-link {
+      color: #ffffff;
+      border-bottom-color: rgba(255, 255, 255, 0.15);
+      text-decoration: none;
+    }
+    .nav-link {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      transition: color 0.15s;
+      padding-bottom: 0.125rem;
+      border-bottom: none;
+    }
+    .nav-link:hover {
+      color: var(--foreground);
+    }
+    .nav-link.active {
+      color: var(--foreground);
+      border-bottom: 1px solid var(--foreground);
+      font-weight: var(--font-weight-medium);
+    }
+    .mobile-menu {
+      display: none;
+    }
+    @media (max-width: 767px) {
+      .mobile-menu.open {
+        display: block;
+      }
+    }
+    /* -- Remove underline from all anchor tags -- */
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen bg-background text-foreground">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 bg-background border-b">
+      <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+        <a href="index.html" class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">
+          Force of the Horse
+        </a>
+
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="index.html" class="nav-link">TOP</a>
+          <a href="certified-event-system.html" class="nav-link active">公認イベント制度</a>
+          <a href="event-calendar-page.html" class="nav-link">イベントカレンダー</a>
+          <a href="faq.html" class="nav-link">FAQ</a>
+        </nav>
+
+        <button class="md:hidden p-1" onclick="toggleMobileMenu()">
+          <svg id="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg id="close-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div id="mobile-menu" class="mobile-menu md:hidden bg-background border-t">
+        <a href="index.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">TOP</a>
+        <a href="certified-event-system.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link active">公認イベント制度</a>
+        <a href="event-calendar-page.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">イベントカレンダー</a>
+        <a href="faq.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">FAQ</a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- About Page -->
+      <div class="max-w-5xl mx-auto px-5 py-12">
+        <div class="breadcrumb">
+          <a href="index.html">TOP</a>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          <span class="current">公認イベント制度について</span>
+        </div>
+
+        <header class="mb-10">
+          <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">About</p>
+          <h1 class="text-2xl font-semibold text-foreground mb-3">公認イベント制度について</h1>
+        </header>
+
+        <div class="max-w-2xl space-y-5 text-sm text-foreground leading-relaxed mb-12">
+          <p>
+            Force of the Horseでは、プレイヤーの皆さまによる自主的なイベント開催やコミュニティ活動を支援するため、「公認イベント制度」を設けています。
+          </p>
+          <p>
+            本制度は、対戦大会だけでなく、交流会や初心者体験会、オンラインイベントなど、さまざまな形でForce of the Horseを楽しむ場を広げていくことを目的としています。
+          </p>
+          <div class="border-l-2 border-accent pl-5 py-1 space-y-2 text-muted-foreground">
+            <p>「もっと多くの人に遊んでもらいたい」</p>
+            <p>「競馬の話をしながら交流したい」</p>
+            <p>「地域やオンラインでコミュニティを盛り上げたい」</p>
+          </div>
+          <p>
+            そんな想いを持つプレイヤーの皆さまを、運営が公認イベントという形でサポートします。
+          </p>
+          <p>
+            公認イベントとして認定されたイベントは、公式サイトや公式SNSでの紹介をはじめ、各種プロモーション支援を受けることができます。
+          </p>
+          <p>
+            開催形式や規模は問いません。<br>
+            競技大会からカジュアルな交流会まで、Force of the Horseを楽しむ場を一緒に作っていきましょう。
+          </p>
+          <p class="text-muted-foreground">
+            公認イベントの開催をご希望の方は、ガイドラインをご確認のうえ、申請フォームよりお申し込みください。
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+          <a href="guideline.html" class="quick-link-card">
+            <span class="icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </span>
+            <h3 class="text-sm font-medium text-foreground mb-1 hover:text-accent transition-colors">公認イベントガイドライン</h3>
+            <p class="text-xs text-muted-foreground leading-relaxed">大会開催に必要な規定・ルール・ジャッジ制度などの詳細はこちら</p>
+            <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+              <span>詳細を見る</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </a>
+
+          <a href="apply.html" class="text-left bg-primary text-primary-foreground rounded-lg p-6 hover:opacity-90 transition-all">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-primary-foreground/10 mb-4 transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-foreground">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </span>
+            <h3 class="text-sm font-medium mb-1">公認イベントの開催申請はこちら</h3>
+            <p class="text-xs text-primary-foreground/70 leading-relaxed">申請フォームからイベント情報を入力してお申し込みください</p>
+            <div class="mt-4 flex items-center gap-1 text-xs text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+              <span>申請フォームへ</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t mt-16">
+      <div class="max-w-5xl mx-auto px-5 py-8">
+        <p class="text-xs text-muted-foreground">
+          © 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      menu.classList.toggle('open');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    }
+
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      menu.classList.remove('open');
+      menuIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

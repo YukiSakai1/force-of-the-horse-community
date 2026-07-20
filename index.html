@@ -1,0 +1,3057 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community site for card game</title>
+  <meta name="description" content="Provides official tournament guidelines, FAQs, and a Q&A platform for Force of the horse card game players to access and share community information." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables from sample design */
+    :root {
+      --font-size: 16px;
+      --background: #f8f8f7;
+      --foreground: #1a1a18;
+      --card: #ffffff;
+      --card-foreground: #1a1a18;
+      --popover: #ffffff;
+      --popover-foreground: #1a1a18;
+      --primary: #000000;
+      --primary-foreground: #ffffff;
+      --secondary: #eee;
+      --secondary-foreground: #1a1a18;
+      --muted: #ebebea;
+      --muted-foreground: #6b6b68;
+      --accent: #5eff00;
+      --accent-foreground: #1a1a18;
+      --destructive: #d4183d;
+      --destructive-foreground: #ffffff;
+      --border: rgba(26, 26, 24, 0.1);
+      --input: transparent;
+      --input-background: #f3f3f5;
+      --switch-background: #cbced4;
+      --font-weight-medium: 500;
+      --font-weight-normal: 400;
+      --ring: oklch(0.708 0 0);
+      --radius: 0.625rem;
+
+      /* Tag colors */
+      --tag-news: #ff0000;
+      --tag-event: #ff9000;
+      --tag-faq: #00ffbb;
+      --tag-area: #e600ff;
+      --tag-social: #ff7b00;
+      --day-sun: #ff6467;
+      --day-sat: #51a2ff;
+
+      /* Sample design tokens */
+      --color-black: #000000;
+      --section-bg: #eee;
+
+      /* Fonts */
+      --font-jp: "Noto Sans JP", sans-serif;
+      --font-display: "Chakra Petch", sans-serif;
+      --font-logo: "Inter", sans-serif;
+    }
+
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.5;
+    }
+
+    /* Utility classes converted from Tailwind */
+    .min-h-screen {
+      min-height: 100vh;
+    }
+
+    .max-w-5xl {
+      max-width: 64rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .px-5 {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .py-12 {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    .py-8 {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .mb-1 {
+      margin-bottom: 0.25rem;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .mb-3 {
+      margin-bottom: 0.75rem;
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+
+    .mb-5 {
+      margin-bottom: 1.25rem;
+    }
+
+    .mb-6 {
+      margin-bottom: 1.5rem;
+    }
+
+    .mb-8 {
+      margin-bottom: 2rem;
+    }
+
+    .mb-10 {
+      margin-bottom: 2.5rem;
+    }
+
+    .mb-12 {
+      margin-bottom: 3rem;
+    }
+
+    .mb-14 {
+      margin-bottom: 3.5rem;
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem;
+    }
+
+    .mt-3 {
+      margin-top: 0.75rem;
+    }
+
+    .mt-4 {
+      margin-top: 1rem;
+    }
+
+    .mt-6 {
+      margin-top: 1.5rem;
+    }
+
+    .mt-8 {
+      margin-top: 2rem;
+    }
+
+    .mt-12 {
+      margin-top: 3rem;
+    }
+
+    .mt-16 {
+      margin-top: 4rem;
+    }
+
+    .gap-1 {
+      gap: 0.25rem;
+    }
+
+    .gap-1\.5 {
+      gap: 0.375rem;
+    }
+
+    .gap-2 {
+      gap: 0.5rem;
+    }
+
+    .gap-3 {
+      gap: 0.75rem;
+    }
+
+    .gap-4 {
+      gap: 1rem;
+    }
+
+    .gap-6 {
+      gap: 1.5rem;
+    }
+
+    .gap-7 {
+      gap: 1.75rem;
+    }
+
+    .gap-8 {
+      gap: 2rem;
+    }
+
+    .gap-12 {
+      gap: 3rem;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .items-start {
+      align-items: flex-start;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .justify-center {
+      justify-content: center;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-left {
+      text-align: left;
+    }
+
+    .grid {
+      display: grid;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-cols-5 {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .block {
+      display: block;
+    }
+
+    .inline-block {
+      display: inline-block;
+    }
+
+    .inline-flex {
+      display: inline-flex;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    .h-full {
+      height: 100%;
+    }
+
+    .h-14 {
+      height: 3.5rem;
+    }
+
+    .h-56 {
+      height: 14rem;
+    }
+
+    .h-72 {
+      height: 18rem;
+    }
+
+    .h-8 {
+      height: 2rem;
+    }
+
+    .h-10 {
+      height: 2.5rem;
+    }
+
+    .h-6 {
+      height: 1.5rem;
+    }
+
+    .w-2\.5 {
+      width: 0.625rem;
+    }
+
+    .w-6 {
+      width: 1.5rem;
+    }
+
+    .w-8 {
+      width: 2rem;
+    }
+
+    .w-10 {
+      width: 2.5rem;
+    }
+
+    .shrink-0 {
+      flex-shrink: 0;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .fixed {
+      position: fixed;
+    }
+
+    .inset-0 {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .sticky {
+      position: sticky;
+    }
+
+   sticky\.top-0 {
+      top: 0;
+    }
+
+    .z-10 {
+      z-index: 10;
+    }
+
+    .z-50 {
+      z-index: 50;
+    }
+
+    .rounded-lg {
+      border-radius: var(--radius);
+    }
+
+    .rounded-md {
+      border-radius: calc(var(--radius) - 2px);
+    }
+
+    .rounded-sm {
+      border-radius: calc(var(--radius) - 4px);
+    }
+
+    .rounded-full {
+      border-radius: 9999px;
+    }
+
+    .rounded-xl {
+      border-radius: calc(var(--radius) + 4px);
+    }
+
+    .border {
+      border: 1px solid var(--border);
+    }
+
+    .border-t {
+      border-top: 1px solid var(--border);
+    }
+
+    .border-b {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .border-l-2 {
+      border-left: 2px solid var(--accent);
+    }
+
+    .border-l-2-border {
+      border-left: 2px solid var(--border);
+    }
+
+    .bg-background {
+      background-color: var(--background);
+    }
+
+    .bg-card {
+      background-color: var(--card);
+    }
+
+    .bg-primary {
+      background-color: var(--primary);
+    }
+
+    .bg-secondary {
+      background-color: var(--secondary);
+    }
+
+    .bg-muted {
+      background-color: var(--muted);
+    }
+
+    .bg-accent\/20 {
+      background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .bg-accent\/30 {
+      background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    .bg-primary-foreground\/10 {
+      background-color: color-mix(in srgb, var(--primary-foreground) 10%, transparent);
+    }
+
+    .bg-foreground\/20 {
+      background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+    }
+
+    .text-foreground {
+      color: var(--foreground);
+    }
+
+    .text-primary-foreground {
+      color: var(--primary-foreground);
+    }
+
+    .text-muted-foreground {
+      color: var(--muted-foreground);
+    }
+
+    .text-accent {
+      color: var(--accent-foreground);
+    }
+
+    .text-red-400 {
+      color: #f87171;
+    }
+
+    .text-blue-400 {
+      color: #60a5fa;
+    }
+
+    .text-xs {
+      font-size: 0.75rem;
+    }
+
+    .text-10px {
+      font-size: 0.625rem;
+      line-height: 1.2;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+    }
+
+    .text-base {
+      font-size: 1rem;
+    }
+
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+
+    .text-4xl {
+      font-size: 2.25rem;
+    }
+
+    .font-medium {
+      font-weight: var(--font-weight-medium);
+    }
+
+    .font-semibold {
+      font-weight: 600;
+    }
+
+    .tracking-widest {
+      letter-spacing: 0.1em;
+    }
+
+    .uppercase {
+      text-transform: uppercase;
+    }
+
+    .leading-snug {
+      line-height: 1.375;
+    }
+
+    .leading-relaxed {
+      line-height: 1.625;
+    }
+
+    .leading-tight {
+      line-height: 1.25;
+    }
+
+    .object-cover {
+      object-fit: cover;
+    }
+
+    .opacity-20 {
+      opacity: 0.2;
+    }
+
+    .opacity-90 {
+      opacity: 0.9;
+    }
+
+    .opacity-40 {
+      opacity: 0.4;
+    }
+
+    .opacity-50 {
+      opacity: 0.5;
+    }
+
+    .opacity-70 {
+      opacity: 0.7;
+    }
+
+    .transition-colors {
+      transition-property: color, background-color, border-color;
+      transition-duration: 0.15s;
+    }
+
+    .transition-all {
+      transition-property: all;
+      transition-duration: 0.15s;
+    }
+
+    .transition-opacity {
+      transition-property: opacity;
+      transition-duration: 0.15s;
+    }
+
+    .hover\:bg-secondary:hover {
+      background-color: var(--secondary);
+    }
+
+    .hover\:text-foreground:hover {
+      color: var(--foreground);
+    }
+
+    .hover\:text-accent:hover {
+      color: var(--accent-foreground);
+    }
+
+    .hover\:border-foreground\/30:hover {
+      border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+    }
+
+    .hover\:shadow-sm:hover {
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+
+    .hover\:opacity-90:hover {
+      opacity: 0.9;
+    }
+
+    .focus\:outline-none:focus {
+      outline: none;
+    }
+
+    .focus\:ring-1:focus {
+      box-shadow: 0 0 0 1px var(--ring);
+    }
+
+    .disabled\:opacity-40:disabled {
+      opacity: 0.4;
+    }
+
+    .disabled\:cursor-not-allowed:disabled {
+      cursor: not-allowed;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .cursor-not-allowed {
+      cursor: not-allowed;
+    }
+
+    .space-y-1\.5 > * + * {
+      margin-top: 0.375rem;
+    }
+
+    .space-y-2 > * + * {
+      margin-top: 0.5rem;
+    }
+
+    .space-y-3 > * + * {
+      margin-top: 0.75rem;
+    }
+
+    .space-y-4 > * + * {
+      margin-top: 1rem;
+    }
+
+    .space-y-5 > * + * {
+      margin-top: 1.25rem;
+    }
+
+    .space-y-12 > * + * {
+      margin-top: 3rem;
+    }
+
+    .divide-y > * + * {
+      border-top: 1px solid var(--border);
+    }
+
+    .divide-b > * + * {
+      border-top: 1px solid var(--border);
+    }
+
+    .border-collapse {
+      border-collapse: collapse;
+    }
+
+    .table {
+      display: table;
+    }
+
+    .p-1 {
+      padding: 0.25rem;
+    }
+
+    .p-1\.5 {
+      padding: 0.375rem;
+    }
+
+    .p-2 {
+      padding: 0.5rem;
+    }
+
+    .p-2\.5 {
+      padding: 0.625rem;
+    }
+
+    .p-3 {
+      padding: 0.75rem;
+    }
+
+    .p-4 {
+      padding: 1rem;
+    }
+
+    .p-5 {
+      padding: 1.25rem;
+    }
+
+    .p-6 {
+      padding: 1.5rem;
+    }
+
+    .px-1 {
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+    }
+
+    .px-3 {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    .px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .px-5 {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .px-6 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    .py-0\.5 {
+      padding-top: 0.125rem;
+      padding-bottom: 0.125rem;
+    }
+
+    .py-1 {
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .py-1\.5 {
+      padding-top: 0.375rem;
+      padding-bottom: 0.375rem;
+    }
+
+    .py-2 {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .py-2\.5 {
+      padding-top: 0.625rem;
+      padding-bottom: 0.625rem;
+    }
+
+    .py-3 {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .py-5 {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+
+    .pb-2 {
+      padding-bottom: 0.5rem;
+    }
+
+    .pb-3 {
+      padding-bottom: 0.75rem;
+    }
+
+    .pr-4 {
+      padding-right: 1rem;
+    }
+
+    .pr-8 {
+      padding-right: 2rem;
+    }
+
+    .pr-10 {
+      padding-right: 2.5rem;
+    }
+
+    .pl-4 {
+      padding-left: 1rem;
+    }
+
+    .pl-5 {
+      padding-left: 1.25rem;
+    }
+
+    .backdrop-blur-sm {
+      backdrop-filter: blur(4px);
+    }
+
+    .shadow-lg {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    .resize-none {
+      resize: none;
+    }
+
+    .truncate {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .break-all {
+      word-break: break-all;
+    }
+
+    .underline {
+      text-decoration: underline;
+    }
+
+    .underline-offset-2 {
+      text-underline-offset: 2px;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .md\:flex {
+        display: flex;
+      }
+
+      .md\:hidden {
+        display: none;
+      }
+
+      .md\:text-base {
+        font-size: 1rem;
+      }
+
+      .md\:text-4xl {
+        font-size: 2.25rem;
+      }
+
+      .md\:h-72 {
+        height: 18rem;
+      }
+
+      .md\:pr-10 {
+        padding-right: 2.5rem;
+      }
+
+      .md\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .md\:grid-cols-5 {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .md\:col-span-2 {
+        grid-column: span 2 / span 2;
+      }
+
+      .md\:col-span-3 {
+        grid-column: span 3 / span 3;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .lg\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .lg\:grid-cols-5 {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .lg\:col-span-2 {
+        grid-column: span 2 / span 2;
+      }
+
+      .lg\:col-span-3 {
+        grid-column: span 3 / span 3;
+      }
+    }
+
+    @media (min-width: 640px) {
+      .sm\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .sm\:flex-row {
+        flex-direction: row;
+      }
+    }
+
+    /* Custom styles for interactive elements */
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .nav-link {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      transition: color 0.15s;
+      padding-bottom: 0.125rem;
+      border-bottom: none;
+    }
+
+    .nav-link:hover {
+      color: var(--foreground);
+    }
+
+    .nav-link.active {
+      color: var(--foreground);
+      border-bottom: 1px solid var(--foreground);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+
+    @media (max-width: 767px) {
+      .mobile-menu.open {
+        display: block;
+      }
+    }
+
+    .accordion-content {
+      display: none;
+    }
+
+    .accordion-content.open {
+      display: block;
+    }
+
+    .hero-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.2;
+    }
+
+    /* Calendar styles */
+    .calendar-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .calendar-table th {
+      font-size: 0.625rem;
+      font-weight: var(--font-weight-medium);
+      padding-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .calendar-table td {
+      vertical-align: top;
+      padding: 0.5rem 0.25rem;
+      text-align: center;
+    }
+
+    .calendar-table td.compact {
+      padding: 0.375rem 0.125rem;
+    }
+
+    .calendar-table .sunday {
+      color: #f87171;
+    }
+
+    .calendar-table .saturday {
+      color: #60a5fa;
+    }
+
+    .event-tag {
+      font-size: 0.5625rem;
+      line-height: 1.25;
+      border-radius: 0.125rem;
+      padding: 0.125rem 0.25rem;
+      margin-bottom: 0.125rem;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .event-tag.area {
+      background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+      color: var(--foreground);
+    }
+
+    .event-tag.main {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .event-tag.meetup {
+      background-color: var(--secondary);
+      color: var(--muted-foreground);
+      border: 1px solid var(--border);
+    }
+
+    /* Form styles */
+    .form-input {
+      width: 100%;
+      font-size: 0.875rem;
+      background-color: var(--input-background);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) - 2px);
+      padding: 0.5rem 0.75rem;
+      color: var(--foreground);
+    }
+
+    .form-input::placeholder {
+      color: color-mix(in srgb, var(--muted-foreground) 40%, transparent);
+    }
+
+    .form-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 1px var(--ring);
+    }
+
+    .form-input.error {
+      border-color: #fca5a5;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: var(--font-weight-medium);
+      color: var(--foreground);
+      margin-bottom: 0.375rem;
+    }
+
+    .form-label .required {
+      color: #f87171;
+      margin-left: 0.25rem;
+    }
+
+    .error-message {
+      margin-top: 0.25rem;
+      font-size: 0.625rem;
+      color: #f87171;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      position: relative;
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      width: 100%;
+      max-width: 28rem;
+      padding: 1.5rem;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb button {
+      color: var(--muted-foreground);
+      transition: color 0.15s;
+    }
+
+    .breadcrumb button:hover {
+      color: var(--foreground);
+    }
+
+    .breadcrumb .current {
+      color: var(--foreground);
+    }
+
+    /* Tag styles */
+    .tag {
+      display: inline-block;
+      font-size: 0.625rem;
+      font-weight: var(--font-weight-medium);
+      padding: 0.125rem 0.5rem;
+      border-radius: 0.125rem;
+    }
+
+    .tag-announcement {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .tag-event {
+      background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+      color: var(--foreground);
+      border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    }
+
+    .tag-faq {
+      background-color: var(--secondary);
+      color: var(--foreground);
+      border: 1px solid var(--border);
+    }
+
+    .event-tag {
+      font-size: 0.5625rem;
+      line-height: 1.25;
+      border-radius: 0.125rem;
+      padding: 0.125rem 0.375rem;
+      margin-bottom: 0.125rem;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .event-tag.area {
+      background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+      color: var(--foreground);
+      border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    }
+
+    .event-tag.main {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .event-tag.meetup {
+      background-color: var(--secondary);
+      color: var(--muted-foreground);
+      border: 1px solid var(--border);
+    }
+
+    /* Quick link cards */
+    .quick-link-card {
+      text-align: left;
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      transition: all 0.15s;
+    }
+
+    .quick-link-card:hover {
+      border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+
+    .quick-link-card .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.375rem;
+      background-color: var(--secondary);
+      margin-bottom: 0.75rem;
+      color: var(--foreground);
+      transition: background-color 0.15s;
+    }
+
+    .quick-link-card:hover .icon {
+      background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    /* FAQ cards */
+    .faq-card {
+      text-align: left;
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: all 0.15s;
+    }
+
+    .faq-card:hover {
+      border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+
+    .faq-card:hover h3 {
+      color: var(--accent-foreground);
+    }
+
+    /* Section headers */
+    .section-header {
+      font-size: 0.875rem;
+      font-weight: var(--font-weight-medium);
+      color: var(--foreground);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Checkbox styling */
+    input[type="checkbox"] {
+      accent-color: var(--foreground);
+    }
+
+    input[type="radio"] {
+      accent-color: var(--foreground);
+    }
+
+    /* ============================================================
+       Sample design alignment overrides
+       ============================================================ */
+
+    /* -- Header / Navbar: black bar with white links -- */
+    header.sticky {
+      background-color: var(--color-black);
+      border-bottom: 1px solid var(--color-black);
+    }
+    header.sticky .text-foreground {
+      color: #ffffff;
+    }
+    header.sticky .hover\:text-accent:hover {
+      color: #ffffff;
+      opacity: 0.75;
+    }
+    header.sticky .nav-link {
+      color: #ffffff;
+      opacity: 1;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 3px;
+    }
+    header.sticky .nav-link:hover {
+      color: #ffffff;
+      opacity: 0.75;
+    }
+    header.sticky .nav-link.active {
+      color: #ffffff;
+      border-bottom-color: #ffffff;
+      opacity: 1;
+    }
+    header.sticky button[onclick^="toggleMobileMenu"] {
+      color: #ffffff;
+    }
+    #mobile-menu.mobile-menu {
+      background-color: var(--color-black);
+      border-top: 1px solid var(--color-black);
+    }
+    #mobile-menu.mobile-menu .nav-link {
+      color: #ffffff;
+      border-bottom-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* -- Hero: display font, stacked title/subtitle/lead, gradient bar -- */
+    .hero-section {
+      background-color: #1a1a18;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+    }
+    .hero-section .hero-image {
+      opacity: 1;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1;
+      margin: 0;
+    }
+    .hero-subtitle {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 8px 0 0;
+    }
+    .hero-lead {
+      font-weight: 700;
+      font-size: 14px;
+      opacity: 0.7;
+      margin: 14px 0 0;
+    }
+    .hero-bar {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        #5eff00 0 10%, #ff7b00 10% 20%, #e600ff 20% 30%, #ff0000 30% 40%,
+        #00ffbb 40% 50%, #f6ff00 50% 60%, #e600ff 60% 70%, #00bbff 70% 80%,
+        #5900ff 80% 90%, #ff00cc 90% 100%
+      );
+    }
+    @media (min-width: 768px) {
+      .hero-title { font-size: 56px; }
+      .hero-subtitle { font-size: 20px; }
+      .hero-lead { font-size: 16px; }
+    }
+
+    /* -- Full-bleed gray section behind quick links + content grid -- */
+    .section-gray {
+      background-color: var(--section-bg);
+    }
+
+    /* -- Quick link cards: flush grid, green left border, square icon -- */
+    .quick-links-grid {
+      gap: 0;
+    }
+    .quick-link-card {
+      background-color: #ffffff;
+      border: none;
+      border-left: 4px solid var(--accent);
+      border-radius: 0;
+      padding: 20px 20px 20px 24px;
+      box-shadow: none;
+    }
+    .quick-link-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+    .quick-link-card .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 0;
+      background-color: var(--accent);
+      color: #1a1a18;
+    }
+    .quick-link-card:hover .icon {
+      background-color: var(--accent);
+    }
+
+    /* -- Calendar box (TOP page): borderless, sits flush in gray section -- */
+    .calendar-box {
+      background-color: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+    }
+
+    /* -- Calendar table row separators + weekend colors -- */
+    .calendar-table th,
+    .calendar-table td {
+      border-bottom: 1px solid var(--border);
+    }
+    .calendar-table .sunday { color: var(--day-sun); }
+    .calendar-table .saturday { color: var(--day-sat); }
+
+    /* -- News/announcement tags: black chip, colored left border -- */
+    .tag-announcement,
+    .tag-event,
+    .tag-faq {
+      background-color: var(--color-black);
+      color: #f8f8f7;
+      border: none;
+      border-radius: 0;
+      border-left: 3px solid;
+      padding: 2px 8px 2px 11px;
+    }
+    .tag-announcement { border-left-color: var(--tag-news); }
+    .tag-event { border-left-color: var(--tag-event); }
+    .tag-faq { border-left-color: var(--tag-faq); }
+
+    /* -- Event tags (calendar day chips + event list): flat, bottom border -- */
+    .event-tag {
+      border-radius: 0;
+    }
+    .event-tag.area {
+      background-color: #ffffff;
+      color: var(--foreground);
+      border: none;
+      border-bottom: 2px solid var(--tag-area);
+    }
+    .event-tag.meetup {
+      background-color: #ffffff;
+      color: var(--muted-foreground);
+      border: none;
+      border-bottom: 2px solid var(--tag-social);
+    }
+    .event-tag.main {
+      background-color: var(--color-black);
+      color: #ffffff;
+      border: none;
+    }
+
+    /* -- Footer: black bar -- */
+    footer.border-t {
+      background-color: var(--color-black);
+      border-top: 1px solid var(--color-black);
+    }
+    footer.border-t .text-muted-foreground {
+      color: #dddddd;
+    }
+    /* -- Remove underline from all anchor tags -- */
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen bg-background text-foreground">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 bg-background border-b">
+      <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+        <a href="index.html" class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">
+          Force of the Horse
+        </a>
+
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="index.html" class="nav-link" data-page="top">TOP</a>
+          <a href="certified-event-system.html" class="nav-link" data-page="about">公認イベント制度</a>
+          <a href="event-calendar-page.html" class="nav-link" data-page="calendar">イベントカレンダー</a>
+          <a href="faq.html" class="nav-link" data-page="faq-index">FAQ</a>
+        </nav>
+
+        <button class="md:hidden p-1" onclick="toggleMobileMenu()">
+          <svg id="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg id="close-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div id="mobile-menu" class="mobile-menu md:hidden bg-background border-t">
+        <a href="index.html" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">TOP</a>
+        <a href="certified-event-system.html" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">公認イベント制度</a>
+        <a href="event-calendar-page.html" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">イベントカレンダー</a>
+        <a href="faq.html" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">FAQ</a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- TOP Page -->
+      <div id="page-top" class="page active">
+        <!-- Hero -->
+        <div class="hero-section relative h-56 md:h-72 bg-primary overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&h=480&fit=crop&auto=format" alt="Force of the Horse — カードゲームコミュニティ" class="hero-image" />
+          <div class="hero-overlay"></div>
+          <div class="relative z-10 max-w-5xl mx-auto px-5 h-full flex flex-col justify-center">
+            <h1 class="hero-title text-primary-foreground">
+              Force of the Horse
+            </h1>
+            <p class="hero-subtitle text-primary-foreground">Community Site</p>
+            <p class="hero-lead text-primary-foreground">
+              公認イベントガイドライン・FAQ・最新情報
+            </p>
+          </div>
+          <div class="hero-bar" aria-hidden="true"></div>
+        </div>
+
+        <div class="section-gray">
+        <div class="max-w-5xl mx-auto px-5 py-12">
+          <!-- Quick links -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-14 quick-links-grid">
+            <a href="certified-event-system.html" class="quick-link-card">
+              <span class="icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </span>
+              <h3 class="text-sm font-medium text-foreground mb-1">公認イベント制度について</h3>
+              <p class="text-xs text-muted-foreground leading-relaxed">公認イベント制度の概要・ガイドライン・申請はこちら</p>
+            </a>
+
+            <a href="event-calendar-page.html" class="quick-link-card">
+              <span class="icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </span>
+              <h3 class="text-sm font-medium text-foreground mb-1">イベントカレンダー</h3>
+              <p class="text-xs text-muted-foreground leading-relaxed">公認大会・交流会の開催スケジュールを確認できます</p>
+            </a>
+
+            <a href="faq.html" class="quick-link-card">
+              <span class="icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </span>
+              <h3 class="text-sm font-medium text-foreground mb-1">FAQ一覧</h3>
+              <p class="text-xs text-muted-foreground leading-relaxed">Vol.1〜5のカードに関するQ&Aを確認できます</p>
+            </a>
+          </div>
+
+          <!-- Main content grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+            <!-- Announcements -->
+            <section class="lg:col-span-3">
+              <h2 class="text-base font-medium mb-5">お知らせ・最新情報</h2>
+              <div class="border-t">
+                <div class="py-5 border-b">
+                  <div class="flex items-start gap-3">
+                    <span class="mt-0.5 shrink-0 inline-block text-10px font-medium px-3 py-0.5 rounded-sm tag-announcement" style="font-size: 0.5625rem;">お知らせ</span>
+                    <div>
+                      <p class="text-xs text-muted-foreground mb-1">2025年6月20日</p>
+                      <h3 class="text-sm font-medium text-foreground mb-1">公認イベントガイドライン v2.1 を公開しました</h3>
+                      <p class="text-xs text-muted-foreground leading-relaxed">参加資格・会場要件・ジャッジ基準を改定しました。大会主催予定の方はご確認ください。</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="py-5 border-b">
+                  <div class="flex items-start gap-3">
+                    <span class="mt-0.5 shrink-0 inline-block text-10px font-medium px-2 py-0.5 rounded-sm tag-event">イベント</span>
+                    <div>
+                      <p class="text-xs text-muted-foreground mb-1">2025年6月10日</p>
+                      <h3 class="text-sm font-medium text-foreground mb-1">全国選手権 2025 エリア予選 — 開催日程を更新</h3>
+                      <p class="text-xs text-muted-foreground leading-relaxed">7月〜9月にかけて全国8都市でエリア予選を実施します。詳細はイベントカレンダーをご覧ください。</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="py-5 border-b">
+                  <div class="flex items-start gap-3">
+                    <span class="mt-0.5 shrink-0 inline-block text-10px font-medium px-2 py-0.5 rounded-sm tag-faq">FAQ</span>
+                    <div>
+                      <p class="text-xs text-muted-foreground mb-1">2025年5月28日</p>
+                      <h3 class="text-sm font-medium text-foreground mb-1">Vol.5 FAQ を追加しました</h3>
+                      <p class="text-xs text-muted-foreground leading-relaxed">Vol.5「覚醒の蹄」収録カードに関するQ&A 42件を公開しました。</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="py-5 border-b">
+                  <div class="flex items-start gap-3">
+                    <span class="mt-0.5 shrink-0 inline-block text-10px font-medium px-3 py-0.5 rounded-sm tag-announcement" style="font-size: 0.5625rem;">お知らせ</span>
+                    <div>
+                      <p class="text-xs text-muted-foreground mb-1">2025年5月1日</p>
+                      <h3 class="text-sm font-medium text-foreground mb-1">コミュニティサイトをリニューアルしました</h3>
+                      <p class="text-xs text-muted-foreground leading-relaxed">FAQの検索・閲覧機能を改善し、Vol別のページ構成に変更しました。</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Event calendar -->
+            <section class="lg:col-span-2">
+              <div class="flex items-center justify-between mb-1">
+                <h2 class="text-base font-medium">公認大会イベントカレンダー</h2>
+                <a href="event-calendar-page.html" class="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
+                  一覧
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </a>
+              </div>
+
+              <div class="bg-card border rounded-lg p-4 mt-4 calendar-box">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-foreground" id="mini-calendar-title">2025年7月</h3>
+                  <div class="flex items-center gap-1">
+                    <button onclick="prevMiniMonth()" class="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+                    <button onclick="nextMiniMonth()" class="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div id="mini-calendar"></div>
+              </div>
+
+              <div id="mini-month-events" class="mt-4 space-y-0 border-t"></div>
+            </section>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <!-- About Page -->
+      <div id="page-about" class="page">
+        <div class="max-w-5xl mx-auto px-5 py-12">
+          <div class="breadcrumb">
+            <span>TOP</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span class="current">公認イベント制度について</span>
+          </div>
+
+          <header class="mb-10">
+            <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">About</p>
+            <h1 class="text-2xl font-semibold text-foreground mb-3">公認イベント制度について</h1>
+          </header>
+
+          <div class="max-w-2xl space-y-5 text-sm text-foreground leading-relaxed mb-12">
+            <p>
+              Force of the Horseでは、プレイヤーの皆さまによる自主的なイベント開催やコミュニティ活動を支援するため、「公認イベント制度」を設けています。
+            </p>
+            <p>
+              本制度は、対戦大会だけでなく、交流会や初心者体験会、オンラインイベントなど、さまざまな形でForce of the Horseを楽しむ場を広げていくことを目的としています。
+            </p>
+            <div class="border-l-2 border-accent pl-5 py-1 space-y-2 text-muted-foreground">
+              <p>「もっと多くの人に遊んでもらいたい」</p>
+              <p>「競馬の話をしながら交流したい」</p>
+              <p>「地域やオンラインでコミュニティを盛り上げたい」</p>
+            </div>
+            <p>
+              そんな想いを持つプレイヤーの皆さまを、運営が公認イベントという形でサポートします。
+            </p>
+            <p>
+              公認イベントとして認定されたイベントは、公式サイトや公式SNSでの紹介をはじめ、各種プロモーション支援を受けることができます。
+            </p>
+            <p>
+              開催形式や規模は問いません。<br />
+              競技大会からカジュアルな交流会まで、Force of the Horseを楽しむ場を一緒に作っていきましょう。
+            </p>
+            <p class="text-muted-foreground">
+              公認イベントの開催をご希望の方は、ガイドラインをご確認のうえ、申請フォームよりお申し込みください。
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+            <a href="guideline.html" class="quick-link-card">
+              <span class="icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </span>
+              <h3 class="text-sm font-medium text-foreground mb-1 hover:text-accent transition-colors">公認イベントガイドライン</h3>
+              <p class="text-xs text-muted-foreground leading-relaxed">大会開催に必要な規定・ルール・ジャッジ制度などの詳細はこちら</p>
+              <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <span>詳細を見る</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </a>
+
+            <a href="apply.html" class="text-left bg-primary text-primary-foreground rounded-lg p-6 hover:opacity-90 transition-all">
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-primary-foreground/10 mb-4 transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-foreground">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </span>
+              <h3 class="text-sm font-medium mb-1">公認イベントの開催申請はこちら</h3>
+              <p class="text-xs text-primary-foreground/70 leading-relaxed">申請フォームからイベント情報を入力してお申し込みください</p>
+              <div class="mt-4 flex items-center gap-1 text-xs text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                <span>申請フォームへ</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Page -->
+      <div id="page-calendar" class="page">
+        <div class="max-w-5xl mx-auto px-5 py-12">
+          <div class="breadcrumb">
+            <button onclick="navigateTo('top')">TOP</button>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span class="current">イベントカレンダー</span>
+          </div>
+
+          <header class="mb-10">
+            <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Event Calendar</p>
+            <h1 class="text-2xl font-semibold text-foreground mb-2">公認大会イベントカレンダー</h1>
+            <p class="text-sm text-muted-foreground">公認大会・交流会の開催スケジュールです。</p>
+          </header>
+
+          <div class="flex items-center gap-4 mb-8 flex-wrap">
+            <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span class="inline-block w-2.5 h-2.5 rounded-sm event-tag area"></span>
+              エリア予選
+            </span>
+            <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span class="inline-block w-2.5 h-2.5 rounded-sm event-tag main"></span>
+              本戦
+            </span>
+            <span class="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <span class="inline-block w-2.5 h-2.5 rounded-sm event-tag meetup"></span>
+              交流会
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+              <div class="bg-card border rounded-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-sm font-medium text-foreground" id="full-calendar-title">2025年7月</h3>
+                  <div class="flex items-center gap-1">
+                    <button onclick="prevFullMonth()" class="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+                    <button onclick="nextFullMonth()" class="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div id="full-calendar"></div>
+              </div>
+            </div>
+
+            <div>
+              <h2 class="text-sm font-medium text-foreground mb-4" id="full-month-title">2025年7月のイベント</h2>
+              <div id="full-month-events" class="border-t divide-y"></div>
+
+              <div class="mt-8">
+                <h2 class="text-sm font-medium text-foreground mb-4">今後の全イベント</h2>
+                <div id="all-events" class="border-t divide-y"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Index Page -->
+      <div id="page-faq-index" class="page">
+        <div class="max-w-5xl mx-auto px-5 py-12">
+          <div class="breadcrumb">
+            <span>TOP</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span class="current">FAQ一覧</span>
+          </div>
+
+          <header class="mb-10">
+            <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">FAQ</p>
+            <h1 class="text-2xl font-semibold text-foreground mb-3">よくある質問（FAQ）</h1>
+            <p class="text-sm text-muted-foreground">
+              Vol.1〜5に収録されたカードに関するQ&Aをまとめています。<br />
+              弾を選択してQ&Aをご確認ください。
+            </p>
+          </header>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="faq-vol1.html" class="faq-card">
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.1</p>
+              <h3 class="text-base font-medium text-foreground mb-1">創世の蹄</h3>
+              <p class="text-xs text-muted-foreground">4件のQ&A</p>
+              <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <span>詳細を見る</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </a>
+
+            <a href="faq-vol2.html" class="faq-card">
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.2</p>
+              <h3 class="text-base font-medium text-foreground mb-1">嵐の蹄鉄</h3>
+              <p class="text-xs text-muted-foreground">3件のQ&A</p>
+              <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <span>詳細を見る</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </a>
+
+            <a href="faq-vol3.html" class="faq-card">
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.3</p>
+              <h3 class="text-base font-medium text-foreground mb-1">黄金の平原</h3>
+              <p class="text-xs text-muted-foreground">3件のQ&A</p>
+              <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <span>詳細を見る</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </a>
+
+            <a href="faq-vol4.html" class="faq-card">
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.4</p>
+              <h3 class="text-base font-medium text-foreground mb-1">深淵の馬蹄</h3>
+              <p class="text-xs text-muted-foreground">4件のQ&A</p>
+              <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <span>詳細を見る</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </a>
+
+            <a href="faq-vol5.html" class="faq-card">
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.5</p>
+              <h3 class="text-base font-medium text-foreground mb-1">覚醒の蹄</h3>
+              <p class="text-xs text-muted-foreground">5件のQ&A</p>
+              <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <span>詳細を見る</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </a>
+          </div>
+
+          <div class="mt-12 border-t pt-8">
+            <h2 class="text-sm font-medium text-foreground mb-4">質問を投稿する</h2>
+            <div id="question-form-index"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Vol Page -->
+      <div id="page-faq-vol" class="page">
+        <div class="max-w-5xl mx-auto px-5 py-12">
+          <div class="breadcrumb">
+            <button onclick="navigateTo('top')">TOP</button>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <button onclick="navigateTo('faq-index')">FAQ一覧</button>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span class="current" id="faq-vol-breadcrumb">Vol.1 創世の蹄</span>
+          </div>
+
+          <header class="mb-10">
+            <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">FAQ / <span id="faq-vol-subtitle">Vol.1</span></p>
+            <h1 class="text-2xl font-semibold text-foreground mb-1" id="faq-vol-title">Vol.1「創世の蹄」</h1>
+            <p class="text-sm text-muted-foreground" id="faq-vol-count">4件のQ&A</p>
+          </header>
+
+          <div class="flex gap-2 flex-wrap mb-8" id="faq-vol-tabs"></div>
+
+          <div class="border-t divide-y" id="faq-vol-content"></div>
+
+          <div class="mt-12 border-t pt-8">
+            <h2 class="text-sm font-medium text-foreground mb-4">このVolについて質問する</h2>
+            <div id="question-form-vol"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guidelines Page -->
+      <div id="page-guidelines" class="page">
+        <div class="max-w-5xl mx-auto px-5 py-12">
+          <div class="breadcrumb">
+            <span>TOP</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <button onclick="navigateTo('about')">公認イベント制度について</button>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span class="current">公認イベントガイドライン</span>
+          </div>
+
+          <header class="mb-10">
+            <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Guidelines</p>
+            <h1 class="text-2xl font-semibold text-foreground mb-3">公認イベントガイドライン</h1>
+            <p class="text-sm text-muted-foreground">
+              最終更新：2025年6月20日（v2.1）<br />
+              Force of the Horse 公認イベントの開催にあたり、主催者・参加者が共有するルールと制度の概要を定めています。
+            </p>
+          </header>
+
+          <div class="border-t divide-y" id="guidelines-content"></div>
+
+          <div class="mt-10 flex flex-col sm:flex-row gap-4">
+            <button onclick="navigateTo('apply')" class="inline-flex items-center gap-2 bg-primary text-primary-foreground text-sm px-5 py-3 rounded-md hover:opacity-90 transition-opacity font-medium">
+              公認イベントの開催申請はこちら
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="mt-6 p-5 bg-secondary rounded-lg border">
+            <p class="text-xs text-muted-foreground">
+              ご不明な点があれば、公式Discordの
+              <span class="font-medium text-foreground">#judge-support</span>
+              チャンネル、またはメール（judge@foh-official.example）までお問い合わせください。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Apply Page -->
+      <div id="page-apply" class="page">
+        <div class="max-w-5xl mx-auto px-5 py-12">
+          <div class="breadcrumb">
+            <button onclick="navigateTo('top')">TOP</button>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <button onclick="navigateTo('about')">公認イベント制度について</button>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <span class="current">開催申請</span>
+          </div>
+
+          <header class="mb-10">
+            <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Apply</p>
+            <h1 class="text-2xl font-semibold text-foreground mb-2">Force of the Horse 公認イベント申請</h1>
+            <p class="text-sm text-muted-foreground">
+              Force of the Horseの公認イベント・交流会・大会の開催申請フォームです。<br />
+              必要事項をご入力の上、申請してください。
+            </p>
+          </header>
+
+          <form id="apply-form" class="max-w-2xl space-y-12">
+            <!-- Section 1 -->
+            <section>
+              <h2 class="section-header">1. 主催者情報</h2>
+              <div class="space-y-5">
+                <div>
+                  <label class="form-label">主催者名（ハンドルネーム可）<span class="required">*</span></label>
+                  <input type="text" name="organizerName" placeholder="例：田中太郎 / FoHマスター" class="form-input" required />
+                  <p class="error-message" id="error-organizerName"></p>
+                </div>
+                <div>
+                  <label class="form-label">メールアドレス<span class="required">*</span></label>
+                  <input type="email" name="email" placeholder="example@mail.com" class="form-input" required />
+                  <p class="error-message" id="error-email"></p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label class="form-label">Xアカウント（推奨）</label>
+                    <input type="text" name="xAccount" placeholder="@username" class="form-input" />
+                  </div>
+                  <div>
+                    <label class="form-label">Discord ID（推奨）</label>
+                    <input type="text" name="discordId" placeholder="username#0000" class="form-input" />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Section 2 -->
+            <section>
+              <h2 class="section-header">2. イベント基本情報</h2>
+              <div class="space-y-5">
+                <div>
+                  <label class="form-label">イベント名<span class="required">*</span></label>
+                  <input type="text" name="eventName" placeholder="例：第3回 FoH公認大会 in 東京" class="form-input" required />
+                  <p class="error-message" id="error-eventName"></p>
+                </div>
+                <div>
+                  <label class="form-label">開催日<span class="required">*</span></label>
+                  <input type="date" name="eventDate" class="form-input" required />
+                  <p class="error-message" id="error-eventDate"></p>
+                </div>
+                <div class="grid grid-cols-2 gap-5">
+                  <div>
+                    <label class="form-label">開始時間<span class="required">*</span></label>
+                    <input type="time" name="startTime" class="form-input" required />
+                    <p class="error-message" id="error-startTime"></p>
+                  </div>
+                  <div>
+                    <label class="form-label">終了予定時間<span class="required">*</span></label>
+                    <input type="time" name="endTime" class="form-input" required />
+                    <p class="error-message" id="error-endTime"></p>
+                  </div>
+                </div>
+                <div>
+                  <label class="form-label">開催形式<span class="required">*</span></label>
+                  <div class="flex gap-6 mt-1">
+                    <label class="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                      <input type="radio" name="format" value="オフライン" checked />
+                      オフライン
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                      <input type="radio" name="format" value="オンライン" />
+                      オンライン
+                    </label>
+                    <label class="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                      <input type="radio" name="format" value="ハイブリッド" />
+                      ハイブリッド
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label class="form-label">開催場所<span class="required">*</span></label>
+                  <input type="text" name="venue" placeholder="店舗名、会場名、Discordサーバー名などを記入してください" class="form-input" required />
+                  <p class="error-message" id="error-venue"></p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Section 3 -->
+            <section>
+              <h2 class="section-header">3. イベント内容</h2>
+              <div class="space-y-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
+                    <label class="form-label">イベント種別<span class="required">*</span></label>
+                    <select name="eventType" class="form-input" required>
+                      <option value="">選択してください</option>
+                      <option value="公認大会">公認大会</option>
+                      <option value="交流会">交流会</option>
+                      <option value="初心者体験会">初心者体験会</option>
+                      <option value="観戦会">観戦会</option>
+                      <option value="配信イベント">配信イベント</option>
+                    </select>
+                    <p class="error-message" id="error-eventType"></p>
+                  </div>
+                  <div>
+                    <label class="form-label">イベントの目的<span class="required">*</span></label>
+                    <select name="purpose" class="form-input" required>
+                      <option value="">選択してください</option>
+                      <option value="競技大会">競技大会</option>
+                      <option value="カジュアル対戦">カジュアル対戦</option>
+                      <option value="初心者交流">初心者交流</option>
+                      <option value="コレクション交流">コレクション交流</option>
+                      <option value="競馬ファン交流">競馬ファン交流</option>
+                    </select>
+                    <p class="error-message" id="error-purpose"></p>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-5">
+                  <div>
+                    <label class="form-label">定員<span class="required">*</span></label>
+                    <input type="number" name="capacity" min="1" placeholder="例：32" class="form-input" required />
+                    <p class="error-message" id="error-capacity"></p>
+                  </div>
+                  <div>
+                    <label class="form-label">参加費（円）<span class="required">*</span></label>
+                    <input type="number" name="fee" min="0" placeholder="例：500（無料の場合は0）" class="form-input" required />
+                    <p class="error-message" id="error-fee"></p>
+                  </div>
+                </div>
+                <div>
+                  <label class="form-label">使用フォーマット<span class="required">*</span></label>
+                  <select name="gameFormat" class="form-input" required>
+                    <option value="">選択してください</option>
+                    <option value="スタンダード">スタンダード</option>
+                    <option value="エクストラ">エクストラ</option>
+                    <option value="その他">その他</option>
+                  </select>
+                  <p class="error-message" id="error-gameFormat"></p>
+                </div>
+                <div>
+                  <label class="form-label">使用レギュレーション</label>
+                  <textarea name="regulation" rows="3" placeholder="使用するレギュレーションや特別ルールがあれば記入してください" class="form-input resize-none"></textarea>
+                </div>
+              </div>
+            </section>
+
+            <!-- Section 4 -->
+            <section>
+              <h2 class="section-header">4. 告知情報</h2>
+              <div class="space-y-5">
+                <div>
+                  <label class="form-label">告知用タイトル<span class="required">*</span></label>
+                  <input type="text" name="prTitle" placeholder="公式サイト・SNSで使用される告知タイトル" class="form-input" required />
+                  <p class="error-message" id="error-prTitle"></p>
+                </div>
+                <div>
+                  <label class="form-label">イベント説明文（100〜300文字目安）<span class="required">*</span></label>
+                  <textarea name="description" rows="5" placeholder="イベントの概要・参加対象・特徴などをご記入ください" class="form-input resize-none" required></textarea>
+                  <p class="mt-1 text-10px text-muted-foreground text-right"><span id="description-count">0</span>文字</p>
+                  <p class="error-message" id="error-description"></p>
+                </div>
+                <div>
+                  <label class="form-label">告知画像URL（任意）</label>
+                  <input type="url" name="imageUrl" placeholder="https://..." class="form-input" />
+                </div>
+                <div>
+                  <label class="form-label">イベントページURL（任意）</label>
+                  <input type="url" name="eventPageUrl" placeholder="Tonamel、Discord、X投稿、Googleフォーム等" class="form-input" />
+                </div>
+              </div>
+            </section>
+
+            <!-- Section 5 -->
+            <section>
+              <h2 class="section-header">5. 主催者実績（任意）</h2>
+              <div class="space-y-5">
+                <div>
+                  <label class="form-label">過去開催回数</label>
+                  <input type="number" name="pastCount" min="0" placeholder="例：3" class="form-input" />
+                </div>
+                <div>
+                  <label class="form-label">過去のイベントURL</label>
+                  <input type="url" name="pastEventUrl" placeholder="https://..." class="form-input" />
+                </div>
+              </div>
+            </section>
+
+            <!-- Section 6 -->
+            <section>
+              <h2 class="section-header">6. 確認事項</h2>
+              <div class="space-y-4">
+                <div>
+                  <label class="flex items-start gap-3 cursor-pointer group">
+                    <input type="checkbox" name="agree1" class="mt-0.5 accent-foreground shrink-0" required />
+                    <span class="text-sm text-foreground leading-relaxed">Force of the Horseコミュニティガイドラインに同意します</span>
+                  </label>
+                  <p class="error-message" id="error-agree1"></p>
+                </div>
+                <div>
+                  <label class="flex items-start gap-3 cursor-pointer group">
+                    <input type="checkbox" name="agree2" class="mt-0.5 accent-foreground shrink-0" required />
+                    <span class="text-sm text-foreground leading-relaxed">ハラスメント行為・差別行為を禁止します</span>
+                  </label>
+                  <p class="error-message" id="error-agree2"></p>
+                </div>
+                <div>
+                  <label class="flex items-start gap-3 cursor-pointer group">
+                    <input type="checkbox" name="agree3" class="mt-0.5 accent-foreground shrink-0" required />
+                    <span class="text-sm text-foreground leading-relaxed">開催後にイベントレポートを提出します</span>
+                  </label>
+                  <p class="error-message" id="error-agree3"></p>
+                </div>
+                <div>
+                  <label class="flex items-start gap-3 cursor-pointer group">
+                    <input type="checkbox" name="agree4" class="mt-0.5 accent-foreground shrink-0" required />
+                    <span class="text-sm text-foreground leading-relaxed">イベント情報が公式サイト・公式SNSで紹介される場合があることに同意します</span>
+                  </label>
+                  <p class="error-message" id="error-agree4"></p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Submit -->
+            <div class="flex gap-3 pt-2">
+              <button type="submit" class="bg-primary text-primary-foreground text-sm px-6 py-2.5 rounded-md hover:opacity-90 transition-opacity font-medium">
+                申請する
+              </button>
+              <button type="button" onclick="navigateTo('guidelines')" class="text-sm px-5 py-2.5 rounded-md border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors">
+                キャンセル
+              </button>
+            </div>
+
+            <p class="text-xs text-red-400 hidden" id="form-error">未入力または未同意の項目があります。ご確認ください。</p>
+          </form>
+        </div>
+
+        <!-- Success message -->
+        <div id="apply-success" class="hidden max-w-5xl mx-auto px-5 py-12">
+          <div class="max-w-md">
+            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mb-6">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h1 class="text-2xl font-semibold text-foreground mb-3">申請を受け付けました</h1>
+            <p class="text-sm text-muted-foreground leading-relaxed mb-8">
+              Force of the Horse公認イベント申請を受け付けました。<br />
+              内容を確認後、運営事務局よりご連絡いたします。
+            </p>
+            <button onclick="navigateTo('top')" class="bg-primary text-primary-foreground text-sm px-5 py-2.5 rounded-md hover:opacity-90 transition-opacity">
+              トップへ戻る
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t mt-16">
+      <div class="max-w-5xl mx-auto px-5 py-8">
+        <p class="text-xs text-muted-foreground">
+          © 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Data
+    const VOL_NAMES = {
+      1: "創世の蹄",
+      2: "嵐の蹄鉄",
+      3: "黄金の平原",
+      4: "深淵の馬蹄",
+      5: "覚醒の蹄",
+    };
+
+    const FAQ_DATA = {
+      1: [
+        { card: "疾風のアルタイル", q: "疾風のアルタイルの速攻効果は、相手のターン中にも使用できますか？", a: "いいえ、速攻効果はあなたのターン中のメインフェイズにのみ使用できます。相手ターン中は使用できません。", date: "2024-04-15" },
+        { card: "大地の守護者", q: "大地の守護者が場にいる間、自分のユニット全体にシールド付与されますか？", a: "はい、大地の守護者の常在効果はあなたがコントロールするすべてのユニットに適用されます。守護者自身も含みます。", date: "2024-04-15" },
+        { card: "蹄の神託", q: "蹄の神託を使ったとき、山札が0枚の場合はどうなりますか？", a: "山札が0枚の場合、引けるカードが存在しないためドロー効果は不発となります。他の効果は通常どおり処理されます。", date: "2024-05-20" },
+        { card: "稲妻の一撃", q: "稲妻の一撃はプレイヤーに直接ダメージを与えることはできますか？", a: "いいえ、稲妻の一撃の対象はユニットのみです。プレイヤーを対象に選択することはできません。", date: "2024-05-20" },
+      ],
+      2: [
+        { card: "嵐を呼ぶ者", q: "嵐を呼ぶ者の効果で追加ドローを行った際、手札上限は適用されますか？", a: "ドロー時点での手札上限は適用されません。ドロー後、ターン終了時に手札上限を超えていた場合、超過分を墓地に送ります。", date: "2024-07-10" },
+        { card: "鉄壁の蹄鉄", q: "鉄壁の蹄鉄が装備されているユニットに貫通効果を持つ攻撃は通りますか？", a: "貫通効果はシールドを無視しますが、鉄壁の蹄鉄のダメージ軽減効果は貫通の影響を受けません。軽減は適用されます。", date: "2024-08-01" },
+        { card: "砂塵の旋風", q: "砂塵の旋風の範囲効果は、自分のユニットにも当たりますか？", a: "はい、砂塵の旋風は「すべてのユニット」を対象とするため、自分のユニットにも効果が適用されます。使用時にご注意ください。", date: "2024-08-15" },
+      ],
+      3: [
+        { card: "黄金の蹄跡", q: "黄金の蹄跡で得たゴールドは次のターンに持ち越せますか？", a: "いいえ、黄金の蹄跡で得た追加ゴールドはそのターン限りです。ターン終了時に消滅します。", date: "2024-11-05" },
+        { card: "平原の守り手", q: "平原の守り手は相手の魔法効果の対象にならないとありますが、全体効果も対象外ですか？", a: "「対象にならない」効果は単体対象の効果のみに適用されます。「すべてのユニット」など対象を選ばない全体効果は通常どおり処理されます。", date: "2024-12-01" },
+        { card: "収穫の奇跡", q: "収穫の奇跡を複数枚同じターンに使用した場合、効果は重複しますか？", a: "収穫の奇跡の継続効果は同一ターン中でも複数枚重複して適用されます。使用枚数分のボーナスを得ることができます。", date: "2024-12-15" },
+      ],
+      4: [
+        { card: "深淵の騎士", q: "深淵の騎士が破壊されたとき、墓地効果は相手のターン中でも発動しますか？", a: "はい、深淵の騎士の墓地効果は破壊されたタイミングに関わらず自動的に発動します。相手ターン中でも適用されます。", date: "2025-02-10" },
+        { card: "奈落の渦", q: "奈落の渦でゲームから除外されたカードは、復帰効果で戻せますか？", a: "いいえ、ゲームから除外されたカードは「除外ゾーン」に置かれ、通常の復帰効果の対象外です。除外ゾーンを参照する専用効果のみが対象となります。", date: "2025-02-20" },
+        { card: "冥府の使者", q: "冥府の使者の効果を使うとき、墓地にカードが1枚もない場合は使用できますか？", a: "コスト支払いとして墓地のカードを除外する必要がある場合、墓地が0枚では使用できません。効果の発動条件を事前にご確認ください。", date: "2025-03-05" },
+        { card: "暗黒の盾", q: "暗黒の盾の反射ダメージは相手プレイヤーに直接与えられますか？", a: "はい、暗黒の盾の反射ダメージは攻撃を行ったユニットではなく、その攻撃を行ったプレイヤーに直接与えられます。", date: "2025-03-15" },
+      ],
+      5: [
+        { card: "覚醒の雄叫び", q: "覚醒の雄叫びの強化効果は、発動後に場を離れたユニットにも継続しますか？", a: "強化効果はユニットが場にいる間のみ有効です。場を離れると効果は消滅し、再び場に出ても引き継ぎません。", date: "2025-05-10" },
+        { card: "天馬の降臨", q: "天馬の降臨はソーサリータイミングですか、インスタントタイミングですか？", a: "天馬の降臨はインスタントタイミングで使用できます。相手のターン中や戦闘中でも使用可能です。", date: "2025-05-10" },
+        { card: "封印の蹄跡", q: "封印の蹄跡で封印されたカードは、デッキ構築時の枚数制限に含まれますか？", a: "いいえ、ゲーム中に封印されたカードはゲームの進行上の処理であり、デッキ構築時の枚数制限とは無関係です。", date: "2025-05-28" },
+        { card: "最終覚醒", q: "最終覚醒の「すべての能力を得る」効果は、コスト変動効果も含みますか？", a: "はい、最終覚醒が参照するユニットが持つすべての常在効果・起動効果・誘発効果を取得します。コスト変動を含む常在効果も対象です。", date: "2025-05-28" },
+        { card: "蹄の覚醒者", q: "蹄の覚醒者が複数体いる場合、効果は重複しますか？", a: "蹄の覚醒者の効果は同名ユニットが複数体いる場合でも重複して適用されます。それぞれが独立して効果を持ちます。", date: "2025-06-05" },
+      ],
+    };
+
+    const EVENTS = [
+      { date: "2025-07-06", title: "エリア予選 — 東京", location: "東京都千代田区", type: "エリア予選" },
+      { date: "2025-07-13", title: "エリア予選 — 大阪", location: "大阪府大阪市", type: "エリア予選" },
+      { date: "2025-07-20", title: "エリア予選 — 名古屋", location: "愛知県名古屋市", type: "エリア予選" },
+      { date: "2025-07-27", title: "公認交流会 — 仙台", location: "宮城県仙台市", type: "交流会" },
+      { date: "2025-08-03", title: "エリア予選 — 福岡", location: "福岡県福岡市", type: "エリア予選" },
+      { date: "2025-08-10", title: "エリア予選 — 広島", location: "広島県広島市", type: "エリア予選" },
+      { date: "2025-08-17", title: "エリア予選 — 札幌", location: "北海道札幌市", type: "エリア予選" },
+      { date: "2025-08-24", title: "公認交流会 — 金沢", location: "石川県金沢市", type: "交流会" },
+      { date: "2025-09-07", title: "全国選手権 本戦", location: "東京都港区（ビッグサイト）", type: "本戦" },
+    ];
+
+    const GUIDELINES = [
+      {
+        title: "§1　制度について",
+        content: `
+          <div class="space-y-5">
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">公認イベント制度の目的</h4>
+              <p class="text-sm text-muted-foreground leading-relaxed">
+                プレイヤーの皆さまによる自主的なイベント開催・コミュニティ活動を支援するため、公認イベント制度を設けています。対戦大会だけでなく、交流会・初心者体験会・観戦会・配信イベントなど、さまざまな形でForce of the Horseを楽しむ場を広げていくことを目的としています。イベントの種別や規模は問いません。ここに挙げた形式にとらわれず、アイデアがあればお気軽にご相談ください。
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">公認イベントのメリット</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 mt-0.5 text-accent">✓</span>公式サイト・SNSでのイベント告知掲載</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 mt-0.5 text-accent">✓</span>限定プロモーションカード等の景品提供（審査あり）</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 mt-0.5 text-accent">✓</span>公認主催者ロゴ・認定バッジの使用権</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 mt-0.5 text-accent">✓</span>弊社スタッフによる運営サポート（一部イベント）</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">免責事項</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>開催によって生じたトラブル・損害について弊社は責任を負いません</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>虚偽申請・違反が判明した場合は公認を取り消すことがあります</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>本書は予告なく改訂される場合があります</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§2　イベント種別の例",
+        content: `
+          <div class="space-y-5">
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              以下は代表的な例です。この枠に必ずしも当てはめる必要はありません。申請フォームの「イベント概要」欄に自由に記載してください。
+            </p>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">公認大会</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">勝敗を競う対戦形式のイベント。スイスドロー・トーナメント等を使用。詳細なレギュレーションは§3を参照。</p>
+            </div>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">交流会</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">勝敗よりも参加者同士のつながりや楽しさを重視するイベント。フリー対戦・デッキ品評会・テーマ縛り対戦・競馬トーク会など形式は自由。</p>
+            </div>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">初心者体験会</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">未経験・初心者を主な対象とした普及目的のイベント。ルール説明からのレクチャー形式・デッキ構築教室・競馬場やショップでの簡易体験など。デモデッキ貸し出し・解説資料の提供を申請できます（要事前申請）。</p>
+            </div>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">観戦会</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">上位プレイヤーの対戦を観戦・解説するイベント。会場観戦・オンライン配信視聴いずれも可。</p>
+            </div>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">配信イベント</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">YouTubeやTwitchなどのプラットフォームを使ったライブ配信形式のイベント。対戦配信・解説配信・交流配信など形式は問いません。申請時に配信URLまたはチャンネル情報を記載してください。</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§3　競技大会レギュレーション（推奨）",
+        content: `
+          <div class="space-y-5">
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              本セクションは公認大会を開催する際の推奨ルールです。実際の運営は主催者の判断に委ねます。参加者は主催者の定めたルールに従ってください。
+            </p>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">推奨する基本ルール</h4>
+              <p class="text-sm text-muted-foreground leading-relaxed">
+                勝ち点制（勝利3点・引き分け1点・敗北0点）。スコアシートで記録しながら進行。
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-2">推奨大会形式</h4>
+              <div class="space-y-3">
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">スイスドロー（6名以上）</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">勝ち点が近い未対戦者とペアリング。全員が規定回数の試合後に順位決定。</p>
+                </div>
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">総当たりリーグ（2〜8名）</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">全員が一度ずつ対戦。勝ち点で順位決定。</p>
+                </div>
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">シングルエリミネーション（4名以上）</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">勝者のみ次戦へ。引き分けは再試合。連続引き分けは共に敗北。</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-2">サブルール（任意選択）</h4>
+              <div class="space-y-3">
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">3本勝負制</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">最大3戦で勝ち点集計。2勝終了か3戦必行かを要項に明記。</p>
+                </div>
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">ドラフト戦</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">1人20枚配布→7枚から1枚ピック→左隣に渡す形式でデッキ構築。</p>
+                </div>
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">シールド戦</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">1人4〜6パックを会場で一斉開封しデッキ構築。同名カード枚数制限なし可。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§4　共通マナーと禁止事項",
+        content: `
+          <div class="space-y-5">
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              すべてのイベントに共通するルールです。種別・規模にかかわらず遵守してください。
+            </p>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">禁止行為</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>参加費以外を目的とした金銭授受・賭博類似行為</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>コピーカード・自作カードの使用</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>他の参加者への誹謗中傷・ハラスメント・脅迫</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>公序良俗に著しく反する言動</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">共通マナー</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>初心者・ベテランを問わず互いに敬意を持って接する</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>注意を受けた場合はすぐにやめる</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>会場外の方々にも配慮する</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>主催者の指示に従う</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§5　大会参加者の皆様へ（推奨）",
+        content: `
+          <div class="space-y-5">
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              以下は大会参加時の推奨事項です。実際のルールは各イベントの主催者案内を優先してください。
+            </p>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">対戦台に置けるもの</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>裏面統一のメインデッキ</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>筆記用具（2本以内）・フタ付き飲料容器</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>プレイマット・カウンター・ダイス等の補助小物</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">試合前の確認</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>デッキ枚数・スリーブ状態を相互確認してから開始</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>問題がある場合は速やかにジャッジを呼ぶ</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">試合中の注意</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>両手は常に対戦台の上に出す</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>カードプレイ・ターンエンドは口頭で宣言する</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§6　主催者の皆様へ",
+        content: `
+          <div class="space-y-5">
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-3">申請の流れ</h4>
+              <div class="space-y-3">
+                <div class="flex gap-3">
+                  <span class="shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground text-10px font-semibold flex items-center justify-center mt-0.5">1</span>
+                  <div>
+                    <p class="text-xs font-semibold text-foreground mb-0.5">イベント申請</p>
+                    <p class="text-sm text-muted-foreground leading-relaxed">種別・日時・会場またはオンラインURL・連絡先・イベント概要を申請フォームより提出。種別はあくまで参考で、自由記述でも構いません。</p>
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <span class="shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground text-10px font-semibold flex items-center justify-center mt-0.5">2</span>
+                  <div>
+                    <p class="text-xs font-semibold text-foreground mb-0.5">掲載・景品発送</p>
+                    <p class="text-sm text-muted-foreground leading-relaxed">受理後、公式サイトに掲載。景品は開催5〜7日前に発送。</p>
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <span class="shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground text-10px font-semibold flex items-center justify-center mt-0.5">3</span>
+                  <div>
+                    <p class="text-xs font-semibold text-foreground mb-0.5">開催レポート提出</p>
+                    <p class="text-sm text-muted-foreground leading-relaxed">開催後2週間以内（月3件以上は翌月末）。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">申請条件</h4>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                イベントの種別・規模にかかわらず共通です。以下3点を満たせば申請できます。
+              </p>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>開催日時と場所（またはオンラインURL）が決まっていること</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>誰でも連絡できる主催者の連絡先を用意できること</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>開催7日以上前に申請すること</li>
+              </ul>
+              <p class="mt-2 text-sm text-muted-foreground leading-relaxed">
+                公認大会の場合は進行ルールを事前に参加者へ周知してください。
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">共通ルール</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>未成年の単独主催不可（保護者または成年との共同開催は可）</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>中学生以下が参加する場合は保護者同伴を周知</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>1週間あたり申請3件以内</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+    ];
+
+    // State
+    let currentPage = 'top';
+    let currentFaqVol = 1;
+    let miniCalYear = 2025;
+    let miniCalMonth = 7;
+    let fullCalYear = 2025;
+    let fullCalMonth = 7;
+
+    // Navigation
+    function navigateTo(page, param = null) {
+      currentPage = page;
+      if (param) currentFaqVol = param;
+
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+      // Show current page
+      const pageElement = document.getElementById(`page-${page}`);
+      if (pageElement) {
+        pageElement.classList.add('active');
+      }
+
+      // Update nav links
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.page === page) {
+          link.classList.add('active');
+        }
+      });
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Page-specific initialization
+      if (page === 'calendar') {
+        renderFullCalendar();
+        renderAllEvents();
+      } else if (page === 'faq-vol') {
+        renderFaqVolPage();
+      } else if (page === 'guidelines') {
+        renderGuidelines();
+      } else if (page === 'top') {
+        renderMiniCalendar();
+      }
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      menu.classList.toggle('open');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    }
+
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      menu.classList.remove('open');
+      menuIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+    }
+
+    // Calendar functions
+    function formatDate(iso) {
+      const [y, m, d] = iso.split("-");
+      return `${y}年${parseInt(m)}月${parseInt(d)}日`;
+    }
+
+    function buildCalendarGrid(year, month) {
+      const firstDay = new Date(year, month - 1, 1).getDay();
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const cells = [];
+      for (let i = 0; i < firstDay; i++) cells.push(null);
+      for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+      while (cells.length % 7 !== 0) cells.push(null);
+      return cells;
+    }
+
+    function eventsOnDate(year, month, day) {
+      const iso = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      return EVENTS.filter((e) => e.date === iso);
+    }
+
+    function getEventTypeClass(type) {
+      switch (type) {
+        case "本戦": return "event-tag main";
+        case "交流会": return "event-tag meetup";
+        default: return "event-tag area";
+      }
+    }
+
+    function renderCalendar(year, month, containerId, compact = false) {
+      const cells = buildCalendarGrid(year, month);
+      const DOW = ["日", "月", "火", "水", "木", "金", "土"];
+      const weeks = [];
+      for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+
+      let html = '<table class="calendar-table">';
+      html += '<thead><tr class="border-b">';
+      DOW.forEach((d, i) => {
+        const colorClass = i === 0 ? 'sunday' : i === 6 ? 'saturday' : '';
+        html += `<th class="${colorClass}">${d}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+
+      weeks.forEach((week) => {
+        html += '<tr class="border-b last:border-0">';
+        week.forEach((day, di) => {
+          const events = day ? eventsOnDate(year, month, day) : [];
+          const isSun = di === 0;
+          const isSat = di === 6;
+          const colorClass = isSun ? 'sunday' : isSat ? 'saturday' : '';
+          const paddingClass = compact ? 'compact' : '';
+          
+          html += `<td class="${paddingClass}">`;
+          if (day !== null) {
+            html += `<span class="text-xs font-medium block mb-1 ${colorClass}">${day}</span>`;
+            events.forEach(ev => {
+              html += `<span class="${getEventTypeClass(ev.type)}" title="${ev.title}">${compact ? ev.type : ev.title}</span>`;
+            });
+          }
+          html += '</td>';
+        });
+        html += '</tr>';
+      });
+
+      html += '</tbody></table>';
+      document.getElementById(containerId).innerHTML = html;
+    }
+
+    function renderMiniCalendar() {
+      renderCalendar(miniCalYear, miniCalMonth, 'mini-calendar', true);
+      document.getElementById('mini-calendar-title').textContent = `${miniCalYear}年${miniCalMonth}月`;
+      renderMiniMonthEvents();
+    }
+
+    function renderMiniMonthEvents() {
+      const monthEvents = EVENTS.filter(e => {
+        const [y, m] = e.date.split("-").map(Number);
+        return y === miniCalYear && m === miniCalMonth;
+      });
+
+      const container = document.getElementById('mini-month-events');
+      if (monthEvents.length === 0) {
+        container.innerHTML = '<p class="mt-4 text-xs text-muted-foreground">この月の予定はありません。</p>';
+        return;
+      }
+
+      let html = '<div class="mt-4 space-y-0 border-t">';
+      monthEvents.forEach(ev => {
+        html += `
+          <div class="py-3 border-b flex items-start gap-3">
+            <span class="mt-0.5 shrink-0 text-10px px-1.5 py-0.5 rounded ${getEventTypeClass(ev.type)}">${ev.type}</span>
+            <div>
+              <p class="text-xs text-muted-foreground">${formatDate(ev.date)}</p>
+              <p class="text-sm font-medium text-foreground">${ev.title}</p>
+              <p class="text-xs text-muted-foreground">${ev.location}</p>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function prevMiniMonth() {
+      if (miniCalMonth === 1) {
+        miniCalYear--;
+        miniCalMonth = 12;
+      } else {
+        miniCalMonth--;
+      }
+      renderMiniCalendar();
+    }
+
+    function nextMiniMonth() {
+      if (miniCalMonth === 12) {
+        miniCalYear++;
+        miniCalMonth = 1;
+      } else {
+        miniCalMonth++;
+      }
+      renderMiniCalendar();
+    }
+
+    function renderFullCalendar() {
+      renderCalendar(fullCalYear, fullCalMonth, 'full-calendar', false);
+      document.getElementById('full-calendar-title').textContent = `${fullCalYear}年${fullCalMonth}月`;
+      renderFullMonthEvents();
+    }
+
+    function renderFullMonthEvents() {
+      const monthEvents = EVENTS.filter(e => {
+        const [y, m] = e.date.split("-").map(Number);
+        return y === fullCalYear && m === fullCalMonth;
+      });
+
+      document.getElementById('full-month-title').textContent = `${fullCalYear}年${fullCalMonth}月のイベント`;
+      const container = document.getElementById('full-month-events');
+      
+      if (monthEvents.length === 0) {
+        container.innerHTML = '<p class="text-xs text-muted-foreground">この月の予定はありません。</p>';
+        return;
+      }
+
+      let html = '<div class="border-t divide-y">';
+      monthEvents.forEach(ev => {
+        html += `
+          <div class="py-4">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-10px px-1.5 py-0.5 rounded ${getEventTypeClass(ev.type)}">${ev.type}</span>
+              <span class="text-xs text-muted-foreground">${formatDate(ev.date)}</span>
+            </div>
+            <p class="text-sm font-medium text-foreground">${ev.title}</p>
+            <p class="text-xs text-muted-foreground mt-0.5">${ev.location}</p>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function renderAllEvents() {
+      const container = document.getElementById('all-events');
+      let html = '<div class="border-t divide-y">';
+      EVENTS.forEach(ev => {
+        html += `
+          <div class="py-3">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-10px px-1.5 py-0.5 rounded ${getEventTypeClass(ev.type)}">${ev.type}</span>
+            </div>
+            <p class="text-xs text-muted-foreground">${formatDate(ev.date)}</p>
+            <p class="text-sm font-medium text-foreground">${ev.title}</p>
+            <p class="text-xs text-muted-foreground">${ev.location}</p>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function prevFullMonth() {
+      if (fullCalMonth === 1) {
+        fullCalYear--;
+        fullCalMonth = 12;
+      } else {
+        fullCalMonth--;
+      }
+      renderFullCalendar();
+    }
+
+    function nextFullMonth() {
+      if (fullCalMonth === 12) {
+        fullCalYear++;
+        fullCalMonth = 1;
+      } else {
+        fullCalMonth++;
+      }
+      renderFullCalendar();
+    }
+
+    // FAQ functions
+    function renderFaqVolPage() {
+      const entries = FAQ_DATA[currentFaqVol] || [];
+      
+      document.getElementById('faq-vol-breadcrumb').textContent = `Vol.${currentFaqVol} ${VOL_NAMES[currentFaqVol]}`;
+      document.getElementById('faq-vol-subtitle').textContent = `Vol.${currentFaqVol}`;
+      document.getElementById('faq-vol-title').textContent = `Vol.${currentFaqVol}「${VOL_NAMES[currentFaqVol]}」`;
+      document.getElementById('faq-vol-count').textContent = `${entries.length}件のQ&A`;
+
+      // Render tabs
+      let tabsHtml = '';
+      for (let v = 1; v <= 5; v++) {
+        const activeClass = v === currentFaqVol 
+          ? 'bg-primary text-primary-foreground border-primary' 
+          : 'bg-card border-b text-muted-foreground hover:text-foreground hover:border-foreground/30';
+        tabsHtml += `<button onclick="navigateTo('faq-vol', ${v})" class="text-xs px-3 py-1.5 rounded border transition-colors ${activeClass}">Vol.${v}</button>`;
+      }
+      document.getElementById('faq-vol-tabs').innerHTML = tabsHtml;
+
+      // Render content
+      let contentHtml = '';
+      entries.forEach((entry, i) => {
+        contentHtml += `
+          <div>
+            <button class="w-full text-left py-5 group" onclick="toggleFaqItem(${i})">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  ${entry.card ? `<span class="text-10px text-muted-foreground bg-secondary px-2 py-0.5 rounded-sm mr-2">${entry.card}</span>` : ''}
+                  <span class="text-sm font-medium text-foreground group-hover:text-accent transition-colors">Q. ${entry.q}</span>
+                </div>
+                <svg id="faq-chevron-${i}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-muted-foreground mt-0.5">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+            </button>
+            <div id="faq-content-${i}" class="accordion-content pb-5 pr-8">
+              <div class="border-l-2 border-accent pl-4">
+                <p class="text-sm text-foreground leading-relaxed mb-3">A. ${entry.a}</p>
+                <p class="text-xs text-muted-foreground">回答日：${formatDate(entry.date)}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('faq-vol-content').innerHTML = contentHtml;
+
+      // Render question form
+      renderQuestionForm('question-form-vol', currentFaqVol);
+    }
+
+    function toggleFaqItem(index) {
+      const content = document.getElementById(`faq-content-${index}`);
+      const chevron = document.getElementById(`faq-chevron-${index}`);
+      
+      content.classList.toggle('open');
+      
+      if (content.classList.contains('open')) {
+        chevron.innerHTML = '<polyline points="18 15 12 9 18 9"></polyline>';
+      } else {
+        chevron.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+      }
+    }
+
+    // Guidelines functions
+    function renderGuidelines() {
+      let html = '';
+      GUIDELINES.forEach((section, i) => {
+        html += `
+          <div>
+            <button class="w-full text-left flex items-center justify-between py-5 gap-4 group" onclick="toggleGuidelineSection(${i})">
+              <span class="text-sm font-medium text-foreground group-hover:text-accent transition-colors">${section.title}</span>
+              <svg id="guideline-chevron-${i}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-muted-foreground">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div id="guideline-content-${i}" class="accordion-content pb-6 pr-4 md:pr-10">
+              ${section.content}
+            </div>
+          </div>
+        `;
+      });
+      document.getElementById('guidelines-content').innerHTML = html;
+    }
+
+    function toggleGuidelineSection(index) {
+      const content = document.getElementById(`guideline-content-${index}`);
+      const chevron = document.getElementById(`guideline-chevron-${index}`);
+      
+      content.classList.toggle('open');
+      
+      if (content.classList.contains('open')) {
+        chevron.innerHTML = '<polyline points="18 15 12 9 18 9"></polyline>';
+      } else {
+        chevron.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+      }
+    }
+
+    // Question form
+    function renderQuestionForm(containerId, defaultVol = null) {
+      const volOptions = [1, 2, 3, 4, 5].map(v => 
+        `<option value="${v}" ${defaultVol === v ? 'selected' : ''}>Vol.${v} — ${VOL_NAMES[v]}</option>`
+      ).join('');
+
+      const html = `
+        <div class="max-w-xl">
+          <div id="question-modal-${containerId}" class="modal-overlay">
+            <div class="modal-backdrop" onclick="closeQuestionModal('${containerId}')"></div>
+            <div class="modal-content">
+              <h3 class="text-base font-semibold text-foreground mb-1">投稿内容をご確認ください</h3>
+              <p class="text-xs text-muted-foreground mb-5 leading-relaxed">
+                以下の内容で投稿します。<br />投稿後の内容変更はできません。
+              </p>
+              <div class="bg-secondary rounded-lg p-4 mb-5 space-y-2 text-xs" id="question-preview-${containerId}"></div>
+              <div class="space-y-3 mb-6">
+                <label class="flex items-start gap-2.5 cursor-pointer">
+                  <input type="checkbox" id="confirm-check-1-${containerId}" class="mt-0.5 accent-foreground shrink-0" />
+                  <span class="text-xs text-foreground leading-relaxed">入力内容に誤りはありません。</span>
+                </label>
+                <label class="flex items-start gap-2.5 cursor-pointer">
+                  <input type="checkbox" id="confirm-check-2-${containerId}" class="mt-0.5 accent-foreground shrink-0" />
+                  <span class="text-xs text-foreground leading-relaxed">投稿内容は運営判断で編集・要約・非掲載・削除される場合があることに同意します。</span>
+                </label>
+              </div>
+              <div class="flex gap-3">
+                <button onclick="closeQuestionModal('${containerId}')" class="flex-1 text-sm px-4 py-2.5 rounded-md border border-b text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors">戻る</button>
+                <button onclick="submitQuestion('${containerId}')" id="submit-question-btn-${containerId}" class="flex-1 bg-primary text-primary-foreground text-sm px-4 py-2.5 rounded-md hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed font-medium" disabled>投稿する</button>
+              </div>
+            </div>
+          </div>
+
+          <form id="question-form-${containerId}" class="space-y-4">
+            <div class="flex gap-3">
+              <div class="flex-1">
+                <label class="block text-xs text-muted-foreground mb-1.5">対象弾</label>
+                <select id="question-vol-${containerId}" class="form-input">
+                  <option value="">選択してください</option>
+                  ${volOptions}
+                </select>
+              </div>
+              <div class="flex-1">
+                <label class="block text-xs text-muted-foreground mb-1.5">カード名（任意）</label>
+                <input type="text" id="question-card-${containerId}" placeholder="例：疾風のアルタイル" class="form-input" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs text-muted-foreground mb-1.5">質問内容</label>
+              <textarea id="question-text-${containerId}" rows="4" placeholder="カードのルールや裁定について質問を入力してください" class="form-input resize-none"></textarea>
+            </div>
+            <button type="button" onclick="showQuestionModal('${containerId}')" id="preview-question-btn-${containerId}" class="bg-primary text-primary-foreground text-sm px-5 py-2 rounded-md hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed" disabled>投稿内容を確認する</button>
+          </form>
+
+          <div class="mt-6 bg-muted rounded-lg p-4 border border-b">
+            <p class="text-xs font-medium text-foreground mb-3">ご投稿前にご確認ください</p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed"><span class="shrink-0 mt-0.5">・</span><span>ご質問への回答には数日〜1週間程度お時間をいただく場合があります。</span></li>
+              <li class="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed"><span class="shrink-0 mt-0.5">・</span><span>すべてのご質問に回答をお約束するものではありません。</span></li>
+              <li class="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed"><span class="shrink-0 mt-0.5">・</span><span>個人情報、誹謗中傷、公序良俗に反する内容、第三者の権利を侵害する内容、Force of the Horseに関係のない内容は掲載いたしません。</span></li>
+              <li class="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed"><span class="shrink-0 mt-0.5">・</span><span>運営判断により、投稿内容の編集・要約・非掲載・削除を行う場合があります。</span></li>
+              <li class="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed"><span class="shrink-0 mt-0.5">・</span><span>投稿内容は公式サイトや公式SNS等で紹介させていただく場合があります。</span></li>
+            </ul>
+          </div>
+
+          <div id="question-success-${containerId}" class="hidden bg-secondary rounded-lg p-5 border border-b">
+            <p class="text-sm font-medium text-foreground mb-1">質問を受け付けました</p>
+            <p class="text-xs text-muted-foreground">
+              内容を確認後、FAQ一覧に回答を掲載します。お時間をいただく場合があります。
+            </p>
+            <button onclick="resetQuestionForm('${containerId}', ${defaultVol})" class="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
+              続けて質問する
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById(containerId).innerHTML = html;
+
+      // Add event listeners
+      const questionText = document.getElementById(`question-text-${containerId}`);
+      const previewBtn = document.getElementById(`preview-question-btn-${containerId}`);
+      const check1 = document.getElementById(`confirm-check-1-${containerId}`);
+      const check2 = document.getElementById(`confirm-check-2-${containerId}`);
+      const submitBtn = document.getElementById(`submit-question-btn-${containerId}`);
+
+      questionText.addEventListener('input', () => {
+        previewBtn.disabled = !questionText.value.trim();
+      });
+
+      check1.addEventListener('change', updateSubmitButton);
+      check2.addEventListener('change', updateSubmitButton);
+
+      function updateSubmitButton() {
+        submitBtn.disabled = !(check1.checked && check2.checked);
+      }
+    }
+
+    function showQuestionModal(containerId) {
+      const vol = document.getElementById(`question-vol-${containerId}`).value;
+      const card = document.getElementById(`question-card-${containerId}`).value;
+      const question = document.getElementById(`question-text-${containerId}`).value;
+
+      let previewHtml = '';
+      if (vol) {
+        previewHtml += `<div class="flex gap-2"><span class="text-muted-foreground shrink-0">対象弾</span><span class="text-foreground">Vol.${vol} — ${VOL_NAMES[vol]}</span></div>`;
+      }
+      if (card) {
+        previewHtml += `<div class="flex gap-2"><span class="text-muted-foreground shrink-0">カード名</span><span class="text-foreground">${card}</span></div>`;
+      }
+      previewHtml += `<div class="flex gap-2"><span class="text-muted-foreground shrink-0">質問内容</span><span class="text-foreground leading-relaxed break-all">${question}</span></div>`;
+
+      document.getElementById(`question-preview-${containerId}`).innerHTML = previewHtml;
+      document.getElementById(`question-modal-${containerId}`).classList.add('open');
+    }
+
+    function closeQuestionModal(containerId) {
+      document.getElementById(`question-modal-${containerId}`).classList.remove('open');
+    }
+
+    function submitQuestion(containerId) {
+      closeQuestionModal(containerId);
+      document.getElementById(`question-form-${containerId}`).classList.add('hidden');
+      document.getElementById(`question-success-${containerId}`).classList.remove('hidden');
+    }
+
+    function resetQuestionForm(containerId, defaultVol) {
+      document.getElementById(`question-form-${containerId}`).classList.remove('hidden');
+      document.getElementById(`question-success-${containerId}`).classList.add('hidden');
+      document.getElementById(`question-vol-${containerId}`).value = defaultVol || '';
+      document.getElementById(`question-card-${containerId}`).value = '';
+      document.getElementById(`question-text-${containerId}`).value = '';
+      document.getElementById(`confirm-check-1-${containerId}`).checked = false;
+      document.getElementById(`confirm-check-2-${containerId}`).checked = false;
+    }
+
+    // Apply form
+    const applyForm = document.getElementById('apply-form');
+    if (applyForm) {
+      applyForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const errors = {};
+        const requiredFields = ['organizerName', 'email', 'eventName', 'eventDate', 'startTime', 'endTime', 'venue', 'eventType', 'purpose', 'capacity', 'fee', 'gameFormat', 'prTitle', 'description'];
+        
+        requiredFields.forEach(field => {
+          const input = applyForm.querySelector(`[name="${field}"]`);
+          if (!input.value.trim()) {
+            errors[field] = '必須項目です';
+          }
+        });
+
+        // Email validation
+        const emailInput = applyForm.querySelector('[name="email"]');
+        if (emailInput.value.trim() && !/\S+@\S+\.\S+/.test(emailInput.value)) {
+          errors.email = '正しいメールアドレスを入力してください';
+        }
+
+        // Checkbox validation
+        const agreeFields = ['agree1', 'agree2', 'agree3', 'agree4'];
+        agreeFields.forEach(field => {
+          const checkbox = applyForm.querySelector(`[name="${field}"]`);
+          if (!checkbox.checked) {
+            errors[field] = '同意が必要です';
+          }
+        });
+
+        // Display errors
+        Object.keys(errors).forEach(field => {
+          const errorEl = document.getElementById(`error-${field}`);
+          if (errorEl) {
+            errorEl.textContent = errors[field];
+            const input = applyForm.querySelector(`[name="${field}"]`);
+            if (input) input.classList.add('error');
+          }
+        });
+
+        // Remove error styling for valid fields
+        applyForm.querySelectorAll('.form-input').forEach(input => {
+          if (!errors[input.name]) {
+            input.classList.remove('error');
+          }
+        });
+
+        if (Object.keys(errors).length > 0) {
+          document.getElementById('form-error').classList.remove('hidden');
+          return;
+        }
+
+        // Success
+        applyForm.classList.add('hidden');
+        document.getElementById('apply-success').classList.remove('hidden');
+      });
+
+      // Character count for description
+      const descriptionInput = applyForm.querySelector('[name="description"]');
+      const countDisplay = document.getElementById('description-count');
+      if (descriptionInput && countDisplay) {
+        descriptionInput.addEventListener('input', () => {
+          countDisplay.textContent = descriptionInput.value.length;
+        });
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderMiniCalendar();
+      renderQuestionForm('question-form-index');
+    });
+  </script>
+</body>
+</html>

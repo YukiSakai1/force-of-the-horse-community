@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vol.2 嵐の蹄鉄 - Force of the Horse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-size: 16px;
+      --background: #f8f8f7;
+      --foreground: #1a1a18;
+      --card: #ffffff;
+      --card-foreground: #1a1a18;
+      --popover: #ffffff;
+      --popover-foreground: #1a1a18;
+      --primary: #000000;
+      --primary-foreground: #ffffff;
+      --secondary: #eee;
+      --secondary-foreground: #1a1a18;
+      --muted: #ebebea;
+      --muted-foreground: #6b6b68;
+      --accent: #5eff00;
+      --accent-foreground: #1a1a18;
+      --destructive: #d4183d;
+      --destructive-foreground: #ffffff;
+      --border: rgba(26,26,24,0.1);
+      --input: transparent;
+      --input-background: #f3f3f5;
+      --switch-background: #cbced4;
+      --font-weight-medium: 500;
+      --font-weight-normal: 400;
+      --ring: oklch(0.708 0 0);
+      --radius: 0.625rem;
+      --tag-news: #ff0000;
+      --tag-event: #ff9000;
+      --tag-faq: #00ffbb;
+      --tag-area: #e600ff;
+      --tag-social: #ff7b00;
+      --day-sun: #ff6467;
+      --day-sat: #51a2ff;
+      --color-black: #000000;
+      --section-bg: #eee;
+      --font-jp: "Noto Sans JP", sans-serif;
+      --font-display: "Chakra Petch", sans-serif;
+      --font-logo: "Inter", sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Noto Sans JP', 'Inter', sans-serif; background-color: var(--background); color: var(--foreground); line-height: 1.5; }
+
+    .min-h-screen { min-height: 100vh; }
+    .max-w-5xl { max-width: 64rem; margin-left: auto; margin-right: auto; }
+    .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+    .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; }
+    .mb-5 { margin-bottom: 1.25rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; } .mb-10 { margin-bottom: 2.5rem; } .mb-12 { margin-bottom: 3rem; }
+    .mt-1 { margin-top: 0.25rem; } .mt-2 { margin-top: 0.5rem; } .mt-3 { margin-top: 0.75rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; } .mt-8 { margin-top: 2rem; } .mt-12 { margin-top: 3rem; }
+    .mt-16 { margin-top: 4rem; }
+    .gap-1 { gap: 0.25rem; } .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-5 { gap: 1.25rem; } .gap-6 { gap: 1.5rem; }
+    .flex { display: flex; } .flex-col { flex-direction: column; } .items-center { align-items: center; } .items-start { align-items: flex-start; }
+    .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+    .grid { display: grid; } .grid-cols-1 { grid-template-columns: repeat(1, minmax(0,1fr)); }
+    .hidden { display: none; } .block { display: block; } .w-full { width: 100%; }
+    .h-14 { height: 3.5rem; } .h-6 { height: 1.5rem; } .h-8 { height: 2rem; }
+    .w-6 { width: 1.5rem; } .w-8 { width: 2rem; } .w-10 { width: 2.5rem; }
+    .shrink-0 { flex-shrink: 0; }
+    .relative { position: relative; } .sticky { position: sticky; } .sticky.top-0 { top:0; } .z-50 { z-index:50; }
+    .rounded-md { border-radius: calc(var(--radius) - 2px); }
+    .border { border:1px solid var(--border); } .border-t { border-top:1px solid var(--border); }
+    .bg-background { background: var(--background); } .bg-card { background: var(--card); } .bg-secondary { background: var(--secondary); }
+    .text-foreground { color: var(--foreground); } .text-primary-foreground { color: var(--primary-foreground); }
+    .text-muted-foreground { color: var(--muted-foreground); }
+    .text-xs { font-size:0.75rem; } .text-sm { font-size:0.875rem; } .text-base { font-size:1rem; } .text-2xl { font-size:1.5rem; }
+    .font-medium { font-weight: var(--font-weight-medium); } .font-semibold { font-weight:600; }
+    .tracking-widest { letter-spacing:0.1em; } .uppercase { text-transform: uppercase; }
+    .leading-relaxed { line-height:1.625; }
+    .transition-colors { transition: color, background-color, border-color 0.15s; }
+    .hover\:bg-secondary:hover { background: var(--secondary); }
+    .hover\:text-foreground:hover { color: var(--foreground); }
+    .focus\:outline-none:focus { outline: none; }
+    .cursor-pointer { cursor: pointer; }
+    .divide-y > * + * { border-top:1px solid var(--border); }
+    .p-2 { padding:0.5rem; } .p-2\.5 { padding:0.625rem; } .p-3 { padding:0.75rem; } .p-4 { padding:1rem; } .p-5 { padding:1.25rem; } .p-6 { padding:1.5rem; }
+    .px-2 { padding-left:0.5rem; padding-right:0.5rem; } .px-3 { padding-left:0.75rem; padding-right:0.75rem; } .px-5 { padding-left:1.25rem; padding-right:1.25rem; }
+    .py-1 { padding-top:0.25rem; padding-bottom:0.25rem; } .py-1\.5 { padding-top:0.375rem; padding-bottom:0.375rem; } .py-2 { padding-top:0.5rem; padding-bottom:0.5rem; }
+    .md\:flex { @media(min-width:768px) { display:flex; } }
+    .md\:hidden { @media(min-width:768px) { display:none; } }
+
+    header.sticky { background-color: var(--color-black); border-bottom: 1px solid var(--color-black); }
+    header.sticky .text-foreground { color: #ffffff; }
+    header.sticky .hover\:text-accent:hover { color: #ffffff; opacity:0.75; }
+    header.sticky .nav-link { color: #ffffff; opacity:1; border-bottom:1px solid transparent; padding-bottom:3px; text-decoration: none; }
+    header.sticky .nav-link:hover { color:#ffffff; opacity:0.75; }
+    header.sticky .nav-link.active { color:#ffffff; border-bottom-color:#ffffff; opacity:1; }
+    header.sticky button[onclick*="toggleMobileMenu"] { color:#ffffff; }
+    #mobile-menu.mobile-menu { background-color: var(--color-black); border-top:1px solid var(--color-black); }
+    #mobile-menu.mobile-menu .nav-link { color:#ffffff; border-bottom-color: rgba(255,255,255,0.15); text-decoration: none; }
+    .nav-link { color: var(--muted-foreground); font-size:0.875rem; transition:color 0.15s; padding-bottom:0.125rem; border-bottom:none; }
+    .nav-link:hover { color: var(--foreground); }
+    .nav-link.active { color: var(--foreground); border-bottom:1px solid var(--foreground); font-weight: var(--font-weight-medium); }
+    .mobile-menu { display:none; }
+    @media(max-width:767px) { .mobile-menu.open { display:block; } }
+
+    .breadcrumb { display:flex; align-items:center; gap:0.375rem; font-size:0.75rem; color: var(--muted-foreground); margin-bottom:2rem; }
+    .breadcrumb a, .breadcrumb button { color: var(--muted-foreground); transition:color 0.15s; text-decoration: none; background:none; border:none; font:inherit; cursor:pointer; }
+    .breadcrumb a:hover, .breadcrumb button:hover { color: var(--foreground); }
+    .breadcrumb .current { color: var(--foreground); }
+
+    .tag { font-size: 10px; padding: 1px 8px; background-color: var(--color-black); color: #f8f8f7; border-left: 3px solid; display: inline-block; }
+    .tag.faq { border-left-color: var(--tag-faq); }
+
+    .faq-item { padding: 1.25rem 0; }
+    .faq-item .q { font-weight: 500; margin-bottom: 0.75rem; }
+    .faq-item .a { font-size: 0.875rem; color: var(--muted-foreground); }
+
+    /* -- Remove underline from all anchor tags -- */
+    a {
+        text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen bg-background text-foreground">
+    <header class="sticky top-0 z-50 bg-background border-b">
+      <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+        <a href="index.html" class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">Force of the Horse</a>
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="index.html" class="nav-link">TOP</a>
+          <a href="certified-event-system.html" class="nav-link">公認イベント制度</a>
+          <a href="event-calendar-page.html" class="nav-link">イベントカレンダー</a>
+          <a href="faq.html" class="nav-link active">FAQ</a>
+        </nav>
+        <button class="md:hidden p-2" onclick="toggleMobileMenu()">
+          <svg id="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg id="close-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div id="mobile-menu" class="mobile-menu md:hidden bg-background border-t">
+        <a href="index.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">TOP</a>
+        <a href="certified-event-system.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">公認イベント制度</a>
+        <a href="event-calendar-page.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">イベントカレンダー</a>
+        <a href="faq.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link active">FAQ</a>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-5 py-12">
+      <div class="breadcrumb">
+        <a href="index.html">TOP</a>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+        <a href="faq.html">FAQ一覧</a>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+        <span class="current">Vol.2 嵐の蹄鉄</span>
+      </div>
+
+      <header class="mb-10">
+        <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">FAQ / Vol.2</p>
+        <h1 class="text-2xl font-semibold text-foreground mb-1">Vol.2「嵐の蹄鉄」</h1>
+        <p class="text-sm text-muted-foreground">3件のQ&A</p>
+      </header>
+
+      <div class="flex gap-2 flex-wrap mb-8">
+        <a href="faq-vol2.html" class="px-3 py-1.5 text-xs rounded-md bg-primary text-primary-foreground transition-colors">すべて</a>
+        <span class="px-3 py-1.5 text-xs rounded-md bg-secondary text-muted-foreground">嵐を呼ぶ者</span>
+        <span class="px-3 py-1.5 text-xs rounded-md bg-secondary text-muted-foreground">鉄壁の蹄鉄</span>
+        <span class="px-3 py-1.5 text-xs rounded-md bg-secondary text-muted-foreground">砂塵の旋風</span>
+      </div>
+
+      <div class="border-t divide-y">
+        <div class="faq-item">
+          <p class="text-xs text-muted-foreground mb-2">2024-07-10</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="tag faq">嵐を呼ぶ者</span>
+          </div>
+          <p class="q text-base">嵐を呼ぶ者の効果で追加ドローを行った際、手札上限は適用されますか？</p>
+          <p class="a">ドロー時点での手札上限は適用されません。ドロー後、ターン終了時に手札上限を超えていた場合、超過分を墓地に送ります。</p>
+        </div>
+
+        <div class="faq-item">
+          <p class="text-xs text-muted-foreground mb-2">2024-08-01</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="tag faq">鉄壁の蹄鉄</span>
+          </div>
+          <p class="q text-base">鉄壁の蹄鉄が装備されているユニットに貫通効果を持つ攻撃は通りますか？</p>
+          <p class="a">貫通効果はシールドを無視しますが、鉄壁の蹄鉄のダメージ軽減効果は貫通の影響を受けません。軽減は適用されます。</p>
+        </div>
+
+        <div class="faq-item">
+          <p class="text-xs text-muted-foreground mb-2">2024-08-15</p>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="tag faq">砂塵の旋風</span>
+          </div>
+          <p class="q text-base">砂塵の旋風の範囲効果は、自分のユニットにも当たりますか？</p>
+          <p class="a">はい、砂塵の旋風は「すべてのユニット」を対象とするため、自分のユニットにも効果が適用されます。使用時にご注意ください。</p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="border-t mt-16">
+      <div class="max-w-5xl mx-auto px-5 py-8">
+        <p class="text-xs text-muted-foreground">© 2025 Force of the Horse コミュニティ。本サイトは非公式のコミュニティサイトです。</p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      menu.classList.toggle('open');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

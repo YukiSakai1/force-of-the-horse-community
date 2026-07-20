@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>公認イベントガイドライン - Force of the Horse</title>
+  <meta name="description" content="Provides official tournament guidelines, FAQs, and a Q&A platform for Force of the horse card game players to access and share community information." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables from sample design */
+    :root {
+      --font-size: 16px;
+      --background: #f8f8f7;
+      --foreground: #1a1a18;
+      --card: #ffffff;
+      --card-foreground: #1a1a18;
+      --popover: #ffffff;
+      --popover-foreground: #1a1a18;
+      --primary: #000000;
+      --primary-foreground: #ffffff;
+      --secondary: #eee;
+      --secondary-foreground: #1a1a18;
+      --muted: #ebebea;
+      --muted-foreground: #6b6b68;
+      --accent: #5eff00;
+      --accent-foreground: #1a1a18;
+      --destructive: #d4183d;
+      --destructive-foreground: #ffffff;
+      --border: rgba(26, 26, 24, 0.1);
+      --input: transparent;
+      --input-background: #f3f3f5;
+      --switch-background: #cbced4;
+      --font-weight-medium: 500;
+      --font-weight-normal: 400;
+      --ring: oklch(0.708 0 0);
+      --radius: 0.625rem;
+
+      /* Tag colors */
+      --tag-news: #ff0000;
+      --tag-event: #ff9000;
+      --tag-faq: #00ffbb;
+      --tag-area: #e600ff;
+      --tag-social: #ff7b00;
+      --day-sun: #ff6467;
+      --day-sat: #51a2ff;
+
+      /* Sample design tokens */
+      --color-black: #000000;
+      --section-bg: #eee;
+
+      /* Fonts */
+      --font-jp: "Noto Sans JP", sans-serif;
+      --font-display: "Chakra Petch", sans-serif;
+      --font-logo: "Inter", sans-serif;
+    }
+
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Noto Sans JP', 'Inter', sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.5;
+    }
+
+    /* Utility classes converted from Tailwind */
+    .min-h-screen {
+      min-height: 100vh;
+    }
+
+    .max-w-5xl {
+      max-width: 64rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .px-5 {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .py-12 {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    .mb-1 {
+      margin-bottom: 0.25rem;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem;
+    }
+
+    .mb-3 {
+      margin-bottom: 0.75rem;
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem;
+    }
+
+    .mb-5 {
+      margin-bottom: 1.25rem;
+    }
+
+    .mb-6 {
+      margin-bottom: 1.5rem;
+    }
+
+    .mb-8 {
+      margin-bottom: 2rem;
+    }
+
+    .mb-10 {
+      margin-bottom: 2.5rem;
+    }
+
+    .mb-12 {
+      margin-bottom: 3rem;
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem;
+    }
+
+    .mt-3 {
+      margin-top: 0.75rem;
+    }
+
+    .mt-4 {
+      margin-top: 1rem;
+    }
+
+    .mt-6 {
+      margin-top: 1.5rem;
+    }
+
+    .mt-8 {
+      margin-top: 2rem;
+    }
+
+    .mt-10 {
+      margin-top: 2.5rem;
+    }
+
+    .mt-12 {
+      margin-top: 3rem;
+    }
+
+    .mt-16 {
+      margin-top: 4rem;
+    }
+
+    .gap-1 {
+      gap: 0.25rem;
+    }
+
+    .gap-1\.5 {
+      gap: 0.375rem;
+    }
+
+    .gap-2 {
+      gap: 0.5rem;
+    }
+
+    .gap-3 {
+      gap: 0.75rem;
+    }
+
+    .gap-4 {
+      gap: 1rem;
+    }
+
+    .gap-6 {
+      gap: 1.5rem;
+    }
+
+    .gap-7 {
+      gap: 1.75rem;
+    }
+
+    .gap-8 {
+      gap: 2rem;
+    }
+
+    .gap-12 {
+      gap: 3rem;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .flex-col {
+      flex-direction: column;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .items-start {
+      align-items: flex-start;
+    }
+
+    .justify-between {
+      justify-content: space-between;
+    }
+
+    .justify-center {
+      justify-content: center;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-left {
+      text-align: left;
+    }
+
+    .grid {
+      display: grid;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .block {
+      display: block;
+    }
+
+    .inline-block {
+      display: inline-block;
+    }
+
+    .inline-flex {
+      display: inline-flex;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    .h-full {
+      height: 100%;
+    }
+
+    .h-14 {
+      height: 3.5rem;
+    }
+
+    .h-56 {
+      height: 14rem;
+    }
+
+    .h-72 {
+      height: 18rem;
+    }
+
+    .h-8 {
+      height: 2rem;
+    }
+
+    .h-10 {
+      height: 2.5rem;
+    }
+
+    .h-6 {
+      height: 1.5rem;
+    }
+
+    .w-2\.5 {
+      width: 0.625rem;
+    }
+
+    .w-6 {
+      width: 1.5rem;
+    }
+
+    .w-8 {
+      width: 2rem;
+    }
+
+    .w-10 {
+      width: 2.5rem;
+    }
+
+    .shrink-0 {
+      flex-shrink: 0;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .fixed {
+      position: fixed;
+    }
+
+    .inset-0 {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .sticky {
+      position: sticky;
+    }
+
+    .sticky\.top-0 {
+      top: 0;
+    }
+
+    .z-10 {
+      z-index: 10;
+    }
+
+    .z-50 {
+      z-index: 50;
+    }
+
+    .rounded-lg {
+      border-radius: var(--radius);
+    }
+
+    .rounded-md {
+      border-radius: calc(var(--radius) - 2px);
+    }
+
+    .rounded-sm {
+      border-radius: calc(var(--radius) - 4px);
+    }
+
+    .rounded-full {
+      border-radius: 9999px;
+    }
+
+    .rounded-xl {
+      border-radius: calc(var(--radius) + 4px);
+    }
+
+    .border {
+      border: 1px solid var(--border);
+    }
+
+    .border-t {
+      border-top: 1px solid var(--border);
+    }
+
+    .border-b {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .border-l-2 {
+      border-left: 2px solid var(--accent);
+    }
+
+    .border-l-2-border {
+      border-left: 2px solid var(--border);
+    }
+
+    .bg-background {
+      background-color: var(--background);
+    }
+
+    .bg-card {
+      background-color: var(--card);
+    }
+
+    .bg-primary {
+      background-color: var(--primary);
+    }
+
+    .bg-secondary {
+      background-color: var(--secondary);
+    }
+
+    .bg-muted {
+      background-color: var(--muted);
+    }
+
+    .bg-accent\/20 {
+      background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .bg-accent\/30 {
+      background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    .bg-primary-foreground\/10 {
+      background-color: color-mix(in srgb, var(--primary-foreground) 10%, transparent);
+    }
+
+    .bg-foreground\/20 {
+      background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+    }
+
+    .text-foreground {
+      color: var(--foreground);
+    }
+
+    .text-primary-foreground {
+      color: var(--primary-foreground);
+    }
+
+    .text-muted-foreground {
+      color: var(--muted-foreground);
+    }
+
+    .text-accent {
+      color: var(--accent-foreground);
+    }
+
+    .text-red-400 {
+      color: #f87171;
+    }
+
+    .text-blue-400 {
+      color: #60a5fa;
+    }
+
+    .text-xs {
+      font-size: 0.75rem;
+    }
+
+    .text-10px {
+      font-size: 0.625rem;
+      line-height: 1.2;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+    }
+
+    .text-base {
+      font-size: 1rem;
+    }
+
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+
+    .text-4xl {
+      font-size: 2.25rem;
+    }
+
+    .font-medium {
+      font-weight: var(--font-weight-medium);
+    }
+
+    .font-semibold {
+      font-weight: 600;
+    }
+
+    .tracking-widest {
+      letter-spacing: 0.1em;
+    }
+
+    .uppercase {
+      text-transform: uppercase;
+    }
+
+    .leading-snug {
+      line-height: 1.375;
+    }
+
+    .leading-relaxed {
+      line-height: 1.625;
+    }
+
+    .leading-tight {
+      line-height: 1.25;
+    }
+
+    .object-cover {
+      object-fit: cover;
+    }
+
+    .opacity-20 {
+      opacity: 0.2;
+    }
+
+    .opacity-90 {
+      opacity: 0.9;
+    }
+
+    .opacity-40 {
+      opacity: 0.4;
+    }
+
+    .opacity-50 {
+      opacity: 0.5;
+    }
+
+    .opacity-70 {
+      opacity: 0.7;
+    }
+
+    .transition-colors {
+      transition-property: color, background-color, border-color;
+      transition-duration: 0.15s;
+    }
+
+    .transition-all {
+      transition-property: all;
+      transition-duration: 0.15s;
+    }
+
+    .transition-opacity {
+      transition-property: opacity;
+      transition-duration: 0.15s;
+    }
+
+    .hover\:bg-secondary:hover {
+      background-color: var(--secondary);
+    }
+
+    .hover\:text-foreground:hover {
+      color: var(--foreground);
+    }
+
+    .hover\:text-accent:hover {
+      color: var(--accent-foreground);
+    }
+
+    .hover\:border-foreground\/30:hover {
+      border-color: color-mix(in srgb, var(--foreground) 30%, transparent);
+    }
+
+    .hover\:shadow-sm:hover {
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    }
+
+    .hover\:opacity-90:hover {
+      opacity: 0.9;
+    }
+
+    .focus\:outline-none:focus {
+      outline: none;
+    }
+
+    .focus\:ring-1:focus {
+      box-shadow: 0 0 0 1px var(--ring);
+    }
+
+    .disabled\:opacity-40:disabled {
+      opacity: 0.4;
+    }
+
+    .disabled\:cursor-not-allowed:disabled {
+      cursor: not-allowed;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .cursor-not-allowed {
+      cursor: not-allowed;
+    }
+
+    .space-y-1\.5 > * + * {
+      margin-top: 0.375rem;
+    }
+
+    .space-y-2 > * + * {
+      margin-top: 0.5rem;
+    }
+
+    .space-y-3 > * + * {
+      margin-top: 0.75rem;
+    }
+
+    .space-y-4 > * + * {
+      margin-top: 1rem;
+    }
+
+    .space-y-5 > * + * {
+      margin-top: 1.25rem;
+    }
+
+    .space-y-12 > * + * {
+      margin-top: 3rem;
+    }
+
+    .divide-y > * + * {
+      border-top: 1px solid var(--border);
+    }
+
+    .divide-b > * + * {
+      border-top: 1px solid var(--border);
+    }
+
+    .border-collapse {
+      border-collapse: collapse;
+    }
+
+    .table {
+      display: table;
+    }
+
+    .p-1 {
+      padding: 0.25rem;
+    }
+
+    .p-1\.5 {
+      padding: 0.375rem;
+    }
+
+    .p-2 {
+      padding: 0.5rem;
+    }
+
+    .p-2\.5 {
+      padding: 0.625rem;
+    }
+
+    .p-3 {
+      padding: 0.75rem;
+    }
+
+    .p-4 {
+      padding: 1rem;
+    }
+
+    .p-5 {
+      padding: 1.25rem;
+    }
+
+    .p-6 {
+      padding: 1.5rem;
+    }
+
+    .px-1 {
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+    }
+
+    .px-3 {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+
+    .px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .px-5 {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .px-6 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    .py-0\.5 {
+      padding-top: 0.125rem;
+      padding-bottom: 0.125rem;
+    }
+
+    .py-1 {
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .py-1\.5 {
+      padding-top: 0.375rem;
+      padding-bottom: 0.375rem;
+    }
+
+    .py-2 {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .py-2\.5 {
+      padding-top: 0.625rem;
+      padding-bottom: 0.625rem;
+    }
+
+    .py-3 {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .py-5 {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+
+    .pb-2 {
+      padding-bottom: 0.5rem;
+    }
+
+    .pb-3 {
+      padding-bottom: 0.75rem;
+    }
+
+    .pr-4 {
+      padding-right: 1rem;
+    }
+
+    .pr-8 {
+      padding-right: 2rem;
+    }
+
+    .pr-10 {
+      padding-right: 2.5rem;
+    }
+
+    .pl-4 {
+      padding-left: 1rem;
+    }
+
+    .pl-5 {
+      padding-left: 1.25rem;
+    }
+
+    .backdrop-blur-sm {
+      backdrop-filter: blur(4px);
+    }
+
+    .shadow-lg {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    .resize-none {
+      resize: none;
+    }
+
+    .truncate {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .break-all {
+      word-break: break-all;
+    }
+
+    .underline {
+      text-decoration: underline;
+    }
+
+    .underline-offset-2 {
+      text-underline-offset: 2px;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .md\:flex {
+        display: flex;
+      }
+
+      .md\:hidden {
+        display: none;
+      }
+
+      .md\:text-base {
+        font-size: 1rem;
+      }
+
+      .md\:text-4xl {
+        font-size: 2.25rem;
+      }
+
+      .md\:h-72 {
+        height: 18rem;
+      }
+
+      .md\:pr-10 {
+        padding-right: 2.5rem;
+      }
+
+      .md\:grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    /* Quick link cards */
+    .quick-link-card {
+      text-align: left;
+      background-color: var(--card);
+      border: none;
+      border-left: 4px solid var(--accent);
+      border-radius: 0;
+      padding: 20px 20px 20px 24px;
+      transition: all 0.15s;
+    }
+
+    .quick-link-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .quick-link-card .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 0;
+      background-color: var(--accent);
+      margin-bottom: 0.75rem;
+      color: #1a1a18;
+      transition: background-color 0.15s;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb a, .breadcrumb button {
+      color: var(--muted-foreground);
+      transition: color 0.15s;
+      text-decoration: none;
+      background: none;
+      border: none;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .breadcrumb a:hover, .breadcrumb button:hover {
+      color: var(--foreground);
+    }
+
+    .breadcrumb .current {
+      color: var(--foreground);
+    }
+
+    /* Nav styles */
+    header.sticky {
+      background-color: var(--color-black);
+      border-bottom: 1px solid var(--color-black);
+    }
+    header.sticky .text-foreground {
+      color: #ffffff;
+    }
+    header.sticky .hover\:text-accent:hover {
+      color: #ffffff;
+      opacity: 0.75;
+    }
+    header.sticky .nav-link {
+      color: #ffffff;
+      opacity: 1;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 3px;
+      text-decoration: none;
+    }
+    header.sticky .nav-link:hover {
+      color: #ffffff;
+      opacity: 0.75;
+    }
+    header.sticky .nav-link.active {
+      color: #ffffff;
+      border-bottom-color: #ffffff;
+      opacity: 1;
+    }
+    header.sticky button[onclick*="toggleMobileMenu"] {
+      color: #ffffff;
+    }
+    #mobile-menu.mobile-menu {
+      background-color: var(--color-black);
+      border-top: 1px solid var(--color-black);
+    }
+    #mobile-menu.mobile-menu .nav-link {
+      color: #ffffff;
+      border-bottom-color: rgba(255, 255, 255, 0.15);
+      text-decoration: none;
+    }
+    .nav-link {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      transition: color 0.15s;
+      padding-bottom: 0.125rem;
+      border-bottom: none;
+    }
+    .nav-link:hover {
+      color: var(--foreground);
+    }
+    .nav-link.active {
+      color: var(--foreground);
+      border-bottom: 1px solid var(--foreground);
+      font-weight: var(--font-weight-medium);
+    }
+    .mobile-menu {
+      display: none;
+    }
+    @media (max-width: 767px) {
+      .mobile-menu.open {
+        display: block;
+      }
+    }
+
+    /* Accordion styles */
+    .accordion-button {
+      width: 100%;
+      text-align: left;
+      padding: 1.5rem 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .accordion-button:hover {
+      color: var(--accent-foreground);
+    }
+
+    .accordion-button .toggle-icon {
+      transition: transform 0.2s;
+    }
+
+    .accordion-button.open .toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      padding-bottom: 1.5rem;
+      display: none;
+    }
+
+    .accordion-content.open {
+      display: block;
+    }
+
+    /* Section header */
+    .section-header {
+        font-size: 0.875rem;
+        font-weight: var(--font-weight-medium);
+        color: var(--foreground);
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* -- Remove underline from all anchor tags -- */
+    a {
+        text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen bg-background text-foreground">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 bg-background border-b">
+      <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+        <a href="index.html" class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">
+          Force of the Horse
+        </a>
+
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="index.html" class="nav-link">TOP</a>
+          <a href="certified-event-system.html" class="nav-link">公認イベント制度</a>
+          <a href="event-calendar-page.html" class="nav-link">イベントカレンダー</a>
+          <a href="faq.html" class="nav-link">FAQ</a>
+        </nav>
+
+        <button class="md:hidden p-1" onclick="toggleMobileMenu()">
+          <svg id="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg id="close-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div id="mobile-menu" class="mobile-menu md:hidden bg-background border-t">
+        <a href="index.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">TOP</a>
+        <a href="certified-event-system.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">公認イベント制度</a>
+        <a href="event-calendar-page.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">イベントカレンダー</a>
+        <a href="faq.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">FAQ</a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Guidelines Page -->
+      <div class="max-w-5xl mx-auto px-5 py-12">
+        <div class="breadcrumb">
+          <a href="index.html">TOP</a>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          <a href="certified-event-system.html">公認イベント制度について</a>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          <span class="current">公認イベントガイドライン</span>
+        </div>
+
+        <header class="mb-10">
+          <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Guidelines</p>
+          <h1 class="text-2xl font-semibold text-foreground mb-3">公認イベントガイドライン</h1>
+          <p class="text-sm text-muted-foreground">
+            最終更新：2025年6月20日（v2.1）<br />
+            Force of the Horse 公認イベントの開催にあたり、主催者・参加者が共有するルールと制度の概要を定めています。
+          </p>
+        </header>
+
+        <div class="border-t divide-y" id="guidelines-content"></div>
+
+        <div class="mt-10 flex flex-col sm:flex-row gap-4">
+          <a href="apply.html" class="inline-flex items-center gap-2 bg-primary text-primary-foreground text-sm px-5 py-3 rounded-md hover:opacity-90 transition-opacity font-medium">
+            公認イベントの開催申請はこちら
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        </div>
+
+        <div class="mt-6 p-5 bg-secondary rounded-lg border">
+          <p class="text-xs text-muted-foreground">
+            ご不明な点があれば、公式Discordの
+            <span class="font-medium text-foreground">#judge-support</span>
+            チャンネル、またはメール（judge@foh-official.example）までお問い合わせください。
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t mt-16">
+      <div class="max-w-5xl mx-auto px-5 py-8">
+        <p class="text-xs text-muted-foreground">
+          © 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const GUIDELINES = [
+      {
+        title: "§1　制度について",
+        content: `
+          <div class="space-y-5">
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">公認イベント制度の目的</h4>
+              <p class="text-sm text-muted-foreground leading-relaxed">
+                プレイヤーの皆さまによる自主的なイベント開催・コミュニティ活動を支援するため、公認イベント制度を設けています。対戦大会だけでなく、交流会・初心者体験会・観戦会・配信イベントなど、さまざまな形でForce of the Horseを楽しむ場を広げていくことを目的としています。イベントの種別や規模は問いません。ここに挙げた形式にとらわれず、アイデアがあればお気軽にご相談ください。
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">公認イベントのメリット</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 mt-0.5 text-accent">✓</span>公式サイト・SNSでのイベント告知掲載</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 mt-0.5 text-accent">✓</span>限定プロモーションカード等の景品提供（審査あり）</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 mt-0.5 text-accent">✓</span>公認主催者ロゴ・認定バッジの使用権</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 mt-0.5 text-accent">✓</span>弊社スタッフによる運営サポート（一部イベント）</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">免責事項</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>開催によって生じたトラブル・損害について弊社は責任を負いません</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>虚偽申請・違反が判明した場合は公認を取り消すことがあります</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>本書は予告なく改訂される場合があります</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§2　イベント種別の例",
+        content: `
+          <div class="space-y-5">
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              以下は代表的な例です。この枠に必ずしも当てはめる必要はありません。申請フォームの「イベント概要」欄に自由に記載してください。
+            </p>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">公認大会</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">勝敗を競う対戦形式のイベント。スイスドロー・トーナメント等を使用。詳細なレギュレーションは§3を参照。</p>
+            </div>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">交流会</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">勝敗よりも参加者同士のつながりや楽しさを重視するイベント。フリー対戦・デッキ品評会・テーマ縛り対戦・競馬トーク会など形式は自由。</p>
+            </div>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">初心者体験会</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">未経験・初心者を主な対象とした普及目的のイベント。ルール説明からのレクチャー形式・デッキ構築教室・競馬場やショップでの簡易体験など。デモデッキ貸し出し・解説資料の提供を申請できます（要事前申請）。</p>
+            </div>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">観戦会</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">上位プレイヤーの対戦を観戦・解説するイベント。会場観戦・オンライン配信視聴いずれも可。</p>
+            </div>
+            <div class="border-l-2 border-l-2-border pl-4">
+              <p class="text-xs font-semibold text-foreground mb-1">配信イベント</p>
+              <p class="text-sm text-muted-foreground leading-relaxed">YouTubeやTwitchなどのプラットフォームを使ったライブ配信形式のイベント。対戦配信・解説配信・交流配信など形式は問いません。申請時に配信URLまたはチャンネル情報を記載してください。</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§3　競技大会レギュレーション（推奨）",
+        content: `
+          <div class="space-y-5">
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              本セクションは公認大会を開催する際の推奨ルールです。実際の運営は主催者の判断に委ねます。参加者は主催者の定めたルールに従ってください。
+            </p>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">推奨する基本ルール</h4>
+              <p class="text-sm text-muted-foreground leading-relaxed">
+                勝ち点制（勝利3点・引き分け1点・敗北0点）。スコアシートで記録しながら進行。
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-2">推奨大会形式</h4>
+              <div class="space-y-3">
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">スイスドロー（6名以上）</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">勝ち点が近い未対戦者とペアリング。全員が規定回数の試合後に順位決定。</p>
+                </div>
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">総当たりリーグ（2-8名）</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">全員が一度ずつ対戦。勝ち点で順位決定。</p>
+                </div>
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">シングルエリミネーション（4名以上）</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">勝者のみ次戦へ。引き分けは再試合。連続引き分けは共に敗北。</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-2">サブルール（任意選択）</h4>
+              <div class="space-y-3">
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">3本勝負制</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">最大3戦で勝ち点集計。2勝終了か3戦必行かを要項に明記。</p>
+                </div>
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">ドラフト戦</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">1人20枚配布→7枚から1枚ピック→左隣に渡す形式でデッキ構築。</p>
+                </div>
+                <div class="border-l-2 border-l-2-border pl-4">
+                  <p class="text-xs font-semibold text-foreground mb-1">シールド戦</p>
+                  <p class="text-sm text-muted-foreground leading-relaxed">1人4-6パックを会場で一斉開封しデッキ構築。同名カード枚数制限なし可。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§4　共通マナーと禁止事項",
+        content: `
+          <div class="space-y-5">
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              すべてのイベントに共通するルールです。種別・規模にかかわらず遵守してください。
+            </p>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">禁止行為</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>参加費以外を目的とした金銭授受・賭博類似行為</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>コピーカード・自作カードの使用</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>他の参加者への誹謗中傷・ハラスメント・脅迫</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>公序良俗に著しく反する言動</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">共通マナー</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>初心者・ベテランを問わず互いに敬意を持って接する</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>注意を受けた場合はすぐにやめる</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>会場外の方々にも配慮する</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>主催者の指示に従う</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§5　大会参加者の皆様へ（推奨）",
+        content: `
+          <div class="space-y-5">
+            <p class="text-sm text-muted-foreground leading-relaxed">
+              以下は大会参加時の推奨事項です。実際のルールは各イベントの主催者案内を優先してください。
+            </p>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">対戦台に置けるもの</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>裏面統一のメインデッキ</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>筆記用具（2本以内）・フタ付き飲料容器</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>プレイマット・カウンター・ダイス等の補助小物</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">試合前の確認</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>デッキ枚数・スリーブ状態を相互確認してから開始</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>問題がある場合は速やかにジャッジを呼ぶ</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">試合中の注意</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>両手は常に対戦台の上に出す</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>カードプレイ・ターンエンドは口頭で宣言する</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "§6　主催者の皆様へ",
+        content: `
+          <div class="space-y-5">
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-3">申請の流れ</h4>
+              <div class="space-y-3">
+                <div class="flex gap-3">
+                  <span class="shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground text-10px font-semibold flex items-center justify-center mt-0.5">1</span>
+                  <div>
+                    <p class="text-xs font-semibold text-foreground mb-0.5">イベント申請</p>
+                    <p class="text-sm text-muted-foreground leading-relaxed">種別・日時・会場またはオンラインURL・連絡先・イベント概要を申請フォームより提出。種別はあくまで参考で、自由記述でも構いません。</p>
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <span class="shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground text-10px font-semibold flex items-center justify-center mt-0.5">2</span>
+                  <div>
+                    <p class="text-xs font-semibold text-foreground mb-0.5">掲載・景品発送</p>
+                    <p class="text-sm text-muted-foreground leading-relaxed">受理後、公式サイトに掲載。景品は開催5-7日前に発送。</p>
+                  </div>
+                </div>
+                <div class="flex gap-3">
+                  <span class="shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground text-10px font-semibold flex items-center justify-center mt-0.5">3</span>
+                  <div>
+                    <p class="text-xs font-semibold text-foreground mb-0.5">開催レポート提出</p>
+                    <p class="text-sm text-muted-foreground leading-relaxed">開催後2週間以内（月3件以上は翌月末）。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">申請条件</h4>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-2">
+                イベントの種別・規模にかかわらず共通です。以下3点を満たせば申請できます。
+              </p>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>開催日時と場所（またはオンラインURL）が決まっていること</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>誰でも連絡できる主催者の連絡先を用意できること</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0 text-accent">✓</span>開催7日以上前に申請すること</li>
+              </ul>
+              <p class="mt-2 text-sm text-muted-foreground leading-relaxed">
+                公認大会の場合は進行ルールを事前に参加者へ周知してください。
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-semibold text-foreground mb-1.5">共通ルール</h4>
+              <ul class="space-y-1.5">
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>未成年の単独主催不可（保護者または成年との共同開催は可）</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>中学生以下が参加する場合は保護者同伴を周知</li>
+                <li class="flex items-start gap-2 text-sm text-muted-foreground"><span class="shrink-0">・</span>1週間あたり申請3件以内</li>
+              </ul>
+            </div>
+          </div>
+        `
+      },
+    ];
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      menu.classList.toggle('open');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    }
+
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      menu.classList.remove('open');
+      menuIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+    }
+
+    function toggleAccordion(index) {
+      const content = document.getElementById(`accordion-content-${index}`);
+      const button = document.getElementById(`accordion-button-${index}`);
+      content.classList.toggle('open');
+      button.classList.toggle('open');
+    }
+
+    function renderGuidelines() {
+      const container = document.getElementById('guidelines-content');
+      container.innerHTML = GUIDELINES.map((g, i) => `
+        <div class="py-2">
+          <button id="accordion-button-${i}" class="accordion-button ${i === 0 ? 'open' : ''}" onclick="toggleAccordion(${i})">
+            <h3 class="text-sm font-semibold text-foreground">${g.title}</h3>
+            <svg class="toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div id="accordion-content-${i}" class="accordion-content ${i === 0 ? 'open' : ''}">
+            ${g.content}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGuidelines();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>公認イベント申請 - Force of the Horse</title>
+  <meta name="description" content="公認イベントの開催申請フォーム" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Variables from sample design */
+    :root {
+      --font-size: 16px;
+      --background: #f8f8f7;
+      --foreground: #1a1a18;
+      --card: #ffffff;
+      --card-foreground: #1a1a18;
+      --popover: #ffffff;
+      --popover-foreground: #1a1a18;
+      --primary: #000000;
+      --primary-foreground: #ffffff;
+      --secondary: #eee;
+      --secondary-foreground: #1a1a18;
+      --muted: #ebebea;
+      --muted-foreground: #6b6b68;
+      --accent: #5eff00;
+      --accent-foreground: #1a1a18;
+      --destructive: #d4183d;
+      --destructive-foreground: #ffffff;
+      --border: rgba(26,26,24,0.1);
+      --input: transparent;
+      --input-background: #f3f3f5;
+      --switch-background: #cbced4;
+      --font-weight-medium: 500;
+      --font-weight-normal: 400;
+      --ring: oklch(0.708 0 0);
+      --radius: 0.625rem;
+      --tag-news: #ff0000;
+      --tag-event: #ff9000;
+      --tag-faq: #00ffbb;
+      --tag-area: #e600ff;
+      --tag-social: #ff7b00;
+      --day-sun: #ff6467;
+      --day-sat: #51a2ff;
+      --color-black: #000000;
+      --section-bg: #eee;
+      --font-jp: "Noto Sans JP", sans-serif;
+      --font-display: "Chakra Petch", sans-serif;
+      --font-logo: "Inter", sans-serif;
+    }
+
+    /* Base styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Noto Sans JP', 'Inter', sans-serif; background-color: var(--background); color: var(--foreground); line-height: 1.5; }
+
+    /* Utility classes */
+    .min-h-screen { min-height: 100vh; }
+    .max-w-5xl { max-width: 64rem; margin-left: auto; margin-right: auto; }
+    .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+    .mb-1 { margin-bottom: 0.25rem; } .mb-2 { margin-bottom: 0.5rem; } .mb-3 { margin-bottom: 0.75rem; } .mb-4 { margin-bottom: 1rem; }
+    .mb-5 { margin-bottom: 1.25rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; } .mb-10 { margin-bottom: 2.5rem; } .mb-12 { margin-bottom: 3rem; }
+    .mt-2 { margin-top: 0.5rem; } .mt-3 { margin-top: 0.75rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; } .mt-8 { margin-top: 2rem; } .mt-12 { margin-top: 3rem; }
+    .mt-16 { margin-top: 4rem; }
+    .gap-2 { gap: 0.5rem; } .gap-3 { gap: 0.75rem; } .gap-4 { gap: 1rem; } .gap-5 { gap: 1.25rem; } .gap-6 { gap: 1.5rem; }
+    .flex { display: flex; } .flex-col { flex-direction: column; } .items-center { align-items: center; } .items-start { align-items: flex-start; }
+    .justify-between { justify-content: space-between; } .justify-center { justify-content: center; }
+    .grid { display: grid; } .grid-cols-1 { grid-template-columns: repeat(1, minmax(0,1fr)); }
+    .sm\:grid-cols-2 { @media (min-width:640px) { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    .hidden { display: none; } .block { display: block; } .w-full { width: 100%; }
+    .h-14 { height: 3.5rem; } .h-6 { height: 1.5rem; } .h-8 { height: 2rem; }
+    .w-6 { width: 1.5rem; } .w-8 { width: 2rem; } .w-10 { width: 2.5rem; }
+    .shrink-0 { flex-shrink: 0; }
+    .relative { position: relative; } .sticky { position: sticky; } .sticky.top-0 { top:0; } .z-50 { z-index:50; }
+    .rounded-md { border-radius: calc(var(--radius) - 2px); }
+    .border { border:1px solid var(--border); } .border-t { border-top:1px solid var(--border); }
+    .bg-background { background: var(--background); } .bg-card { background: var(--card); }
+    .bg-primary { background: var(--primary); } .bg-secondary { background: var(--secondary); }
+    .text-foreground { color: var(--foreground); } .text-primary-foreground { color: var(--primary-foreground); }
+    .text-muted-foreground { color: var(--muted-foreground); } .text-red-400 { color: #f87171; }
+    .text-xs { font-size:0.75rem; } .text-sm { font-size:0.875rem; } .text-base { font-size:1rem; } .text-2xl { font-size:1.5rem; }
+    .font-medium { font-weight: var(--font-weight-medium); } .font-semibold { font-weight:600; }
+    .tracking-widest { letter-spacing:0.1em; } .uppercase { text-transform: uppercase; }
+    .leading-relaxed { line-height:1.625; }
+    .transition-colors { transition: color, background-color, border-color 0.15s; }
+    .transition-opacity { transition: opacity 0.15s; }
+    .hover\:bg-secondary:hover { background: var(--secondary); }
+    .hover\:text-foreground:hover { color: var(--foreground); }
+    .hover\:opacity-90:hover { opacity:0.9; }
+    .focus\:outline-none:focus { outline: none; }
+    .focus\:ring-1:focus { box-shadow: 0 0 0 1px var(--ring); }
+    .cursor-pointer { cursor: pointer; }
+    .space-y-5 > * + * { margin-top: 1.25rem; }
+    .space-y-4 > * + * { margin-top: 1rem; }
+    .divide-y > * + * { border-top:1px solid var(--border); }
+    .p-1 { padding:0.25rem; } .p-1\.5 { padding:0.375rem; } .p-2 { padding:0.5rem; } .p-2\.5 { padding:0.625rem; } .p-3 { padding:0.75rem; } .p-4 { padding:1rem; } .p-5 { padding:1.25rem; } .p-6 { padding:1.5rem; }
+    .px-3 { padding-left:0.75rem; padding-right:0.75rem; } .px-4 { padding-left:1rem; padding-right:1rem; } .px-5 { padding-left:1.25rem; padding-right:1.25rem; }
+    .py-1 { padding-top:0.25rem; padding-bottom:0.25rem; } .py-2 { padding-top:0.5rem; padding-bottom:0.5rem; } .py-2\.5 { padding-top:0.625rem; padding-bottom:0.625rem; } .py-3 { padding-top:0.75rem; padding-bottom:0.75rem; }
+    .pb-2 { padding-bottom:0.5rem; } .pl-4 { padding-left:1rem; } .pl-5 { padding-left:1.25rem; }
+    .accent-foreground { accent-color: var(--foreground); }
+    .break-all { word-break: break-all; }
+    .md\:flex { @media(min-width:768px) { display:flex; } }
+    .md\:hidden { @media(min-width:768px) { display:none; } }
+    .md\:grid-cols-2 { @media(min-width:768px) { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    .sm\:flex-row { @media(min-width:640px) { flex-direction: row; } }
+
+    /* Custom styles */
+    header.sticky { background-color: var(--color-black); border-bottom: 1px solid var(--color-black); }
+    header.sticky .text-foreground { color: #ffffff; }
+    header.sticky .hover\:text-accent:hover { color: #ffffff; opacity:0.75; }
+    header.sticky .nav-link { color: #ffffff; opacity:1; border-bottom:1px solid transparent; padding-bottom:3px; text-decoration: none; }
+    header.sticky .nav-link:hover { color:#ffffff; opacity:0.75; }
+    header.sticky .nav-link.active { color:#ffffff; border-bottom-color:#ffffff; opacity:1; }
+    header.sticky button[onclick*="toggleMobileMenu"] { color:#ffffff; }
+    #mobile-menu.mobile-menu { background-color: var(--color-black); border-top:1px solid var(--color-black); }
+    #mobile-menu.mobile-menu .nav-link { color:#ffffff; border-bottom-color: rgba(255,255,255,0.15); text-decoration: none; }
+    .nav-link { color: var(--muted-foreground); font-size:0.875rem; transition:color 0.15s; padding-bottom:0.125rem; border-bottom:none; }
+    .nav-link:hover { color: var(--foreground); }
+    .nav-link.active { color: var(--foreground); border-bottom:1px solid var(--foreground); font-weight: var(--font-weight-medium); }
+    .mobile-menu { display:none; }
+    @media(max-width:767px) { .mobile-menu.open { display:block; } }
+
+    .breadcrumb { display:flex; align-items:center; gap:0.375rem; font-size:0.75rem; color: var(--muted-foreground); margin-bottom:2rem; }
+    .breadcrumb a, .breadcrumb button { color: var(--muted-foreground); transition:color 0.15s; text-decoration: none; background:none; border:none; font:inherit; cursor:pointer; }
+    .breadcrumb a:hover, .breadcrumb button:hover { color: var(--foreground); }
+    .breadcrumb .current { color: var(--foreground); }
+
+    .section-header { font-size:0.875rem; font-weight: var(--font-weight-medium); color: var(--foreground); border-bottom:1px solid var(--border); padding-bottom:0.75rem; margin-bottom:1.5rem; }
+    .form-label { display:block; font-size:0.75rem; font-weight: var(--font-weight-medium); color: var(--foreground); margin-bottom:0.375rem; }
+    .form-label .required { color: #f87171; margin-left:0.25rem; }
+    .form-input { width:100%; font-size:0.875rem; background-color: var(--input-background); border:1px solid var(--border); border-radius: calc(var(--radius)-2px); padding:0.5rem 0.75rem; color: var(--foreground); }
+    .form-input:focus { outline: none; box-shadow:0 0 0 1px var(--ring); }
+    .form-input.error { border-color: #fca5a5; }
+    .error-message { margin-top:0.25rem; font-size:0.625rem; color:#f87171; }
+    .form-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+
+    /* -- Remove underline from all anchor tags -- */
+    a {
+        text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen bg-background text-foreground">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-50 bg-background border-b">
+      <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+        <a href="index.html" class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">
+          Force of the Horse
+        </a>
+        <nav class="hidden md:flex items-center gap-7">
+          <a href="index.html" class="nav-link">TOP</a>
+          <a href="certified-event-system.html" class="nav-link">公認イベント制度</a>
+          <a href="event-calendar-page.html" class="nav-link">イベントカレンダー</a>
+          <a href="faq.html" class="nav-link">FAQ</a>
+        </nav>
+        <button class="md:hidden p-1" onclick="toggleMobileMenu()">
+          <svg id="menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+          <svg id="close-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div id="mobile-menu" class="mobile-menu md:hidden bg-background border-t">
+        <a href="index.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">TOP</a>
+        <a href="certified-event-system.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">公認イベント制度</a>
+        <a href="event-calendar-page.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">イベントカレンダー</a>
+        <a href="faq.html" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">FAQ</a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div id="apply-form-page" class="max-w-5xl mx-auto px-5 py-12">
+        <div class="breadcrumb">
+          <a href="index.html">TOP</a>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          <a href="certified-event-system.html">公認イベント制度について</a>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+          <span class="current">開催申請</span>
+        </div>
+
+        <header class="mb-10">
+          <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Apply</p>
+          <h1 class="text-2xl font-semibold text-foreground mb-2">Force of the Horse 公認イベント申請</h1>
+          <p class="text-sm text-muted-foreground">Force of the Horseの公認イベント・交流会・大会の開催申請フォームです。必要事項をご入力の上、申請してください。</p>
+        </header>
+
+        <form id="apply-form" class="max-w-2xl space-y-12">
+          <!-- Section 1: Organizer Info -->
+          <section>
+            <h2 class="section-header">1. 主催者情報</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="form-label">主催者名（ハンドルネーム可）<span class="required">*</span></label>
+                <input type="text" name="organizerName" placeholder="例：田中太郎 / FoHマスター" class="form-input" required />
+                <p class="error-message" id="error-organizerName"></p>
+              </div>
+              <div>
+                <label class="form-label">メールアドレス<span class="required">*</span></label>
+                <input type="email" name="email" placeholder="example@mail.com" class="form-input" required />
+                <p class="error-message" id="error-email"></p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="form-label">Xアカウント（推奨）</label>
+                  <input type="text" name="xAccount" placeholder="@username" class="form-input" />
+                </div>
+                <div>
+                  <label class="form-label">Discord ID（推奨）</label>
+                  <input type="text" name="discordId" placeholder="username#0000" class="form-input" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section 2: Event Basic Info -->
+          <section>
+            <h2 class="section-header">2. イベント基本情報</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="form-label">イベント名<span class="required">*</span></label>
+                <input type="text" name="eventName" class="form-input" required />
+                <p class="error-message" id="error-eventName"></p>
+              </div>
+              <div class="grid grid-cols-2 gap-5">
+                <div>
+                  <label class="form-label">開催日<span class="required">*</span></label>
+                  <input type="date" name="eventDate" class="form-input" required />
+                  <p class="error-message" id="error-eventDate"></p>
+                </div>
+                <div>
+                  <label class="form-label">開始時間<span class="required">*</span></label>
+                  <input type="time" name="startTime" class="form-input" required />
+                  <p class="error-message" id="error-startTime"></p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-5">
+                <div>
+                  <label class="form-label">終了予定時間<span class="required">*</span></label>
+                  <input type="time" name="endTime" class="form-input" required />
+                  <p class="error-message" id="error-endTime"></p>
+                </div>
+                <div>
+                  <label class="form-label">開催場所<span class="required">*</span></label>
+                  <input type="text" name="venue" placeholder="店舗名・会場名・Discordサーバー名など" class="form-input" required />
+                  <p class="error-message" id="error-venue"></p>
+                </div>
+              </div>
+              <div>
+                <label class="form-label">開催形式<span class="required">*</span></label>
+                <div class="flex gap-6 mt-1">
+                  <label class="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                    <input type="radio" name="format" value="オフライン" checked /> オフライン
+                  </label>
+                  <label class="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                    <input type="radio" name="format" value="オンライン" /> オンライン
+                  </label>
+                  <label class="flex items-center gap-2 text-sm text-foreground cursor-pointer">
+                    <input type="radio" name="format" value="ハイブリッド" /> ハイブリッド
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section3: Event Details -->
+          <section>
+            <h2 class="section-header">3. イベント内容</h2>
+            <div class="space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="form-label">イベント種別<span class="required">*</span></label>
+                  <select name="eventType" class="form-input" required>
+                    <option value="">選択してください</option>
+                    <option>公認大会</option>
+                    <option>交流会</option>
+                    <option>初心者体験会</option>
+                    <option>観戦会</option>
+                    <option>配信イベント</option>
+                  </select>
+                  <p class="error-message" id="error-eventType"></p>
+                </div>
+                <div>
+                  <label class="form-label">イベントの目的<span class="required">*</span></label>
+                  <select name="purpose" class="form-input" required>
+                    <option value="">選択してください</option>
+                    <option>競技大会</option>
+                    <option>カジュアル対戦</option>
+                    <option>初心者交流</option>
+                    <option>コレクション交流</option>
+                    <option>競馬ファン交流</option>
+                  </select>
+                  <p class="error-message" id="error-purpose"></p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-5">
+                <div>
+                  <label class="form-label">定員<span class="required">*</span></label>
+                  <input type="number" name="capacity" min="1" class="form-input" required />
+                  <p class="error-message" id="error-capacity"></p>
+                </div>
+                <div>
+                  <label class="form-label">参加費（円）<span class="required">*</span></label>
+                  <input type="number" name="fee" min="0" placeholder="無料の場合は0" class="form-input" required />
+                  <p class="error-message" id="error-fee"></p>
+                </div>
+              </div>
+              <div>
+                <label class="form-label">使用フォーマット<span class="required">*</span></label>
+                <select name="gameFormat" class="form-input" required>
+                  <option value="">選択してください</option>
+                  <option>スタンダード</option>
+                  <option>エクストラ</option>
+                  <option>その他</option>
+                </select>
+                <p class="error-message" id="error-gameFormat"></p>
+              </div>
+              <div>
+                <label class="form-label">使用レギュレーション</label>
+                <textarea name="regulation" rows="3" class="form-input resize-none"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section4: PR Info -->
+          <section>
+            <h2 class="section-header">4. 告知情報</h2>
+            <div class="space-y-5">
+              <div>
+                <label class="form-label">告知用タイトル<span class="required">*</span></label>
+                <input type="text" name="prTitle" class="form-input" required />
+                <p class="error-message" id="error-prTitle"></p>
+              </div>
+              <div>
+                <label class="form-label">イベント説明文（100〜300文字目安）<span class="required">*</span></label>
+                <textarea name="description" rows="5" id="description-input" class="form-input resize-none" required></textarea>
+                <p class="mt-1 text-10px text-muted-foreground text-right"><span id="description-count">0</span>文字</p>
+                <p class="error-message" id="error-description"></p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="form-label">告知画像URL（任意）</label>
+                  <input type="url" name="imageUrl" class="form-input" />
+                </div>
+                <div>
+                  <label class="form-label">イベントページURL（任意）</label>
+                  <input type="url" name="eventPageUrl" placeholder="Tonamel、Discord、X投稿、Googleフォーム等" class="form-input" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section5: Past Experience -->
+          <section>
+            <h2 class="section-header">5. 主催者実績（任意）</h2>
+            <div class="space-y-5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="form-label">過去開催回数</label>
+                  <input type="number" name="pastCount" min="0" class="form-input" />
+                </div>
+                <div>
+                  <label class="form-label">過去のイベントURL</label>
+                  <input type="url" name="pastEventUrl" class="form-input" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Section6: Confirmation -->
+          <section>
+            <h2 class="section-header">6. 確認事項</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" name="agree1" class="mt-0.5 accent-foreground shrink-0" required />
+                  <span class="text-sm text-foreground leading-relaxed">Force of the Horseコミュニティガイドラインに同意します</span>
+                </label>
+                <p class="error-message" id="error-agree1"></p>
+              </div>
+              <div>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" name="agree2" class="mt-0.5 accent-foreground shrink-0" required />
+                  <span class="text-sm text-foreground leading-relaxed">ハラスメント行為・差別行為を禁止します</span>
+                </label>
+                <p class="error-message" id="error-agree2"></p>
+              </div>
+              <div>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" name="agree3" class="mt-0.5 accent-foreground shrink-0" required />
+                  <span class="text-sm text-foreground leading-relaxed">開催後にイベントレポートを提出します</span>
+                </label>
+                <p class="error-message" id="error-agree3"></p>
+              </div>
+              <div>
+                <label class="flex items-start gap-3 cursor-pointer group">
+                  <input type="checkbox" name="agree4" class="mt-0.5 accent-foreground shrink-0" required />
+                  <span class="text-sm text-foreground leading-relaxed">イベント情報が公式サイト・公式SNSで紹介される場合があることに同意します</span>
+                </label>
+                <p class="error-message" id="error-agree4"></p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Buttons -->
+          <div class="flex gap-3 pt-2">
+            <button type="submit" class="bg-primary text-primary-foreground text-sm px-6 py-2.5 rounded-md hover:opacity-90 transition-opacity font-medium">
+              申請する
+            </button>
+            <button type="button" onclick="window.location.href='guideline.html'" class="text-sm px-5 py-2.5 rounded-md border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors">
+              キャンセル
+            </button>
+          </div>
+
+          <p class="text-xs text-red-400 hidden" id="form-error">未入力または未同意の項目があります。ご確認ください。</p>
+        </form>
+      </div>
+
+      <!-- Success Page -->
+      <div id="apply-success" class="hidden max-w-5xl mx-auto px-5 py-12">
+        <div class="max-w-md">
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mb-6">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h1 class="text-2xl font-semibold text-foreground mb-3">申請を受け付けました</h1>
+          <p class="text-sm text-muted-foreground leading-relaxed mb-8">
+            Force of the Horse公認イベント申請を受け付けました。内容を確認後、運営事務局よりご連絡いたします。
+          </p>
+          <button onclick="window.location.href='index.html'" class="bg-primary text-primary-foreground text-sm px-5 py-2.5 rounded-md hover:opacity-90 transition-opacity">
+            トップへ戻る
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t mt-16">
+      <div class="max-w-5xl mx-auto px-5 py-8">
+        <p class="text-xs text-muted-foreground">
+          © 2025 Force of the Horse コミュニティ。本サイトは非公式のコミュニティサイトです。
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      menu.classList.toggle('open');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    }
+
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      menu.classList.remove('open');
+      menuIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+    }
+
+    const descInput = document.getElementById('description-input');
+    const descCount = document.getElementById('description-count');
+    if (descInput && descCount) {
+      descInput.addEventListener('input', (e) => {
+        descCount.textContent = e.target.value.length;
+      });
+      descCount.textContent = descInput.value.length;
+    }
+
+    const applyForm = document.getElementById('apply-form');
+    if (applyForm) {
+      applyForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let hasError = false;
+        // Clear errors
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+        // Check required
+        const requiredFields = ['organizerName', 'email', 'eventName', 'eventDate', 'startTime', 'endTime', 'venue', 'eventType', 'purpose', 'capacity', 'fee', 'gameFormat', 'prTitle', 'description'];
+        requiredFields.forEach(name => {
+          const input = applyForm.querySelector(`[name="${name}"]`);
+          if (input && !input.value.trim()) {
+            const errorEl = document.getElementById(`error-${name}`);
+            if (errorEl) errorEl.textContent = 'この項目は必須です';
+            input.classList.add('error');
+            hasError = true;
+          }
+        });
+        const requiredChecks = ['agree1','agree2','agree3','agree4'];
+        requiredChecks.forEach(name => {
+          const input = applyForm.querySelector(`[name="${name}"]`);
+          if (input && !input.checked) {
+            const errorEl = document.getElementById(`error-${name}`);
+            if (errorEl) errorEl.textContent = 'この項目は必須です';
+            hasError = true;
+          }
+        });
+        if (hasError) {
+          document.getElementById('form-error').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('form-error').classList.add('hidden');
+        document.getElementById('apply-form-page').classList.add('hidden');
+        document.getElementById('apply-success').classList.remove('hidden');
+      });
+    }
+  </script>
+</body>
+</html>
