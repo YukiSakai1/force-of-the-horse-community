@@ -623,7 +623,7 @@ main { padding-bottom: 60px; }
 .upcoming-event-list { list-style: none; }
 
 /* ===== Guideline accordion ===== */
-.accordion { max-width: 900px; margin: 0 auto 60px; padding: 0 24px; }
+.accordion { max-width: 1180px; margin: 0 auto 60px; padding: 0 24px; }
 
 .acc-item {
     border: 1px solid var(--border);
@@ -687,7 +687,7 @@ main { padding-bottom: 60px; }
 
 /* ===== Forms (apply / faq post) ===== */
 .form-card {
-    max-width: 780px;
+    max-width: 1180px;
     margin: 0 auto;
     padding: 0 24px 60px;
 }
