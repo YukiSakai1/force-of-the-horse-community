@@ -441,6 +441,8 @@ main { padding-bottom: 60px; }
 
 .breadcrumb a { color: var(--accent-dark); text-decoration: none; }
 .breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb button { color: var(--accent-dark); background: none; border: none; padding: 0; cursor: pointer; text-decoration: none; font-size: inherit; }
+.breadcrumb button:hover { text-decoration: underline; }
 .breadcrumb-sep { margin: 0 8px; }
 
 .page-head {

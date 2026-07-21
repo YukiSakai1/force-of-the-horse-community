@@ -29,6 +29,7 @@
       --muted-foreground: #6b6b68;
       --accent: #5eff00;
       --accent-foreground: #1a1a18;
+      --accent-dark: #a88a4f;
       --destructive: #d4183d;
       --destructive-foreground: #ffffff;
       --border: rgba(26, 26, 24, 0.1);
@@ -94,6 +95,11 @@
     .py-12 {
       padding-top: 3rem;
       padding-bottom: 3rem;
+    }
+
+    .py-6 {
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
     }
 
     .py-8 {
@@ -1061,17 +1067,26 @@
       align-items: center;
       gap: 0.375rem;
       font-size: 0.75rem;
-      color: var(--muted-foreground);
+      color: var(--accent-dark);
       margin-bottom: 2rem;
     }
 
     .breadcrumb button {
-      color: var(--muted-foreground);
+      color: var(--accent-dark);
       transition: color 0.15s;
+    }
+
+    .breadcrumb a {
+      color: var(--accent-dark);
+      text-decoration: none;
     }
 
     .breadcrumb button:hover {
       color: var(--foreground);
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
     }
 
     .breadcrumb .current {
@@ -1127,9 +1142,9 @@
 
     <!-- Main Content -->
     <main>
-      <div class="max-w-5xl mx-auto px-5 py-12">
+      <div class="max-w-5xl mx-auto px-5 py-6">
         <div class="breadcrumb">
-          <span>TOP</span>
+          <a href="index.html">TOP</a>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
@@ -1138,8 +1153,8 @@
         </div>
 
         <header class="mb-10">
-          <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">About</p>
-          <h1 class="text-2xl font-semibold text-foreground mb-3">公認イベント制度について</h1>
+          <p class="text-xs tracking-widest uppercase mb-2" style="color: var(--accent-dark);">About</p>
+          <h1 class="page-title">公認イベント制度について</h1>
         </header>
 
         <div class="max-w-2xl space-y-5 text-sm text-foreground leading-relaxed mb-12">

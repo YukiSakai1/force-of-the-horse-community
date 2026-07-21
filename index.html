@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Community site for card game</title>
   <meta name="description" content="Provides official tournament guidelines, FAQs, and a Q&A platform for Force of the horse card game players to access and share community information." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
@@ -26,6 +27,7 @@
       --muted-foreground: #6b6b68;
       --accent: #5eff00;
       --accent-foreground: #1a1a18;
+      --accent-dark: #a88a4f;
       --destructive: #d4183d;
       --destructive-foreground: #ffffff;
       --border: rgba(26, 26, 24, 0.1);
@@ -1084,12 +1086,12 @@
       align-items: center;
       gap: 0.375rem;
       font-size: 0.75rem;
-      color: var(--muted-foreground);
+      color: var(--accent-dark);
       margin-bottom: 2rem;
     }
 
     .breadcrumb button {
-      color: var(--muted-foreground);
+      color: var(--accent-dark);
       transition: color 0.15s;
     }
 
@@ -1523,7 +1525,7 @@
                 </svg>
               </span>
               <h3 class="text-sm font-medium text-foreground mb-1">FAQ一覧</h3>
-              <p class="text-xs text-muted-foreground leading-relaxed">Vol.1〜5のカードに関するQ&Aを確認できます</p>
+              <p class="text-xs text-muted-foreground leading-relaxed">スターターキット・Vol.01〜04のカードに関するQ&Aを確認できます</p>
             </a>
           </div>
 
@@ -1557,9 +1559,9 @@
                   <div class="flex items-start gap-3">
                     <span class="mt-0.5 shrink-0 inline-block text-10px font-medium px-2 py-0.5 rounded-sm tag-faq">FAQ</span>
                     <div>
-                      <p class="text-xs text-muted-foreground mb-1">2025年5月28日</p>
-                      <h3 class="text-sm font-medium text-foreground mb-1">Vol.5 FAQ を追加しました</h3>
-                      <p class="text-xs text-muted-foreground leading-relaxed">Vol.5「覚醒の蹄」収録カードに関するQ&A 42件を公開しました。</p>
+                      <p class="text-xs text-muted-foreground mb-1">2025年4月15日</p>
+                      <h3 class="text-sm font-medium text-foreground mb-1">スターターキット FAQ を追加しました</h3>
+                      <p class="text-xs text-muted-foreground leading-relaxed">スターターキット収録カードに関するQ&A 11件を公開しました。</p>
                     </div>
                   </div>
                 </div>
@@ -1618,7 +1620,7 @@
       <div id="page-about" class="page">
         <div class="max-w-5xl mx-auto px-5 py-12">
           <div class="breadcrumb">
-            <span>TOP</span>
+            <button onclick="navigateTo('top')">TOP</button>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
@@ -1626,8 +1628,8 @@
           </div>
 
           <header class="mb-10">
-            <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">About</p>
-            <h1 class="text-2xl font-semibold text-foreground mb-3">公認イベント制度について</h1>
+            <p class="text-xs tracking-widest uppercase mb-2" style="color: var(--accent-dark);">About</p>
+            <h1 class="text-2xl font-semibold text-foreground mb-2">公認イベント制度について</h1>
           </header>
 
           <div class="max-w-2xl space-y-5 text-sm text-foreground leading-relaxed mb-12">
@@ -1771,7 +1773,7 @@
       <div id="page-faq-index" class="page">
         <div class="max-w-5xl mx-auto px-5 py-12">
           <div class="breadcrumb">
-            <span>TOP</span>
+            <button onclick="navigateTo('top')">TOP</button>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
@@ -1782,16 +1784,28 @@
             <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">FAQ</p>
             <h1 class="text-2xl font-semibold text-foreground mb-3">よくある質問（FAQ）</h1>
             <p class="text-sm text-muted-foreground">
-              Vol.1〜5に収録されたカードに関するQ&Aをまとめています。<br />
+              スターターキット・Vol.01〜04に収録されたカードに関するQ&Aをまとめています。<br />
               弾を選択してQ&Aをご確認ください。
             </p>
           </header>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <a href="faq-starter.html" class="faq-card">
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">STARTER</p>
+              <h3 class="text-base font-medium text-foreground mb-1">スターターキット</h3>
+              <p class="text-xs text-muted-foreground">11件のQ&A</p>
+              <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <span>詳細を見る</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </div>
+            </a>
+
             <a href="faq-vol1.html" class="faq-card">
-              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.1</p>
-              <h3 class="text-base font-medium text-foreground mb-1">創世の蹄</h3>
-              <p class="text-xs text-muted-foreground">4件のQ&A</p>
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.01</p>
+              <h3 class="text-base font-medium text-foreground mb-1">競馬、新章</h3>
+              <p class="text-xs text-muted-foreground">1件のQ&A</p>
               <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 <span>詳細を見る</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1801,9 +1815,9 @@
             </a>
 
             <a href="faq-vol2.html" class="faq-card">
-              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.2</p>
-              <h3 class="text-base font-medium text-foreground mb-1">嵐の蹄鉄</h3>
-              <p class="text-xs text-muted-foreground">3件のQ&A</p>
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.02</p>
+              <h3 class="text-base font-medium text-foreground mb-1">英雄VS豪傑</h3>
+              <p class="text-xs text-muted-foreground">0件のQ&A</p>
               <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 <span>詳細を見る</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1813,9 +1827,9 @@
             </a>
 
             <a href="faq-vol3.html" class="faq-card">
-              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.3</p>
-              <h3 class="text-base font-medium text-foreground mb-1">黄金の平原</h3>
-              <p class="text-xs text-muted-foreground">3件のQ&A</p>
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.03</p>
+              <h3 class="text-base font-medium text-foreground mb-1">砂の王 降臨</h3>
+              <p class="text-xs text-muted-foreground">0件のQ&A</p>
               <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 <span>詳細を見る</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1825,21 +1839,9 @@
             </a>
 
             <a href="faq-vol4.html" class="faq-card">
-              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.4</p>
-              <h3 class="text-base font-medium text-foreground mb-1">深淵の馬蹄</h3>
-              <p class="text-xs text-muted-foreground">4件のQ&A</p>
-              <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                <span>詳細を見る</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </div>
-            </a>
-
-            <a href="faq-vol5.html" class="faq-card">
-              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.5</p>
-              <h3 class="text-base font-medium text-foreground mb-1">覚醒の蹄</h3>
-              <p class="text-xs text-muted-foreground">5件のQ&A</p>
+              <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.04</p>
+              <h3 class="text-base font-medium text-foreground mb-1">GO FASTER</h3>
+              <p class="text-xs text-muted-foreground">0件のQ&A</p>
               <div class="mt-4 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 <span>詳細を見る</span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1892,7 +1894,7 @@
       <div id="page-guidelines" class="page">
         <div class="max-w-5xl mx-auto px-5 py-12">
           <div class="breadcrumb">
-            <span>TOP</span>
+            <button onclick="navigateTo('top')">TOP</button>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
