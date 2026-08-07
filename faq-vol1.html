@@ -45,21 +45,11 @@
             <a href="faq-vol2.html" class="vol-tab">Vol.02</a>
             <a href="faq-vol3.html" class="vol-tab">Vol.03</a>
             <a href="faq-vol4.html" class="vol-tab">Vol.04</a>
+            <a href="faq-vol5.html" class="vol-tab">Vol.05</a>
         </div>
 
-        <div class="faq-section">
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span class="faq-icon">Q</span>
-                    <span class="faq-question-text">マジックタイムはガード時一度に追加馬として複数枚出すことは可能でしょうか？</span>
-                    <span class="faq-toggle">▼</span>
-                </div>
-                <div class="faq-answer">
-                    <span class="faq-icon">A</span>
-                    <p>ガード時、追加馬としてマジックタイムを出す場合は、同時にマジックタイム1枚までしか出すことはできません。</p>
-                    <span class="answer-date">回答日: 2025年5月10日</span>
-                </div>
-            </div>
+        <div class="faq-section" id="faq-list" data-vol="vol1">
+            <p class="faq-empty">読み込み中...</p>
         </div>
 
         <hr class="divider">
@@ -67,26 +57,31 @@
         <div class="form-card">
             <div class="form-section">
                 <h2>このVolについて質問する</h2>
-                <form>
+                <form class="vol-question-form">
+                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                        <label for="hp_verify">このフィールドは空欄のままにしてください</label>
+                        <input type="text" id="hp_verify" name="hp_verify" tabindex="-1" autocomplete="off">
+                    </div>
                     <div class="form-field">
                         <label>対象弾</label>
-                        <select>
+                        <select name="vol">
                             <option value="starter">スターターキット</option>
                             <option value="vol1" selected>ブースターパックVol.01 『競馬、新章』</option>
                             <option value="vol2">ブースターパックVol.02 『英雄VS豪傑』</option>
                             <option value="vol3">ブースターパックVol.03 『砂の王 降臨』</option>
                             <option value="vol4">ブースターパックVol.04 『GO FASTER』</option>
+                            <option value="vol5">ブースターパックVol.05 『覚醒の蹄』</option>
                         </select>
                     </div>
                     <div class="form-field">
                         <label>カード名 (任意)</label>
-                        <input type="text" placeholder="例: マジックタイム">
+                        <input type="text" name="card" placeholder="例: マジックタイム">
                     </div>
                     <div class="form-field">
                         <label>質問内容</label>
-                        <textarea rows="5" placeholder="カードのルールや裁定について質問を入力してください"></textarea>
+                        <textarea rows="5" name="content" placeholder="カードのルールや裁定について質問を入力してください"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">投稿内容を確認する</button>
+                    <button type="submit" class="btn btn-primary btn-block">投稿する</button>
                 </form>
             </div>
 
@@ -105,7 +100,7 @@
 
     <footer>
         <div class="footer-inner">
-            <p>© 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。</p>
+            <p><a href="privacy.html">プライバシーポリシー</a> ・ © 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。</p>
         </div>
     </footer>
 

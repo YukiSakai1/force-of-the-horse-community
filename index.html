@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Community site for card game</title>
   <meta name="description" content="Provides official tournament guidelines, FAQs, and a Q&A platform for Force of the horse card game players to access and share community information." />
-  <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -249,6 +248,10 @@
 
     .grid-cols-3 {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .grid-cols-5 {
@@ -845,6 +848,10 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
+      .lg\:grid-cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
       .lg\:grid-cols-5 {
         grid-template-columns: repeat(5, minmax(0, 1fr));
       }
@@ -855,6 +862,10 @@
 
       .lg\:col-span-3 {
         grid-column: span 3 / span 3;
+      }
+
+      .lg\:col-span-4 {
+        grid-column: span 4 / span 4;
       }
     }
 
@@ -933,54 +944,59 @@
       opacity: 0.2;
     }
 
-    /* Calendar styles */
-    .calendar-table {
-      width: 100%;
-      border-collapse: collapse;
+    /* Calendar styles (event-calendar-page.htmlと同じグリッド設計) */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
     }
 
-    .calendar-table th {
-      font-size: 0.625rem;
-      font-weight: var(--font-weight-medium);
-      padding-bottom: 0.5rem;
+    .calendar-day-name {
       text-align: center;
-    }
-
-    .calendar-table td {
-      vertical-align: top;
-      padding: 0.5rem 0.25rem;
-      text-align: center;
-    }
-
-    .calendar-table td.compact {
-      padding: 0.375rem 0.125rem;
-    }
-
-    .calendar-table .sunday {
-      color: #f87171;
-    }
-
-    .calendar-table .saturday {
-      color: #60a5fa;
-    }
-
-    .calendar-table .is-today {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.5rem;
-      height: 1.5rem;
-      border-radius: 50%;
-      background-color: #c8a96e;
-      color: #ffffff !important;
+      font-size: 0.6875rem;
       font-weight: 700;
+      color: var(--muted-foreground);
+      padding: 6px 2px;
     }
+
+    .calendar-day-name.sun { color: #f87171; }
+    .calendar-day-name.sat { color: #60a5fa; }
+
+    .calendar-day {
+      min-height: 54px;
+      text-align: center;
+      font-size: 0.75rem;
+      padding: 6px 2px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      overflow: hidden;
+    }
+
+    /* TOPページのミニカレンダーはやや詰め、フルカレンダー(未使用ページ)は広めに -- event-calendar-page.htmlと同じ比率 */
+    .calendar-grid.compact .calendar-day { min-height: 62px; padding: 5px 3px; gap: 4px; }
+    .calendar-grid:not(.compact) .calendar-day { min-height: 64px; font-size: 0.875rem; }
+
+    .calendar-day.empty { background: transparent; }
+
+    .calendar-day .day-number {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .calendar-day.sun .day-number { color: #f87171; }
+    .calendar-day.sat .day-number { color: #60a5fa; }
 
     .event-tag {
-      font-size: 0.5625rem;
-      line-height: 1.25;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.625rem;
+      line-height: 1.4;
       border-radius: 0.125rem;
-      padding: 0.125rem 0.25rem;
+      padding: 0.2rem 0.35rem;
       margin-bottom: 0.125rem;
       text-align: left;
       overflow: hidden;
@@ -1130,10 +1146,13 @@
     }
 
     .event-tag {
-      font-size: 0.5625rem;
-      line-height: 1.25;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.625rem;
+      line-height: 1.4;
       border-radius: 0.125rem;
-      padding: 0.125rem 0.375rem;
+      padding: 0.2rem 0.35rem;
       margin-bottom: 0.125rem;
       text-align: left;
       overflow: hidden;
@@ -1369,13 +1388,9 @@
       padding: 0;
     }
 
-    /* -- Calendar table row separators + weekend colors -- */
-    .calendar-table th,
-    .calendar-table td {
-      border-bottom: 1px solid var(--border);
-    }
-    .calendar-table .sunday { color: var(--day-sun); }
-    .calendar-table .saturday { color: var(--day-sat); }
+    /* -- Calendar weekend colors (final, uses the --day-sun/--day-sat tokens) -- */
+    .calendar-day-name.sun, .calendar-day.sun .day-number { color: var(--day-sun); }
+    .calendar-day-name.sat, .calendar-day.sat .day-number { color: var(--day-sat); }
 
     /* -- News/announcement tags: black chip, colored left border -- */
     .tag-announcement,
@@ -1395,6 +1410,13 @@
     /* -- Event tags (calendar day chips + event list): flat, bottom border -- */
     .event-tag {
       border-radius: 0;
+      display: -webkit-box;
+      white-space: normal;
+      word-break: break-word;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .event-tag.area {
       background-color: #ffffff;
@@ -1414,6 +1436,179 @@
       border: none;
     }
 
+    /* -- 2件: セルを分割してカテゴリ色+「種別 - 開催場所」 -- */
+    .day-split {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 2px;
+    }
+    .day-split-half {
+      flex: 1;
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+      padding: 1px 4px;
+      border-radius: 3px;
+      box-sizing: border-box;
+      text-align: left;
+      overflow: hidden;
+      display: -webkit-box;
+      white-space: normal;
+      word-break: break-word;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      text-overflow: ellipsis;
+    }
+    .day-split-half.area { background-color: var(--tag-area); }
+    .day-split-half.meetup { background-color: var(--tag-social); }
+    .day-split-half.main { background-color: var(--color-black); }
+
+    /* -- 3件以上: カテゴリ色のドット+件数のみ -- */
+    .day-dots { display: flex; gap: 3px; justify-content: center; margin-top: 1px; }
+    .day-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+    .day-dot.area { background-color: var(--tag-area); }
+    .day-dot.meetup { background-color: var(--tag-social); }
+    .day-dot.main { background-color: var(--color-black); }
+    .day-count { font-size: 9.5px; color: var(--muted-foreground); display: block; margin-top: 1px; }
+
+    /* -- 日付クリックで表示するその日のイベント一覧ポップアップ -- */
+    .day-popup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(20, 16, 12, .45);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .day-popup-overlay.open { display: flex; }
+    .day-popup-box {
+      background: var(--card);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 380px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, .28);
+    }
+    .day-popup-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 15px;
+      position: sticky;
+      top: 0;
+      background: var(--card);
+    }
+    .day-popup-close {
+      border: none;
+      background: none;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--muted-foreground);
+    }
+    .day-popup-list {
+      padding: 10px 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .day-popup-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      width: 100%;
+      text-align: left;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: inherit;
+    }
+    .event-tag-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 2px;
+      margin-bottom: 2px;
+      background-color: #ffffff;
+      color: var(--foreground);
+      border: none;
+    }
+    .event-tag-pill.area { border-bottom: 2px solid var(--tag-area); }
+    .event-tag-pill.meetup { border-bottom: 2px solid var(--tag-social); }
+    .event-tag-pill.main { border-bottom: 2px solid var(--color-black); }
+    .dp-title { font-size: 14.5px; font-weight: 700; color: var(--foreground); }
+    .dp-row { font-size: 12.5px; color: var(--muted-foreground); }
+
+
+    /* -- 「◯月のイベント」アコーディオン一覧 -- */
+    .event-acc-item + .event-acc-item { border-top: 1px solid var(--border); }
+    .event-acc-head {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 2px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+    }
+    .event-acc-head .eah-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .event-acc-head .eah-date { font-size: 11.5px; color: var(--muted-foreground); }
+    .event-acc-head .eah-title { font-size: 13.5px; font-weight: 500; color: var(--foreground); }
+    .event-acc-head svg { flex-shrink: 0; color: var(--muted-foreground); transition: transform .15s ease; }
+    .event-acc-item.open .event-acc-head svg { transform: rotate(180deg); }
+    .event-detail-list {
+      display: none;
+      grid-template-columns: 78px 1fr;
+      row-gap: 7px;
+      column-gap: 10px;
+      padding: 0 2px 16px;
+      font-size: 12.5px;
+    }
+    .event-acc-item.open .event-detail-list { display: grid; }
+    .event-detail-list dt { color: var(--muted-foreground); font-weight: 600; }
+    .event-detail-list dd { color: var(--foreground); }
+    .no-events { font-size: 13px; color: var(--muted-foreground); padding: 10px 2px; }
+
+    /* -- 今日の日付: 今日であることが一目でわかるよう塗りつぶし円+ラベルで強調 -- */
+    /* event-calendar-page.html（styles.css）と同じ薄い金色の背景+金色の丸に統一 */
+    .calendar-day.is-today {
+      background-color: rgba(200, 169, 110, .1);
+      border-radius: 6px;
+    }
+    .day-num-today {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background-color: var(--accent-dark);
+      color: #ffffff !important;
+      border-radius: 50%;
+      font-weight: 700;
+    }
+    .today-label {
+      display: block;
+      font-size: 7px;
+      font-weight: 700;
+      color: var(--accent-dark);
+      margin-top: 1px;
+    }
+
     /* -- Footer: black bar -- */
     footer.border-t {
       background-color: var(--color-black);
@@ -1426,6 +1621,17 @@
     a {
       text-decoration: none;
     }
+
+    /* -- Calendar day: クリックでその日のイベント一覧ポップアップを表示 -- */
+    .calendar-day.has-events {
+      cursor: pointer;
+      transition: background-color .15s ease;
+    }
+    .calendar-day.has-events:hover {
+      background-color: var(--secondary, rgba(0,0,0,.035));
+    }
+
+
   </style>
 </head>
 <body>
@@ -1477,7 +1683,7 @@
             <h1 class="hero-title text-primary-foreground">
               Force of the Horse
             </h1>
-            <p class="hero-subtitle text-primary-foreground">Community Site</p>
+            <p class="hero-subtitle text-primary-foreground">Players Portal</p>
             <p class="hero-lead text-primary-foreground">
               公認イベントガイドライン・FAQ・最新情報
             </p>
@@ -1525,7 +1731,7 @@
                 </svg>
               </span>
               <h3 class="text-sm font-medium text-foreground mb-1">FAQ一覧</h3>
-              <p class="text-xs text-muted-foreground leading-relaxed">スターターキット・Vol.01〜04のカードに関するQ&Aを確認できます</p>
+              <p class="text-xs text-muted-foreground leading-relaxed">スターターキット・ブースターパック収録のカードに関するQ&Aを確認できます</p>
             </a>
           </div>
 
@@ -1534,7 +1740,7 @@
             <!-- Announcements -->
             <section class="lg:col-span-3">
               <h2 class="text-base font-medium mb-5">お知らせ・最新情報</h2>
-              <div class="border-t">
+              <div class="border-t" id="announcement-list">
                 <div class="py-5 border-b">
                   <div class="flex items-start gap-3">
                     <span class="mt-0.5 shrink-0 inline-block text-10px font-medium px-3 py-0.5 rounded-sm tag-announcement" style="font-size: 0.5625rem;">お知らせ</span>
@@ -1581,7 +1787,7 @@
             <!-- Event calendar -->
             <section class="lg:col-span-2">
               <div class="flex items-center justify-between mb-1">
-                <h2 class="text-base font-medium">公認大会イベントカレンダー</h2>
+                <h2 class="text-base font-medium">イベントカレンダー</h2>
                 <a href="event-calendar-page.html" class="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
                   一覧
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1608,8 +1814,6 @@
                 </div>
                 <div id="mini-calendar"></div>
               </div>
-
-              <div id="mini-month-events" class="mt-4 space-y-0 border-t"></div>
             </section>
           </div>
         </div>
@@ -1734,7 +1938,7 @@
             </span>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <div class="lg:col-span-2">
               <div class="bg-card border rounded-lg p-6">
                 <div class="flex items-center justify-between mb-4">
@@ -1759,11 +1963,16 @@
             <div>
               <h2 class="text-sm font-medium text-foreground mb-4" id="full-month-title">2025年7月のイベント</h2>
               <div id="full-month-events" class="border-t divide-y"></div>
+            </div>
 
-              <div class="mt-8">
-                <h2 class="text-sm font-medium text-foreground mb-4">今後の全イベント</h2>
-                <div id="all-events" class="border-t divide-y"></div>
-              </div>
+            <div>
+              <h2 class="text-sm font-medium text-muted-foreground mb-4" id="full-next-month-title">来月のイベント</h2>
+              <div id="full-next-month-events" class="border-t divide-y"></div>
+            </div>
+
+            <div class="lg:col-span-4">
+              <h2 class="text-sm font-medium text-foreground mb-4">今後の全イベント</h2>
+              <div id="all-events" class="border-t divide-y"></div>
             </div>
           </div>
         </div>
@@ -2208,11 +2417,22 @@
       </div>
     </main>
 
+    <!-- 日付クリックで開くその日のイベント一覧ポップアップ（event-calendar-page.htmlと同じ設計） -->
+    <div id="day-popup-overlay" class="day-popup-overlay">
+      <div class="day-popup-box">
+        <div class="day-popup-head">
+          <span id="day-popup-date"></span>
+          <button type="button" id="day-popup-close" class="day-popup-close" aria-label="閉じる">×</button>
+        </div>
+        <div id="day-popup-list" class="day-popup-list"></div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="border-t">
       <div class="max-w-5xl mx-auto px-5 py-8">
         <p class="text-xs text-muted-foreground">
-          © 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。
+          ©FRAMELUNCH.INC All rights reserved.
         </p>
       </div>
     </footer>
@@ -2221,10 +2441,10 @@
   <script>
     // Data
     const VOL_NAMES = {
-      1: "創世の蹄",
-      2: "嵐の蹄鉄",
-      3: "黄金の平原",
-      4: "深淵の馬蹄",
+      1: "競馬、新章",
+      2: "英雄VS豪傑",
+      3: "砂の王 降臨",
+      4: "GO FASTER",
       5: "覚醒の蹄",
     };
 
@@ -2260,17 +2480,93 @@
       ],
     };
 
-    const EVENTS = [
-      { date: "2025-07-06", title: "エリア予選 — 東京", location: "東京都千代田区", type: "エリア予選" },
-      { date: "2025-07-13", title: "エリア予選 — 大阪", location: "大阪府大阪市", type: "エリア予選" },
-      { date: "2025-07-20", title: "エリア予選 — 名古屋", location: "愛知県名古屋市", type: "エリア予選" },
-      { date: "2025-07-27", title: "公認交流会 — 仙台", location: "宮城県仙台市", type: "交流会" },
-      { date: "2025-08-03", title: "エリア予選 — 福岡", location: "福岡県福岡市", type: "エリア予選" },
-      { date: "2025-08-10", title: "エリア予選 — 広島", location: "広島県広島市", type: "エリア予選" },
-      { date: "2025-08-17", title: "エリア予選 — 札幌", location: "北海道札幌市", type: "エリア予選" },
-      { date: "2025-08-24", title: "公認交流会 — 金沢", location: "石川県金沢市", type: "交流会" },
-      { date: "2025-09-07", title: "全国選手権 本戦", location: "東京都港区（ビッグサイト）", type: "本戦" },
+    // イベントデータを開催日の固定値ではなく、当日基準で動的に生成する。
+    // ロジックはevent-calendar-page.html（script.js）と同じ「毎週日曜が開催日、
+    // その月最後の日曜だけ交流会」というルールに揃えてあるので、内容が古くなることはない。
+    // =====================================================================
+    // ★★★ 動作確認用の仮データ ★★★
+    // script.js側（event-calendar-page.html等）と全く同じ仮データ・同じON/OFFフラグに
+    // 揃えてあります。ここが噛み合っていないと、トップページとイベントカレンダーページで
+    // 表示される予定がズレて見える原因になります。
+    // スプレッドシート側に本物の承認済みイベントが入ったら、この DEMO_MODE を
+    // false に変更してください（script.js側のDEMO_MODEと必ず同時に変更すること）。
+    // =====================================================================
+    const DEMO_MODE = true;
+
+    // 開催場所（施設名+住所の自由入力）から都道府県名だけを取り出すためのヘルパー。
+    // script.js側と同じロジック。見つからない場合は空文字を返す。
+    const PREFECTURES = [
+      '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+      '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+      '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県',
+      '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県',
+      '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+      '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県',
+      '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'
     ];
+    function extractPrefecture(location) {
+      if (!location) return '';
+      const found = PREFECTURES.find(pref => location.includes(pref));
+      return found || '';
+    }
+
+    function buildDemoEvents() {
+      const today = new Date();
+      const toISO = (d) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      };
+      const plusDays = (n) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() + n);
+        return d;
+      };
+
+      return [
+        // 今日: 1件（今日の日付が枠で囲まれることも確認できます）
+        {
+          date: toISO(today), type: '公式大会', title: '全国選手権 東京予選',
+          location: '東京都・秋葉原イベントホール', time: '10:00〜18:00',
+          fee: '2000', capacity: '32', organizer: 'FOTH運営事務局', contact: '@foth_official'
+        },
+        // 今日+3日: 2件（セル分割表示の確認用）
+        {
+          date: toISO(plusDays(3)), type: '公認イベント', title: '交流会 大阪',
+          location: '大阪府大阪市・なんばカードショップ', time: '13:00〜17:00',
+          fee: '500', capacity: '16', organizer: 'なんばカードショップ', contact: '@namba_cardshop'
+        },
+        {
+          date: toISO(plusDays(3)), type: 'ショップイベント', title: '新弾発売記念大会',
+          location: '大阪府大阪市・梅田ホビーステーション', time: '11:00〜15:00',
+          fee: '1000', capacity: '24', organizer: 'ホビーステーション梅田店', contact: '@hobby_umeda'
+        },
+        // 今日+7日: 3件以上（ドット+件数表示の確認用）
+        {
+          date: toISO(plusDays(7)), type: '公式大会', title: '全国選手権 名古屋予選',
+          location: '愛知県名古屋市・栄イベントスペース', time: '10:00〜18:00',
+          fee: '2000', capacity: '32', organizer: 'FOTH運営事務局', contact: '@foth_official'
+        },
+        {
+          date: toISO(plusDays(7)), type: '公認イベント', title: '初心者体験会',
+          location: '愛知県名古屋市・大須カードスタジオ', time: '13:00〜16:00',
+          fee: '無料', capacity: '10', organizer: '大須カードスタジオ', contact: '@osu_cardstudio'
+        },
+        {
+          date: toISO(plusDays(7)), type: 'ショップイベント', title: '週末ミニ大会',
+          location: '愛知県名古屋市・金山ホビーショップ', time: '19:00〜21:00',
+          fee: '300', capacity: '12', organizer: '金山ホビーショップ', contact: '@kanayama_hobby'
+        },
+        // 来月分も1件用意（月送りの動作確認用）
+        {
+          date: toISO(plusDays(28)), type: '公認イベント', title: '交流会 札幌',
+          location: '北海道札幌市・すすきのゲームカフェ', time: '14:00〜18:00',
+          fee: '800', capacity: '20', organizer: 'すすきのゲームカフェ', contact: '@sapporo_gamecafe'
+        }
+      ];
+    }
+    const EVENTS = buildDemoEvents();
 
     const GUIDELINES = [
       {
@@ -2508,6 +2804,10 @@
     let miniCalMonth = __today.getMonth() + 1;
     let fullCalYear = __today.getFullYear();
     let fullCalMonth = __today.getMonth() + 1;
+    // 「◯月のイベント」一覧は、カレンダー本体の月送りとは独立して動かせるように
+    // 専用のstateを持たせる（event-calendar-page.htmlと同じ設計）。
+    let miniEventsYear = __today.getFullYear();
+    let miniEventsMonth = __today.getMonth() + 1;
 
     // Navigation
     function navigateTo(page, param = null) {
@@ -2544,6 +2844,7 @@
         renderGuidelines();
       } else if (page === 'top') {
         renderMiniCalendar();
+        renderMiniMonthEvents();
       }
     }
 
@@ -2588,91 +2889,143 @@
       return EVENTS.filter((e) => e.date === iso);
     }
 
+    // ---------- クリックで開くその日のイベント一覧ポップアップ（event-calendar-page.htmlと同じ設計） ----------
+    let dayPopupBound = false;
+    let dayPopupOverlay = null;
+    let dayPopupDateEl = null;
+    let dayPopupListEl = null;
+
+    function ensureDayPopupBound() {
+      if (dayPopupBound) return;
+      dayPopupOverlay = document.getElementById('day-popup-overlay');
+      if (!dayPopupOverlay) return;
+      dayPopupDateEl = document.getElementById('day-popup-date');
+      dayPopupListEl = document.getElementById('day-popup-list');
+      const closeBtn = document.getElementById('day-popup-close');
+      if (closeBtn) closeBtn.addEventListener('click', hideDayPopupNow);
+      // 背景（オーバーレイの余白部分）をクリックしたら閉じる
+      dayPopupOverlay.addEventListener('click', (e) => {
+        if (e.target === dayPopupOverlay) hideDayPopupNow();
+      });
+      dayPopupBound = true;
+    }
+
+    function hideDayPopupNow() {
+      if (dayPopupOverlay) dayPopupOverlay.classList.remove('open');
+    }
+
+    function showDayPopupForCell(year, month, day) {
+      ensureDayPopupBound();
+      if (!dayPopupOverlay) return;
+      const evs = eventsOnDate(year, month, day);
+      if (!evs.length) return;
+
+      dayPopupDateEl.textContent = `${year}年${month}月${day}日`;
+      dayPopupListEl.innerHTML = evs.map(ev => {
+        const cls = getEventTypeClass(ev.type).replace('event-tag ', '');
+        return `
+          <div class="day-popup-card">
+            <span class="event-tag-pill ${cls}">${ev.type}</span>
+            <span class="dp-title">${ev.title}</span>
+            <span class="dp-row">📍 ${ev.location || ''}</span>
+            <span class="dp-row">🕒 ${ev.time || ''}</span>
+          </div>`;
+      }).join('');
+
+      dayPopupOverlay.classList.add('open');
+    }
+
+    function bindCalendarPopupDelegation(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container || container.dataset.popupBound) return;
+      container.dataset.popupBound = '1';
+
+      container.addEventListener('click', (e) => {
+        const td = e.target.closest('.calendar-day.has-events');
+        if (!td) return;
+        const y = Number(td.dataset.year), m = Number(td.dataset.month), d = Number(td.dataset.day);
+        showDayPopupForCell(y, m, d);
+      });
+    }
+
     function getEventTypeClass(type) {
       switch (type) {
-        case "本戦": return "event-tag main";
-        case "交流会": return "event-tag meetup";
-        default: return "event-tag area";
+        case "公式大会": return "event-tag main";
+        case "ショップイベント": return "event-tag meetup";
+        default: return "event-tag area"; // 公認イベント
       }
+    }
+
+    function isTodayDate(year, month, day) {
+      const t = new Date();
+      return year === t.getFullYear() && month === t.getMonth() + 1 && day === t.getDate();
     }
 
     function renderCalendar(year, month, containerId, compact = false) {
       const cells = buildCalendarGrid(year, month);
       const DOW = ["日", "月", "火", "水", "木", "金", "土"];
-      const weeks = [];
-      for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
-      const __now = new Date();
-      const isCurrentMonth = year === __now.getFullYear() && month === (__now.getMonth() + 1);
-      const todayDate = __now.getDate();
-
-      let html = '<table class="calendar-table">';
-      html += '<thead><tr class="border-b">';
+      let html = '';
       DOW.forEach((d, i) => {
-        const colorClass = i === 0 ? 'sunday' : i === 6 ? 'saturday' : '';
-        html += `<th class="${colorClass}">${d}</th>`;
-      });
-      html += '</tr></thead><tbody>';
-
-      weeks.forEach((week) => {
-        html += '<tr class="border-b last:border-0">';
-        week.forEach((day, di) => {
-          const events = day ? eventsOnDate(year, month, day) : [];
-          const isSun = di === 0;
-          const isSat = di === 6;
-          const colorClass = isSun ? 'sunday' : isSat ? 'saturday' : '';
-          const paddingClass = compact ? 'compact' : '';
-          const isToday = isCurrentMonth && day === todayDate;
-
-          html += `<td class="${paddingClass}">`;
-          if (day !== null) {
-            html += `<span class="text-xs font-medium block mb-1 ${colorClass}${isToday ? ' is-today' : ''}">${day}</span>`;
-            events.forEach(ev => {
-              html += `<span class="${getEventTypeClass(ev.type)}" title="${ev.title}">${compact ? ev.type : ev.title}</span>`;
-            });
-          }
-          html += '</td>';
-        });
-        html += '</tr>';
+        const wdClass = i === 0 ? ' sun' : i === 6 ? ' sat' : '';
+        html += `<div class="calendar-day-name${wdClass}">${d}</div>`;
       });
 
-      html += '</tbody></table>';
+      cells.forEach((day, i) => {
+        if (day === null) {
+          html += '<div class="calendar-day empty"></div>';
+          return;
+        }
+        const di = i % 7;
+        const isSun = di === 0;
+        const isSat = di === 6;
+        const events = eventsOnDate(year, month, day);
+        const todayCell = isTodayDate(year, month, day);
+
+        const cellClass = 'calendar-day' +
+          (isSun ? ' sun' : '') + (isSat ? ' sat' : '') +
+          (events.length ? ' event-day has-events' : '') +
+          (todayCell ? ' is-today' : '');
+        const cellData = events.length ? ` data-year="${year}" data-month="${month}" data-day="${day}"` : '';
+
+        html += `<div class="${cellClass}"${cellData}>`;
+        html += `<span class="day-number${todayCell ? ' day-num-today' : ''}">${day}</span>`;
+        // 1件: 従来通り色付きの帯にイベント名を表示。
+        // 2件: セルを分割し、それぞれカテゴリ色の帯に「イベント名」を表示
+        //      （event-calendar-page.htmlと同じく、日付の後の情報＝ev.titleを使う。収まらない分は…で省略）。
+        // 3件以上: 内訳が伝わるよう、種別ごとの色付きドット+件数で表示。
+        if (events.length === 1) {
+          const cls = getEventTypeClass(events[0].type).replace('event-tag ', '');
+          html += `<span class="event-tag ${cls}">${events[0].title}</span>`;
+        } else if (events.length === 2) {
+          html += '<div class="day-split">';
+          events.forEach(ev => {
+            const cls = getEventTypeClass(ev.type).replace('event-tag ', '');
+            const full = ev.location ? `${ev.type} - ${ev.location}` : ev.type;
+            html += `<span class="day-split-half ${cls}" title="${full}: ${ev.title}">${ev.title}</span>`;
+          });
+          html += '</div>';
+        } else if (events.length >= 3) {
+          html += '<div class="day-dots">';
+          events.forEach(ev => {
+            const cls = getEventTypeClass(ev.type).replace('event-tag ', '');
+            html += `<span class="day-dot ${cls}" title="${ev.type}: ${ev.title}"></span>`;
+          });
+          html += '</div>';
+          html += `<span class="day-count">${events.length}件</span>`;
+        }
+        if (todayCell) html += '<span class="today-label">本日</span>';
+        html += '</div>';
+      });
+
+      document.getElementById(containerId).className = 'calendar-grid' + (compact ? ' compact' : '');
       document.getElementById(containerId).innerHTML = html;
     }
 
     function renderMiniCalendar() {
       renderCalendar(miniCalYear, miniCalMonth, 'mini-calendar', true);
       document.getElementById('mini-calendar-title').textContent = `${miniCalYear}年${miniCalMonth}月`;
-      renderMiniMonthEvents();
-    }
-
-    function renderMiniMonthEvents() {
-      const monthEvents = EVENTS.filter(e => {
-        const [y, m] = e.date.split("-").map(Number);
-        return y === miniCalYear && m === miniCalMonth;
-      });
-
-      const container = document.getElementById('mini-month-events');
-      if (monthEvents.length === 0) {
-        container.innerHTML = '<p class="mt-4 text-xs text-muted-foreground">この月の予定はありません。</p>';
-        return;
-      }
-
-      let html = '<div class="mt-4 space-y-0 border-t">';
-      monthEvents.forEach(ev => {
-        html += `
-          <div class="py-3 border-b flex items-start gap-3">
-            <span class="mt-0.5 shrink-0 text-10px px-1.5 py-0.5 rounded ${getEventTypeClass(ev.type)}">${ev.type}</span>
-            <div>
-              <p class="text-xs text-muted-foreground">${formatDate(ev.date)}</p>
-              <p class="text-sm font-medium text-foreground">${ev.title}</p>
-              <p class="text-xs text-muted-foreground">${ev.location}</p>
-            </div>
-          </div>
-        `;
-      });
-      html += '</div>';
-      container.innerHTML = html;
+      bindCalendarPopupDelegation('mini-calendar');
     }
 
     function prevMiniMonth() {
@@ -2695,21 +3048,88 @@
       renderMiniCalendar();
     }
 
+    // ---------- 「◯月のイベント」アコーディオン一覧 (event-calendar-page.htmlのmonth-colと同じ内容) ----------
+    // カレンダー本体の月送りとは独立して動く（矢印は「次月へ」専用）。
+    function renderMiniMonthEvents() {
+      const titleEl = document.getElementById('mini-month-events-title');
+      if (titleEl) titleEl.textContent = `${miniEventsYear}年${miniEventsMonth}月のイベント`;
+
+      const monthEvents = EVENTS
+        .filter(e => {
+          const [y, m] = e.date.split('-').map(Number);
+          return y === miniEventsYear && m === miniEventsMonth;
+        })
+        .sort((a, b) => a.date.localeCompare(b.date));
+
+      const container = document.getElementById('mini-month-events');
+      if (!container) return;
+
+      if (monthEvents.length === 0) {
+        container.innerHTML = '<p class="no-events">この月に開催予定のイベントはありません</p>';
+        return;
+      }
+
+      container.innerHTML = monthEvents.map((ev, i) => {
+        const rows = [
+          ['開催日時', `${formatDate(ev.date)}${ev.time ? ' ' + ev.time : ''}`],
+          ['タイトル', ev.title]
+        ];
+        if (ev.location) rows.push(['開催場所', ev.location]);
+        if (ev.fee) rows.push(['参加費', ev.fee + '円']);
+        if (ev.capacity) rows.push(['募集人数', ev.capacity + '名']);
+        if (ev.organizer) rows.push(['主催者名', ev.organizer]);
+        if (ev.contact) rows.push(['問い合わせ先', ev.contact]);
+
+        return `
+          <div class="event-acc-item" data-index="${i}">
+            <button type="button" class="event-acc-head" onclick="toggleMiniEventItem(${i})">
+              <span class="eah-left">
+                <span class="${getEventTypeClass(ev.type)}" style="display:inline-block;">${ev.type}</span>
+                <span class="eah-date">${formatDate(ev.date)}</span>
+                <span class="eah-title">${ev.title}</span>
+              </span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <dl class="event-detail-list">
+              ${rows.map(([label, value]) => `<dt>${label}</dt><dd>${value}</dd>`).join('')}
+            </dl>
+          </div>`;
+      }).join('');
+    }
+
+    function toggleMiniEventItem(i) {
+      const item = document.querySelector(`#mini-month-events .event-acc-item[data-index="${i}"]`);
+      if (item) item.classList.toggle('open');
+    }
+
+    function nextMiniMonthEvents() {
+      if (miniEventsMonth === 12) {
+        miniEventsYear++;
+        miniEventsMonth = 1;
+      } else {
+        miniEventsMonth++;
+      }
+      renderMiniMonthEvents();
+    }
+
     function renderFullCalendar() {
       renderCalendar(fullCalYear, fullCalMonth, 'full-calendar', false);
       document.getElementById('full-calendar-title').textContent = `${fullCalYear}年${fullCalMonth}月`;
+      bindCalendarPopupDelegation('full-calendar');
       renderFullMonthEvents();
+      renderFullNextMonthEvents();
     }
 
-    function renderFullMonthEvents() {
+    function renderFullEventColumn(containerId, headingId, year, month, headingText) {
       const monthEvents = EVENTS.filter(e => {
         const [y, m] = e.date.split("-").map(Number);
-        return y === fullCalYear && m === fullCalMonth;
+        return y === year && m === month;
       });
 
-      document.getElementById('full-month-title').textContent = `${fullCalYear}年${fullCalMonth}月のイベント`;
-      const container = document.getElementById('full-month-events');
-      
+      const headingEl = document.getElementById(headingId);
+      if (headingEl) headingEl.textContent = headingText;
+      const container = document.getElementById(containerId);
+
       if (monthEvents.length === 0) {
         container.innerHTML = '<p class="text-xs text-muted-foreground">この月の予定はありません。</p>';
         return;
@@ -2730,6 +3150,16 @@
       });
       html += '</div>';
       container.innerHTML = html;
+    }
+
+    function renderFullMonthEvents() {
+      renderFullEventColumn('full-month-events', 'full-month-title', fullCalYear, fullCalMonth, `${fullCalYear}年${fullCalMonth}月のイベント`);
+    }
+
+    function renderFullNextMonthEvents() {
+      let ny = fullCalYear, nm = fullCalMonth + 1;
+      if (nm > 12) { nm = 1; ny++; }
+      renderFullEventColumn('full-next-month-events', 'full-next-month-title', ny, nm, `${ny}年${nm}月のイベント（来月）`);
     }
 
     function renderAllEvents() {
@@ -3072,10 +3502,89 @@
       }
     }
 
+    // このindex.htmlはscript.jsを読み込んでいない完全に独立したファイルなので、
+    // 実データ取得も専用に用意する（他ページのscript.jsのfetchPublicDataと処理内容は同じ）。
+    const GAS_WEB_APP_URL_FOR_TOP_PAGE = 'https://script.google.com/macros/s/AKfycbxa6-eG29iGiITzdjtJZ8rn-slapCmFZz-7EVvcgLadhe69zMkDjVqey0Zzh33IvFPi/exec';
+
+    function escapeHtmlTop(str) {
+      return String(str === undefined || str === null ? '' : str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function tagClassForTop(tag) {
+      if (tag === 'イベント') return 'tag-event';
+      if (tag === 'FAQ') return 'tag-faq';
+      return 'tag-announcement';
+    }
+
+    // お知らせ一覧を実データで描画する。取得件数が0件、または取得自体に失敗した場合は
+    // 元々ある（今表示されている）お知らせ例をそのまま残し、何も上書きしない。
+    function renderRealAnnouncements(list) {
+      if (!list || list.length === 0) return;
+      const container = document.getElementById('announcement-list');
+      if (!container) return;
+      container.innerHTML = list.map(a => `
+        <div class="py-5 border-b">
+          <div class="flex items-start gap-3">
+            <span class="mt-0.5 shrink-0 inline-block text-10px font-medium px-3 py-0.5 rounded-sm ${tagClassForTop(a.tag)}" style="font-size: 0.5625rem;">${escapeHtmlTop(a.tag)}</span>
+            <div>
+              <p class="text-xs text-muted-foreground mb-1">${escapeHtmlTop(a.date)}</p>
+              <h3 class="text-sm font-medium text-foreground mb-1">${escapeHtmlTop(a.title)}</h3>
+              <p class="text-xs text-muted-foreground leading-relaxed">${escapeHtmlTop(a.body)}</p>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    // ミニカレンダーの予定を実データに差し替える。EVENTSはconstだが中身の書き換え(mutate)は可能。
+    // 承認済みイベントが1件も無い場合は、既存の自動生成ダミー予定をそのまま使う（空白にしない）。
+    function replaceEventsWithReal(list) {
+      if (!list || list.length === 0) return;
+      EVENTS.length = 0;
+      // Code.gs（getApprovedEvents/mapEventCategory）側ですでに「公式大会／公認イベント／
+      // ショップイベント」の3区分に変換済みなので、ここでは値をそのまま使う。
+      // （以前はここで「公認大会」という生の値を再チェックしていたが、APIから返る時点で
+      // すでに「公式大会」に変換済みのため一致せず、公式大会イベントが誤って
+      // 「公認イベント」表示になってしまっていた）
+      list.forEach(e => EVENTS.push({
+        date: e.date,
+        title: e.title,
+        location: e.location,
+        type: (e.type === '公式大会' || e.type === 'ショップイベント') ? e.type : '公認イベント',
+        time: e.time || '',
+        fee: e.fee || '',
+        capacity: e.capacity || '',
+        organizer: e.organizer || '',
+        contact: e.contact || ''
+      }));
+    }
+
+    function fetchTopPageData() {
+      if (!GAS_WEB_APP_URL_FOR_TOP_PAGE) return Promise.resolve(null);
+      return fetch(`${GAS_WEB_APP_URL_FOR_TOP_PAGE}?action=all`)
+        .then(res => res.json())
+        .then(json => (json && json.ok) ? json : null)
+        .catch(() => null);
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
-      renderMiniCalendar();
+      renderMiniCalendar(); // まずダミー予定で即描画（読み込み待ちで空白にしない）
+      renderMiniMonthEvents();
       renderQuestionForm('question-form-index');
+
+      fetchTopPageData().then(data => {
+        if (!data) return;
+        renderRealAnnouncements(data.announcements);
+        // DEMO_MODEがtrueの間は、script.js側（event-calendar-page.html）と表示を
+        // 揃えるため実データでの上書きを行わない。falseにしたら実データに切り替わる。
+        if (!DEMO_MODE) {
+          replaceEventsWithReal(data.events);
+          renderMiniCalendar(); // 実データが揃ったら再描画
+          renderMiniMonthEvents();
+        }
+      });
     });
   </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>公認大会イベントカレンダー - Force of the Horse</title>
+    <title>イベントカレンダー - Force of the Horse</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -31,12 +31,12 @@
 
         <div class="page-head">
             <p class="page-eyebrow">EVENT CALENDAR</p>
-            <h1 class="page-title">公認大会イベントカレンダー</h1>
-            <p class="page-desc">公認大会・交流会の開催スケジュールです。</p>
+            <h1 class="page-title">イベントカレンダー</h1>
+            <p class="page-desc">イベントの開催スケジュールです。</p>
             <div class="legend">
-                <span class="legend-item"><span class="legend-dot area"></span>エリア予選</span>
-                <span class="legend-item"><span class="legend-dot final"></span>本戦</span>
-                <span class="legend-item"><span class="legend-dot meetup"></span>交流会</span>
+                <span class="legend-item"><span class="legend-dot final"></span>公式大会</span>
+                <span class="legend-item"><span class="legend-dot area"></span>公認イベント</span>
+                <span class="legend-item"><span class="legend-dot meetup"></span>ショップイベント</span>
             </div>
         </div>
     </div>
@@ -52,19 +52,33 @@
         </section>
 
         <section class="side-events">
-            <h2 id="month-event-heading"></h2>
-            <div id="month-event-list"></div>
-
-            <div class="all-events">
-                <h2>今後の全イベント</h2>
-                <ul class="upcoming-event-list" id="all-upcoming-list"></ul>
+            <div class="month-col">
+                <div class="month-col-head">
+                    <h2 id="month-event-heading"></h2>
+                    <div class="month-nav-group">
+                        <button class="calendar-nav month-prev-btn" id="month-list-prev" aria-label="先月のイベントを見る">‹</button>
+                        <button class="calendar-nav month-next-btn" id="month-list-next" aria-label="来月のイベントを見る">›</button>
+                    </div>
+                </div>
+                <div id="month-event-list" class="event-accordion"></div>
             </div>
         </section>
     </main>
 
+    <!-- 日付クリックで開くその日のイベント一覧ポップアップ -->
+    <div id="day-popup-overlay" class="day-popup-overlay">
+        <div class="day-popup-box">
+            <div class="day-popup-head">
+                <span id="day-popup-date"></span>
+                <button type="button" id="day-popup-close" class="day-popup-close" aria-label="閉じる">×</button>
+            </div>
+            <div id="day-popup-list" class="day-popup-list"></div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-inner">
-            <p>© 2025 Force of the Horse コミュニティ. 本サイトは非公式のコミュニティサイトです。</p>
+            <p><a href="privacy.html">プライバシーポリシー</a> ・ ©FRAMELUNCH.INC All rights reserved.</p>
         </div>
     </footer>
 

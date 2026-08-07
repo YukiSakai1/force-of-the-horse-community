@@ -3,9 +3,168 @@
 // Real calendar (synced to today's date) + UI interactions
 // ===================================================================
 
+// ここにGoogle Apps ScriptのウェブアプリURLを設定してください
+// (デプロイ後に発行されるURL。/mnt/user-data/outputs/apps-script/Code.gs の
+//  デプロイ手順を参照)
+const CONFIG = {
+    GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxa6-eG29iGiITzdjtJZ8rn-slapCmFZz-7EVvcgLadhe69zMkDjVqey0Zzh33IvFPi/exec',
+    // Code.gs の スクリプトプロパティ FORM_TOKEN と同じ値をここに設定してください。
+    // （雑なURL直叩きスパムを減らすための簡易フィルタです。詳細はCode.gsのコメント参照）
+    FORM_TOKEN: '4b88a23d80d3eb2e2646dd6e847fab88'
+};
+
+// =====================================================================
+// ★★★ 動作確認用の仮データ ★★★
+// カレンダーの見た目・挙動（1件/2件/3件以上の表示、ポップアップ、アコーディオン等）を
+// スプレッドシート連携なしですぐ確認できるよう、仮の大会情報を差し込んでいます。
+// スプレッドシート側に本物の承認済みイベントが入ったら、この DEMO_MODE を
+// false に変更してください（true のままだと本番データより仮データが優先されます）。
+// =====================================================================
+const DEMO_MODE = true;
+
+// =====================================================================
+// ★★★ 申請フォームの動作確認用モード ★★★
+// Google Apps Script側の準備がまだでも、申請フォームを送信すると（実際には
+// どこにも送信せず）完了画面（✓ 申請を受け付けました）が表示されるようにします。
+// Apps Scriptのデプロイ・動作確認が済んだら、この APPLY_DEMO_MODE を
+// false に変更してください（true のままだと、本番でも実際には送信されません）。
+// =====================================================================
+const APPLY_DEMO_MODE = true;
+
+// 開催場所（施設名+住所の自由入力）から都道府県名だけを取り出すためのヘルパー。
+// 申請フォームの「開催場所」欄は都道府県専用の入力欄になっていないため完全ではないが、
+// 一般的な入力（「東京都〜」「大阪府大阪市〜」など都道府県名が含まれる書き方）であれば拾える。
+// 見つからない場合は空文字を返し、呼び出し側で開催場所の全文にフォールバックする。
+const PREFECTURES = [
+    '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+    '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+    '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県',
+    '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県',
+    '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+    '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県',
+    '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'
+];
+function extractPrefecture(location) {
+    if (!location) return '';
+    const found = PREFECTURES.find(pref => location.includes(pref));
+    return found || '';
+}
+
+function buildDemoEvents() {
+    const today = new Date();
+    const toISO = (d) => {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    };
+    const plusDays = (n) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() + n);
+        return d;
+    };
+
+    return [
+        // 今日: 1件（今日の日付が枠で囲まれることも確認できます）
+        {
+            date: toISO(today), type: '公式大会', title: '全国選手権 東京予選',
+            location: '東京都・秋葉原イベントホール', time: '10:00〜18:00',
+            fee: '2000', capacity: '32', organizer: 'FOTH運営事務局', contact: '@foth_official'
+        },
+        // 今日+3日: 2件（セル分割表示の確認用）
+        {
+            date: toISO(plusDays(3)), type: '公認イベント', title: '交流会 大阪',
+            location: '大阪府大阪市・なんばカードショップ', time: '13:00〜17:00',
+            fee: '500', capacity: '16', organizer: 'なんばカードショップ', contact: '@namba_cardshop'
+        },
+        {
+            date: toISO(plusDays(3)), type: 'ショップイベント', title: '新弾発売記念大会',
+            location: '大阪府大阪市・梅田ホビーステーション', time: '11:00〜15:00',
+            fee: '1000', capacity: '24', organizer: 'ホビーステーション梅田店', contact: '@hobby_umeda'
+        },
+        // 今日+7日: 3件以上（ドット+件数表示の確認用）
+        {
+            date: toISO(plusDays(7)), type: '公式大会', title: '全国選手権 名古屋予選',
+            location: '愛知県名古屋市・栄イベントスペース', time: '10:00〜18:00',
+            fee: '2000', capacity: '32', organizer: 'FOTH運営事務局', contact: '@foth_official'
+        },
+        {
+            date: toISO(plusDays(7)), type: '公認イベント', title: '初心者体験会',
+            location: '愛知県名古屋市・大須カードスタジオ', time: '13:00〜16:00',
+            fee: '無料', capacity: '10', organizer: '大須カードスタジオ', contact: '@osu_cardstudio'
+        },
+        {
+            date: toISO(plusDays(7)), type: 'ショップイベント', title: '週末ミニ大会',
+            location: '愛知県名古屋市・金山ホビーショップ', time: '19:00〜21:00',
+            fee: '300', capacity: '12', organizer: '金山ホビーショップ', contact: '@kanayama_hobby'
+        },
+        // 来月分も1件用意（月送りの動作確認用）
+        {
+            date: toISO(plusDays(28)), type: '公認イベント', title: '交流会 札幌',
+            location: '北海道札幌市・すすきのゲームカフェ', time: '14:00〜18:00',
+            fee: '800', capacity: '20', organizer: 'すすきのゲームカフェ', contact: '@sapporo_gamecafe'
+        }
+    ];
+}
+
+// GASへJSONを送信する共通関数。
+// Content-Type を text/plain にすることでブラウザのCORSプリフライトを回避している
+// （GASのウェブアプリはOPTIONSリクエストにうまく応答できないため）。
+// token と honeypot(hp_verify) は全送信に共通で自動付与する。
+function submitToBackend(payload) {
+    if (!CONFIG.GAS_WEB_APP_URL || CONFIG.GAS_WEB_APP_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+        return Promise.reject(new Error('GAS_WEB_APP_URL未設定'));
+    }
+    const fullPayload = Object.assign({ token: CONFIG.FORM_TOKEN }, payload);
+    return fetch(CONFIG.GAS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(fullPayload)
+    }).then(res => res.json());
+}
+
+// honeypot欄（name="hp_verify"）の値を拾う共通ヘルパー。
+// 人間には見えない/操作されない前提の欄なので、値が入っていたら送信ペイロードに
+// そのまま乗せてサーバー側(Code.gs)で弾く。
+function getHoneypotValue(formEl) {
+    const el = formEl.querySelector('[name="hp_verify"]');
+    return el ? el.value : '';
+}
+
+// スプレッドシート由来の文字列（FAQ回答・お知らせ・イベント申請内容など、非エンジニアが
+// 入力したりユーザーが投稿した内容）をそのままinnerHTMLに差し込むとHTML/スクリプト注入の
+// リスクがあるため、表示前に必ずこれを通す。
+function escapeHtml(str) {
+    return String(str === undefined || str === null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+// Code.gsの doGet?action=all を呼び、公開済みのFAQ・お知らせ・承認済みイベントを取得する。
+// スクリプト読み込み直後に呼び出しておくことで、DOMContentLoaded時点ではほぼ取得済みになる。
+function fetchPublicData() {
+    const empty = { faq: [], announcements: [], events: [] };
+    if (!CONFIG.GAS_WEB_APP_URL || CONFIG.GAS_WEB_APP_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
+        return Promise.resolve(empty);
+    }
+    return fetch(`${CONFIG.GAS_WEB_APP_URL}?action=all`)
+        .then(res => res.json())
+        .then(json => ({
+            faq: (json && json.ok && Array.isArray(json.faq)) ? json.faq : [],
+            announcements: (json && json.ok && Array.isArray(json.announcements)) ? json.announcements : [],
+            events: (json && json.ok && Array.isArray(json.events)) ? json.events : []
+        }))
+        .catch(() => empty);
+}
+
+// ページ読み込み直後にリクエストを開始しておく（DOMContentLoadedで待つのは結果だけ）。
+const publicDataPromise = fetchPublicData();
+
 const MONTH_NAMES = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 const DAY_NAMES = ['日','月','火','水','木','金','土'];
-const CITIES = ['東京','大阪','名古屋','仙台','福岡','札幌','広島','横浜','金沢','京都'];
 
 function daysInMonth(year, month) {
     return new Date(year, month + 1, 0).getDate();
@@ -15,37 +174,55 @@ function firstWeekday(year, month) {
     return new Date(year, month, 1).getDay();
 }
 
-function cityFor(index) {
-    return CITIES[((index % CITIES.length) + CITIES.length) % CITIES.length];
+// 承認済みイベント（申請フォーム経由でスプレッドシートに保存され、ステータスを
+// 「承認済み」に変更したもの）を、Code.gsのdoGetから取得して入れる配列。
+// フェッチが完了するまでは空配列で、カレンダーには「開催予定のイベントはありません」と表示される。
+let REAL_EVENTS = [];
+
+// Code.gs側で「イベント種別」はすでに公式大会／公認イベント／ショップイベントの
+// 3区分に変換済みなので、ここでは表示用のCSSクラス名にマッピングするだけでよい。
+function categoryClass(tag) {
+    if (tag === '公式大会') return 'final';
+    if (tag === 'ショップイベント') return 'meetup';
+    return 'area'; // 公認イベント
 }
 
-// Generates a realistic set of sample "certified events" for a given month.
-// Events fall on every Sunday of the month; the last Sunday is a meetup (交流会)
-// instead of an area qualifier (エリア予選), mirroring the official schedule pattern.
+// 指定した年月の承認済みイベントを、日付(day)をキーにしたオブジェクトへグループ化する。
+// 同じ日に複数件のイベントがあってもすべて保持する（以前は1日1件までしか扱えなかった）。
 function getMonthEvents(year, month) {
-    const total = daysInMonth(year, month);
-    const events = [];
-    let cityIndex = (year + month) % CITIES.length;
-    let sundays = [];
-    for (let d = 1; d <= total; d++) {
-        if (new Date(year, month, d).getDay() === 0) sundays.push(d);
-    }
-    sundays.forEach((d, i) => {
-        const isLast = i === sundays.length - 1;
-        const isFinal = (year === new Date().getFullYear() + 1 && month === 8 && isLast); // placeholder, unused normally
-        const tag = isLast ? '交流会' : 'エリア予選';
-        const city = cityFor(cityIndex + i);
-        const name = isLast ? `公認交流会 － ${city}` : `エリア予選 － ${city}`;
-        events.push({
-            day: d,
-            tag: tag,
-            name: name,
-            city: city,
-            location: `${city}国際会議場`,
-            time: isLast ? '13:00開場 / 14:00開始' : '10:00開場 / 11:00開始'
+    const byDay = {};
+    REAL_EVENTS
+        .map(e => {
+            const d = new Date(e.date + 'T00:00:00');
+            return { raw: e, d: d };
+        })
+        .filter(x => !isNaN(x.d.getTime()) && x.d.getFullYear() === year && x.d.getMonth() === month)
+        .forEach(x => {
+            const day = x.d.getDate();
+            const ev = {
+                day: day,
+                tag: x.raw.type,
+                cls: categoryClass(x.raw.type),
+                name: escapeHtml(x.raw.title),
+                location: escapeHtml(x.raw.location),
+                time: escapeHtml(x.raw.time || ''),
+                fee: escapeHtml(x.raw.fee || ''),
+                capacity: escapeHtml(x.raw.capacity || ''),
+                organizer: escapeHtml(x.raw.organizer || ''),
+                contact: escapeHtml(x.raw.contact || '')
+            };
+            if (!byDay[day]) byDay[day] = [];
+            byDay[day].push(ev);
         });
-    });
-    return events;
+    return byDay;
+}
+
+function getMonthEventsFlat(year, month) {
+    const byDay = getMonthEvents(year, month);
+    const list = [];
+    Object.keys(byDay).forEach(day => byDay[day].forEach(ev => list.push(ev)));
+    list.sort((a, b) => a.day - b.day);
+    return list;
 }
 
 function formatDateShort(year, month, day) {
@@ -56,9 +233,53 @@ function formatDateFull(year, month, day) {
     return `${year}年${MONTH_NAMES[month]}${day}日`;
 }
 
-function isToday(year, month, day) {
-    const t = new Date();
-    return t.getFullYear() === year && t.getMonth() === month && t.getDate() === day;
+// ---------- Day click popup (list of that day's events, shared across calendars) ----------
+let dayPopupBound = false;
+let dayPopupOverlay = null;
+let dayPopupDateEl = null;
+let dayPopupListEl = null;
+let dayPopupOnCardClick = null;
+
+function ensureDayPopupBound() {
+    if (dayPopupBound) return;
+    dayPopupOverlay = document.getElementById('day-popup-overlay');
+    if (!dayPopupOverlay) return;
+    dayPopupDateEl = document.getElementById('day-popup-date');
+    dayPopupListEl = document.getElementById('day-popup-list');
+    const closeBtn = document.getElementById('day-popup-close');
+    if (closeBtn) closeBtn.addEventListener('click', hideDayPopup);
+    dayPopupOverlay.addEventListener('click', (e) => {
+        if (e.target === dayPopupOverlay) hideDayPopup();
+    });
+    dayPopupBound = true;
+}
+
+function hideDayPopup() {
+    if (dayPopupOverlay) dayPopupOverlay.classList.remove('open');
+}
+
+// その日の全イベントをカード形式で表示するポップアップ。カードをクリックすると
+// 下の月間イベント一覧（アコーディオン）の該当箇所まで飛んで開く。
+function showDayPopup(year, month, day, evs, onCardClick) {
+    ensureDayPopupBound();
+    if (!dayPopupOverlay) return;
+    dayPopupOnCardClick = onCardClick;
+    dayPopupDateEl.textContent = formatDateFull(year, month, day);
+    dayPopupListEl.innerHTML = evs.map((ev, i) => `
+        <button type="button" class="day-popup-card" data-index="${i}">
+            <span class="event-tag-pill tag-${ev.cls}">${ev.tag}</span>
+            <span class="dp-title">${ev.name}</span>
+            <span class="dp-row">📍 ${ev.location}</span>
+            <span class="dp-row">🕒 ${ev.time}</span>
+        </button>`).join('');
+    dayPopupListEl.querySelectorAll('.day-popup-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const idx = Number(card.dataset.index);
+            hideDayPopup();
+            if (dayPopupOnCardClick) dayPopupOnCardClick(evs[idx]);
+        });
+    });
+    dayPopupOverlay.classList.add('open');
 }
 
 // ---------- Calendar widget ----------
@@ -68,19 +289,29 @@ class EventCalendar {
         this.labelEl = opts.labelEl || null;
         this.prevBtn = opts.prevBtn || null;
         this.nextBtn = opts.nextBtn || null;
-        this.upcomingEl = opts.upcomingEl || null;   // simple compact list (TOP page)
-        this.monthListEl = opts.monthListEl || null; // detailed list for the displayed month (calendar page)
+        this.upcomingEl = opts.upcomingEl || null;       // simple compact list (unused on the calendar page)
+        this.monthListEl = opts.monthListEl || null;     // accordion list for the displayed month only
         this.monthListHeadEl = opts.monthListHeadEl || null;
-        this.allEventsEl = opts.allEventsEl || null; // full upcoming list across months (calendar page)
+        this.monthListNextBtn = opts.monthListNextBtn || null; // 「来月を見る」矢印（カレンダー本体とは独立して一覧だけ月送りする）
+        this.monthListPrevBtn = opts.monthListPrevBtn || null; // 「先月を見る」矢印（同上、逆方向）
 
         const now = new Date();
         this.year = now.getFullYear();
         this.month = now.getMonth();
+        this.today = now;
+
+        // 月間イベント一覧（アコーディオン）は、カレンダー本体の月送りとは独立して
+        // 動かせるように、専用の年月state（listYear/listMonth）を別に持たせる。
+        this.listYear = now.getFullYear();
+        this.listMonth = now.getMonth();
 
         if (this.prevBtn) this.prevBtn.addEventListener('click', () => this.shift(-1));
         if (this.nextBtn) this.nextBtn.addEventListener('click', () => this.shift(1));
+        if (this.monthListNextBtn) this.monthListNextBtn.addEventListener('click', () => this.shiftList(1));
+        if (this.monthListPrevBtn) this.monthListPrevBtn.addEventListener('click', () => this.shiftList(-1));
 
         this.render();
+        if (this.monthListEl) this.renderMonthAccordion();
     }
 
     shift(delta) {
@@ -90,16 +321,25 @@ class EventCalendar {
         this.render();
     }
 
-    render() {
-        const events = getMonthEvents(this.year, this.month);
-        if (this.gridEl) this.renderGrid(events);
-        if (this.labelEl) this.labelEl.textContent = `${this.year}年${MONTH_NAMES[this.month]}`;
-        if (this.upcomingEl) this.renderUpcomingCompact();
-        if (this.monthListEl) this.renderMonthList(events);
-        if (this.allEventsEl) this.renderAllUpcoming();
+    shiftList(delta) {
+        this.listMonth += delta;
+        if (this.listMonth < 0) { this.listMonth = 11; this.listYear--; }
+        if (this.listMonth > 11) { this.listMonth = 0; this.listYear++; }
+        this.renderMonthAccordion();
     }
 
-    renderGrid(events) {
+    isToday(d) {
+        return this.year === this.today.getFullYear() && this.month === this.today.getMonth() && d === this.today.getDate();
+    }
+
+    render() {
+        const byDay = getMonthEvents(this.year, this.month);
+        if (this.gridEl) this.renderGrid(byDay);
+        if (this.labelEl) this.labelEl.textContent = `${this.year}年${MONTH_NAMES[this.month]}`;
+        if (this.upcomingEl) this.renderUpcomingCompact();
+    }
+
+    renderGrid(byDay) {
         this.gridEl.innerHTML = '';
         DAY_NAMES.forEach((n, i) => {
             const el = document.createElement('div');
@@ -118,29 +358,98 @@ class EventCalendar {
         const total = daysInMonth(this.year, this.month);
         for (let d = 1; d <= total; d++) {
             const wd = new Date(this.year, this.month, d).getDay();
-            const ev = events.find(e => e.day === d);
+            const evs = byDay[d] || [];
             const el = document.createElement('div');
             el.className = 'calendar-day' +
-                (ev ? ' event-day' : '') +
+                (evs.length ? ' event-day' : '') +
                 (wd === 0 ? ' sun' : '') +
                 (wd === 6 ? ' sat' : '') +
-                (isToday(this.year, this.month, d) ? ' today' : '');
+                (this.isToday(d) ? ' today' : '');
 
             const num = document.createElement('span');
             num.className = 'day-number';
             num.textContent = d;
             el.appendChild(num);
 
-            if (ev) {
+            // 1件: 従来通り色付きの帯にイベント名を表示。
+            // 2件: セルを上下に分割し、それぞれカテゴリ色の帯に「イベント名」を表示
+            //      （＝月間イベント一覧と同じく、日付の後の情報＝ev.nameを使う。収まらない分は…で省略）。
+            // 3件以上: 内訳が伝わるよう、種別ごとの色付きドット+件数を表示（クリックでポップアップに全件表示）。
+            if (evs.length === 1) {
                 const tag = document.createElement('span');
-                tag.className = 'event-tag ' + (ev.tag === 'エリア予選' ? 'tag-area' : 'tag-meetup');
-                tag.textContent = ev.name;
+                tag.className = 'event-tag tag-' + evs[0].cls;
+                tag.textContent = evs[0].name;
                 el.appendChild(tag);
-                el.addEventListener('click', () => {
-                    alert(`${this.year}/${this.month + 1}/${d}\n${ev.name}\n${ev.location}\n${ev.time}`);
+            } else if (evs.length === 2) {
+                const split = document.createElement('div');
+                split.className = 'day-split';
+                evs.forEach(ev => {
+                    const half = document.createElement('span');
+                    half.className = 'day-split-half tag-' + ev.cls;
+                    half.textContent = ev.name;
+                    half.title = `${ev.tag}${ev.location ? ' - ' + ev.location : ''}: ${ev.name}`;
+                    split.appendChild(half);
+                });
+                el.appendChild(split);
+            } else if (evs.length >= 3) {
+                const dots = document.createElement('div');
+                dots.className = 'day-dots';
+                evs.forEach(ev => {
+                    const dot = document.createElement('span');
+                    dot.className = 'day-dot tag-' + ev.cls;
+                    dot.title = `${ev.tag}: ${ev.name}`;
+                    dots.appendChild(dot);
+                });
+                el.appendChild(dots);
+                const count = document.createElement('span');
+                count.className = 'day-count';
+                count.textContent = `${evs.length}件`;
+                el.appendChild(count);
+            }
+
+            if (evs.length) {
+                const year = this.year, month = this.month, day = d;
+                el.addEventListener('click', (e) => {
+                    showDayPopup(year, month, day, evs, (ev) => this.jumpToAccordionItem(year, month, day, ev));
+                    e.stopPropagation();
                 });
             }
             this.gridEl.appendChild(el);
+        }
+    }
+
+    // ポップアップ内のカードをクリックすると、下の月間イベント一覧（アコーディオン）を
+    // クリックした日の月に合わせてから、該当項目までスクロールして自動的に開く。
+    // （一覧側の矢印はカレンダー本体と独立して動くため、通常のカレンダー月送りでは
+    //   一覧の表示月は変わらない。ジャンプ時だけ一致させる。）
+    jumpToAccordionItem(year, month, day, ev) {
+        if (!this.monthListEl) return;
+        if (this.listYear !== year || this.listMonth !== month) {
+            this.listYear = year;
+            this.listMonth = month;
+            this.renderMonthAccordion();
+        }
+        const items = this.monthListEl.querySelectorAll('.event-acc-item');
+        let target = null;
+        items.forEach(item => {
+            if (Number(item.dataset.day) === day && item.dataset.name === ev.name) target = item;
+        });
+        if (!target) return;
+        items.forEach(item => item.classList.remove('open'));
+        target.classList.add('open');
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // TOPページのミニカレンダーから「?y=2026&m=8&d=23」のような形でリンクされてきた時、
+    // その月まで移動してから、その日のポップアップを自動的に開く。
+    goToDayFromLink(year, month, day) {
+        this.year = year;
+        this.month = month;
+        this.render();
+        const byDay = getMonthEvents(year, month);
+        const evs = byDay[day];
+        if (evs && evs.length) {
+            showDayPopup(year, month, day, evs, (ev) => this.jumpToAccordionItem(year, month, day, ev));
         }
     }
 
@@ -154,7 +463,7 @@ class EventCalendar {
             let yy = y, mm = m + i;
             yy += Math.floor(mm / 12);
             mm = ((mm % 12) + 12) % 12;
-            getMonthEvents(yy, mm).forEach(e => {
+            getMonthEventsFlat(yy, mm).forEach(e => {
                 const d = new Date(yy, mm, e.day);
                 if (d >= today) list.push(Object.assign({}, e, { year: yy, month: mm, dateObj: d }));
             });
@@ -177,43 +486,84 @@ class EventCalendar {
         });
     }
 
-    renderMonthList(events) {
-        if (this.monthListHeadEl) this.monthListHeadEl.textContent = `${this.year}年${MONTH_NAMES[this.month]}のイベント`;
+    // 当月のイベントだけを、開催日時・タイトル・開催場所・参加費・募集人数・主催者名・
+    // 問い合わせ先を含むアコーディオンとして表示する（空欄の項目は表示しない）。
+    renderMonthAccordion() {
+        if (this.monthListHeadEl) this.monthListHeadEl.textContent = `${this.listYear}年${MONTH_NAMES[this.listMonth]}のイベント`;
+        const list = getMonthEventsFlat(this.listYear, this.listMonth);
         this.monthListEl.innerHTML = '';
-        if (events.length === 0) {
+        if (list.length === 0) {
             this.monthListEl.innerHTML = '<p class="no-events">この月に開催予定のイベントはありません</p>';
             return;
         }
-        events.forEach(e => {
+        const year = this.listYear, month = this.listMonth;
+        list.forEach(ev => {
             const item = document.createElement('div');
-            item.className = 'event-item';
+            item.className = 'acc-item event-acc-item';
+            item.dataset.day = ev.day;
+            item.dataset.name = ev.name;
+
+            const rows = [
+                ['開催日時', `${formatDateFull(year, month, ev.day)}${ev.time ? ' ' + ev.time : ''}`],
+                ['タイトル', ev.name]
+            ];
+            if (ev.location) rows.push(['開催場所', ev.location]);
+            if (ev.fee) rows.push(['参加費', ev.fee + '円']);
+            if (ev.capacity) rows.push(['募集人数', ev.capacity + '名']);
+            if (ev.organizer) rows.push(['主催者名', ev.organizer]);
+            if (ev.contact) rows.push(['問い合わせ先', ev.contact]);
+
             item.innerHTML = `
-                <span class="event-tag-pill ${e.tag === 'エリア予選' ? 'tag-area' : 'tag-meetup'}">${e.tag}</span>
-                <p class="event-item-date">${formatDateFull(this.year, this.month, e.day)}</p>
-                <h3 class="event-item-title">${e.name}</h3>
-                <p class="event-item-loc">${e.location}</p>`;
+                <div class="acc-head">
+                    <span><span class="event-tag-pill tag-${ev.cls}">${ev.tag}</span>${formatDateShort(year, month, ev.day)}　${ev.name}</span>
+                    <span class="acc-toggle">▼</span>
+                </div>
+                <div class="acc-body">
+                    <dl class="event-detail-list">
+                        ${rows.map(([label, value]) => `<dt>${label}</dt><dd>${value}</dd>`).join('')}
+                    </dl>
+                </div>`;
+            item.querySelector('.acc-head').addEventListener('click', () => {
+                item.classList.toggle('open');
+            });
             this.monthListEl.appendChild(item);
         });
     }
+}
 
-    renderAllUpcoming() {
-        const list = this.getUpcoming(10);
-        this.allEventsEl.innerHTML = '';
-        if (list.length === 0) {
-            this.allEventsEl.innerHTML = '<p class="no-events">予定されているイベントはありません</p>';
-            return;
-        }
-        list.forEach(e => {
-            const li = document.createElement('li');
-            li.className = 'event-item';
-            li.innerHTML = `
-                <span class="event-tag-pill ${e.tag === 'エリア予選' ? 'tag-area' : 'tag-meetup'}">${e.tag}</span>
-                <p class="event-item-date">${formatDateFull(e.year, e.month, e.day)}</p>
-                <h3 class="event-item-title">${e.name}</h3>
-                <p class="event-item-loc">${e.location}</p>`;
-            this.allEventsEl.appendChild(li);
-        });
+// スプレッドシートで「回答済み」にしたFAQを、既存の.faq-itemと同じ見た目で描画する。
+// 質問・回答はユーザー投稿／スタッフ入力の内容なので、必ずescapeHtmlを通してから差し込む。
+function renderFaqList(container, items) {
+    container.innerHTML = '';
+    if (!items || items.length === 0) {
+        container.innerHTML = '<p class="faq-empty">現在、このVolについて公開されているQ&Aはありません。下記フォームよりご質問をお寄せください。</p>';
+        return;
     }
+    items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'faq-item';
+        div.innerHTML = `
+            <div class="faq-question">
+                <span class="faq-icon">Q</span>
+                <span class="faq-question-text">${escapeHtml(item.question)}</span>
+                <span class="faq-toggle">▼</span>
+            </div>
+            <div class="faq-answer">
+                <span class="faq-icon">A</span>
+                <p>${escapeHtml(item.answer)}</p>
+                <span class="answer-date">回答日: ${escapeHtml(item.date)}</span>
+            </div>`;
+        container.appendChild(div);
+    });
+    // 新しく追加した.faq-itemにも開閉の挙動を効かせる
+    container.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', function () {
+            const item = this.parentElement;
+            const isActive = item.classList.contains('active');
+            item.parentElement.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            if (!isActive) item.classList.add('active');
+        });
+    });
 }
 
 // ---------- Init on DOM ready ----------
@@ -226,31 +576,66 @@ document.addEventListener('DOMContentLoaded', function () {
         navToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
     }
 
-    // TOP page compact calendar
-    const topGrid = document.getElementById('top-calendar-grid');
-    if (topGrid) {
-        new EventCalendar({
-            gridEl: topGrid,
-            labelEl: document.getElementById('top-calendar-month'),
-            prevBtn: document.getElementById('top-cal-prev'),
-            nextBtn: document.getElementById('top-cal-next'),
-            upcomingEl: document.getElementById('top-upcoming-list')
+    // カレンダー系は「承認済み」の実イベントデータが揃ってから初期化する
+    // （揃うまでは一瞬「開催予定のイベントはありません」と出るだけで、レイアウトは変わらない）。
+    publicDataPromise.then(data => {
+        REAL_EVENTS = DEMO_MODE ? buildDemoEvents() : data.events;
+
+        // TOP page compact calendar
+        const topGrid = document.getElementById('top-calendar-grid');
+        if (topGrid) {
+            new EventCalendar({
+                gridEl: topGrid,
+                labelEl: document.getElementById('top-calendar-month'),
+                prevBtn: document.getElementById('top-cal-prev'),
+                nextBtn: document.getElementById('top-cal-next'),
+                upcomingEl: document.getElementById('top-upcoming-list')
+            });
+        }
+
+        // Full event calendar page
+        const pageGrid = document.getElementById('page-calendar-grid');
+        if (pageGrid) {
+            const pageCalendar = new EventCalendar({
+                gridEl: pageGrid,
+                labelEl: document.getElementById('page-calendar-month'),
+                prevBtn: document.getElementById('page-cal-prev'),
+                nextBtn: document.getElementById('page-cal-next'),
+                monthListEl: document.getElementById('month-event-list'),
+                monthListHeadEl: document.getElementById('month-event-heading'),
+                monthListNextBtn: document.getElementById('month-list-next'),
+                monthListPrevBtn: document.getElementById('month-list-prev')
+            });
+
+            // TOPページのミニカレンダーから「?y=2026&m=8&d=23」の形でリンクされてきた場合、
+            // 該当の月へ移動し、その日のポップアップを自動的に開く。
+            const params = new URLSearchParams(window.location.search);
+            const linkY = Number(params.get('y'));
+            const linkM = Number(params.get('m')); // 1-12（TOPページのdata-month基準）
+            const linkD = Number(params.get('d'));
+            if (linkY && linkM && linkD) {
+                pageCalendar.goToDayFromLink(linkY, linkM - 1, linkD);
+            }
+        }
+    });
+
+    // FAQ詳細ページ（faq-starter.html / faq-vol1〜4.html）の質問一覧を
+    // スプレッドシートで「回答済み」にした内容から動的に表示する。
+    const faqListEl = document.getElementById('faq-list');
+    if (faqListEl) {
+        const vol = faqListEl.dataset.vol;
+        publicDataPromise.then(data => {
+            const items = data.faq.filter(f => f.vol === vol);
+            renderFaqList(faqListEl, items);
+            const pageDesc = document.querySelector('.page-desc');
+            if (pageDesc) pageDesc.textContent = `${items.length}件のQ&A`;
         });
     }
 
-    // Full event calendar page
-    const pageGrid = document.getElementById('page-calendar-grid');
-    if (pageGrid) {
-        new EventCalendar({
-            gridEl: pageGrid,
-            labelEl: document.getElementById('page-calendar-month'),
-            prevBtn: document.getElementById('page-cal-prev'),
-            nextBtn: document.getElementById('page-cal-next'),
-            monthListEl: document.getElementById('month-event-list'),
-            monthListHeadEl: document.getElementById('month-event-heading'),
-            allEventsEl: document.getElementById('all-upcoming-list')
-        });
-    }
+    // Tapping anywhere outside a calendar day closes an open tooltip (touch devices).
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.calendar-day.event-day')) hideCalendarTooltip();
+    });
 
     // Generic action buttons pointing to "#"
     document.querySelectorAll('.action-button, .action-link-btn').forEach(btn => {
@@ -331,15 +716,35 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('modal-back').addEventListener('click', () => modal.classList.remove('open'));
 
             submitBtn.addEventListener('click', () => {
-                modalBody.innerHTML = `
-                    <div class="success-box">
-                        <div class="s-icon">✓</div>
-                        <h3>投稿を受け付けました</h3>
-                        <p>ご投稿ありがとうございます。運営にて内容を確認のうえ、順次回答を掲載いたします。</p>
-                        <button type="button" class="btn btn-primary" id="modal-close">閉じる</button>
-                    </div>`;
-                postForm.reset();
-                document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
+                submitBtn.disabled = true;
+                submitBtn.textContent = '送信中...';
+
+                submitToBackend({
+                    type: 'faq',
+                    vol: volSelect.options[volSelect.selectedIndex].text,
+                    card: cardInput.value.trim(),
+                    content: contentInput.value.trim(),
+                    hp_verify: getHoneypotValue(postForm)
+                }).then(result => {
+                    if (!result || result.ok !== true) throw new Error(result && result.error);
+                    modalBody.innerHTML = `
+                        <div class="success-box">
+                            <div class="s-icon">✓</div>
+                            <h3>投稿を受け付けました</h3>
+                            <p>ご投稿ありがとうございます。運営にて内容を確認のうえ、順次回答を掲載いたします。</p>
+                            <button type="button" class="btn btn-primary" id="modal-close">閉じる</button>
+                        </div>`;
+                    postForm.reset();
+                    document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
+                }).catch(() => {
+                    modalBody.innerHTML = `
+                        <div class="success-box">
+                            <h3>送信に失敗しました</h3>
+                            <p>通信エラーが発生しました。お手数ですが、時間をおいて再度お試しください。</p>
+                            <button type="button" class="btn btn-outline" id="modal-close">閉じる</button>
+                        </div>`;
+                    document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
+                });
             });
         });
 
@@ -351,11 +756,99 @@ document.addEventListener('DOMContentLoaded', function () {
     // ---------- Apply form (公認イベント申請) ----------
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
+        // 開催形式（オフライン/オンライン/ハイブリッド）に応じて、開催場所の入力欄を
+        // 切り替える。表示中の欄だけを必須にし、隠れている欄の値は送信時に空のまま送る
+        // （Code.gs側でも同じ組み合わせを検証しているので、二重のチェックになる）。
+        const venueGroups = applyForm.querySelectorAll('.venue-fields');
+        const venuePlaceholder = applyForm.querySelector('.venue-placeholder');
+        const formatRadios = applyForm.querySelectorAll('input[name="eventFormat"]');
+        function updateVenueFields() {
+            const selected = applyForm.querySelector('input[name="eventFormat"]:checked');
+            const format = selected ? selected.value : '';
+            venueGroups.forEach(group => {
+                const match = group.dataset.format === format;
+                group.style.display = match ? '' : 'none';
+                group.querySelectorAll('input').forEach(input => {
+                    input.required = match;
+                    if (!match) input.value = '';
+                });
+            });
+            if (venuePlaceholder) venuePlaceholder.style.display = format ? 'none' : '';
+        }
+        formatRadios.forEach(r => r.addEventListener('change', updateVenueFields));
+        updateVenueFields();
+
         applyForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            document.getElementById('apply-form-wrap').style.display = 'none';
-            document.getElementById('apply-complete').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const submitBtn = applyForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '送信中...';
+
+            const formData = new FormData(applyForm);
+            const payload = { type: 'application', hp_verify: getHoneypotValue(applyForm) };
+            formData.forEach((value, key) => { payload[key] = value; });
+
+            const showSuccess = () => {
+                document.getElementById('apply-form-wrap').style.display = 'none';
+                document.getElementById('apply-complete').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            if (APPLY_DEMO_MODE) {
+                // テストモード: 実際には送信せず、少し待ってから完了画面だけ表示する
+                console.info('[APPLY_DEMO_MODE] 実際には送信していません。動作確認用の仮表示です。');
+                setTimeout(showSuccess, 500);
+                return;
+            }
+
+            submitToBackend(payload).then(result => {
+                if (!result || result.ok !== true) throw new Error(result && result.error);
+                showSuccess();
+            }).catch(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '申請する';
+                alert('送信に失敗しました。通信環境をご確認のうえ、時間をおいて再度お試しください。');
+            });
         });
     }
+
+    // ---------- Vol detail pages: quick question form (no confirm modal) ----------
+    document.querySelectorAll('.vol-question-form').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const contentField = form.querySelector('[name="content"]');
+            if (!contentField.value.trim()) {
+                alert('質問内容を入力してください');
+                return;
+            }
+            const volField = form.querySelector('[name="vol"]');
+            const cardField = form.querySelector('[name="card"]');
+
+            const originalLabel = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '送信中...';
+
+            submitToBackend({
+                type: 'faq',
+                vol: volField.options[volField.selectedIndex].text,
+                card: cardField.value.trim(),
+                content: contentField.value.trim(),
+                hp_verify: getHoneypotValue(form)
+            }).then(result => {
+                if (!result || result.ok !== true) throw new Error(result && result.error);
+                submitBtn.textContent = '投稿しました ✓';
+                form.reset();
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalLabel;
+                }, 3000);
+            }).catch(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalLabel;
+                alert('送信に失敗しました。時間をおいて再度お試しください。');
+            });
+        });
+    });
 });
