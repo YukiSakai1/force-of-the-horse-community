@@ -619,10 +619,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // FAQ詳細ページ（faq-starter.html / faq-vol1〜4.html）の質問一覧を
+    // FAQ詳細ページ（faq-vol1〜5.html）の質問一覧を
     // スプレッドシートで「回答済み」にした内容から動的に表示する。
+    // ※ スターターキット（vol === 'starter'）は faq-starter.json から表示するため、
+    //   ここでは対象外にする（対象にすると下の処理と競合し、後勝ちで表示が消えてしまう）。
     const faqListEl = document.getElementById('faq-list');
-    if (faqListEl) {
+    if (faqListEl && faqListEl.dataset.vol !== 'starter') {
         const vol = faqListEl.dataset.vol;
         publicDataPromise.then(data => {
             const items = data.faq.filter(f => f.vol === vol);
@@ -851,4 +853,60 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    // ---------- FAQ JSON loading for starter kit ----------
+    const faqList = document.getElementById('faq-list');
+    const faqCount = document.getElementById('faq-count');
+    if (faqList && faqList.dataset.vol === 'starter') {
+        fetch('faq-starter.json')
+            .then(response => response.json())
+            .then(data => {
+                // Update count
+                if (faqCount) {
+                    faqCount.textContent = `${data.questions.length}件のQ&A`;
+                }
+
+                // Clear loading state
+                faqList.innerHTML = '';
+
+                // Render FAQ items
+                data.questions.forEach((item, index) => {
+                    const faqItem = document.createElement('div');
+                    faqItem.className = 'faq-item';
+                    faqItem.innerHTML = `
+                        <div class="faq-question">
+                            <span class="faq-icon">Q</span>
+                            <span class="faq-question-text">${escapeHtml(item.question)}</span>
+                            <span class="faq-toggle">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <span class="faq-icon">A</span>
+                            <p>${escapeHtml(item.answer)}</p>
+                            <span class="answer-date">回答日: ${escapeHtml(item.answerDate)}</span>
+                        </div>
+                    `;
+                    faqList.appendChild(faqItem);
+
+                    // Add click handler for accordion
+                    // ※ 表示/非表示はCSS側の .faq-item.active で制御しているため
+                    //   'active' クラスをトグルする（'open' だとCSSと一致せず何も起きない）
+                    const question = faqItem.querySelector('.faq-question');
+                    question.addEventListener('click', function() {
+                        const isActive = faqItem.classList.contains('active');
+                        faqList.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                        if (!isActive) faqItem.classList.add('active');
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('FAQ JSONの読み込みに失敗しました:', error);
+                if (faqList) {
+                    faqList.innerHTML = '<p class="faq-empty">FAQの読み込みに失敗しました。</p>';
+                }
+                if (faqCount) {
+                    faqCount.textContent = '読み込みエラー';
+                }
+            });
+    }
 });
+
