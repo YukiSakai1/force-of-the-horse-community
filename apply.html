@@ -69,21 +69,21 @@
 
             <div class="form-section">
                 <h2>2. イベント基本情報</h2>
-                <div class="form-field">
-                    <label>イベント名<span class="req">必須</span></label>
-                    <input type="text" name="eventName" required>
-                </div>
                 <div class="form-row">
+                    <div class="form-field">
+                        <label>イベント名<span class="req">必須</span></label>
+                        <input type="text" name="eventName" required>
+                    </div>
                     <div class="form-field">
                         <label>開催日<span class="req">必須</span></label>
                         <input type="date" name="eventDate" required>
                     </div>
+                </div>
+                <div class="form-row">
                     <div class="form-field">
                         <label>開始時間<span class="req">必須</span></label>
                         <input type="time" name="startTime" required>
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-field">
                         <label>終了予定時間<span class="req">必須</span></label>
                         <input type="time" name="endTime" required>
@@ -101,7 +101,7 @@
                         <label><input type="radio" name="eventFormat" value="ハイブリッド" id="fmt-hybrid"> ハイブリッド</label>
                     </div>
                 </div>
-                <p class="section-note">「開催形式」の選択に応じて、入力する項目が切り替わります。</p>
+                <p class="section-note">「開催形式」を選択すると、その形式に応じた入力項目が表示されます。</p>
                 <!-- 開催場所: 開催形式の選択に応じて表示内容が切り替わる -->
                 <div class="form-field venue-fields" data-format="オフライン" style="display:none;">
                     <label>会場名<span class="req">必須</span></label>
@@ -121,7 +121,6 @@
                     <label class="mt-2">オンライン会場名<span class="req">必須</span></label>
                     <input type="text" name="venueNameHybridOnline" placeholder="Discordサーバー名など">
                 </div>
-                <p class="section-note venue-placeholder">開催形式を選択すると、入力項目が表示されます。</p>
             </div>
 
             <div class="form-section">
@@ -147,6 +146,10 @@
                         <label>参加費（円）<span class="req">必須</span></label>
                         <input type="number" name="fee" min="0" required>
                     </div>
+                </div>
+                <div class="form-field">
+                    <label>イベント説明文（500文字以内）<span class="req">必須</span></label>
+                    <textarea name="eventDescription" maxlength="500" rows="5" placeholder="イベントの内容・見どころ・参加方法などをご記入ください" required></textarea>
                 </div>
             </div>
 

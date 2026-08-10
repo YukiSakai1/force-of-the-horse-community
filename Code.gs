@@ -55,7 +55,7 @@ const APPLICATION_HEADERS = [
   '受付日時', 'ステータス',
   '主催者名', 'お問い合わせメールアドレス', 'Xアカウント', 'DiscordID',
   'イベント名', '開催日', '開始時間', '終了時間', '開催形式', '開催場所',
-  'イベント種別', '定員', '参加費',
+  'イベント種別', '定員', '参加費', 'イベント説明文',
   '過去開催回数', '過去イベントURL'
 ];
 
@@ -245,7 +245,7 @@ function buildVenueText(data) {
 
 function handleApplication(data) {
   // 必須項目チェック（フロント側のrequiredをすり抜けて直接送られてきた場合の保険）
-  const required = ['organizerName', 'organizerEmail', 'eventName', 'eventDate', 'startTime', 'endTime', 'eventFormat', 'eventType', 'capacity', 'fee'];
+  const required = ['organizerName', 'organizerEmail', 'eventName', 'eventDate', 'startTime', 'endTime', 'eventFormat', 'eventType', 'capacity', 'fee', 'eventDescription'];
   for (const key of required) {
     if (!data[key] || !String(data[key]).trim()) {
       return jsonResponse({ ok: false, error: 'missing required field: ' + key });
@@ -275,6 +275,7 @@ function handleApplication(data) {
     clip(data.eventType, MAX_LENGTHS.short),
     clip(data.capacity, MAX_LENGTHS.short),
     clip(data.fee, MAX_LENGTHS.short),
+    clip(data.eventDescription, MAX_LENGTHS.long),
     clip(data.pastCount, MAX_LENGTHS.short),
     clip(data.pastUrl, MAX_LENGTHS.short)
   ];
