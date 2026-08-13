@@ -2948,16 +2948,28 @@
       if (!evs.length) return;
 
       dayPopupDateEl.textContent = `${year}年${month}月${day}日`;
-      dayPopupListEl.innerHTML = evs.map(ev => {
+      dayPopupListEl.innerHTML = evs.map((ev, i) => {
         const cls = getEventTypeClass(ev.type).replace('event-tag ', '');
         return `
-          <div class="day-popup-card">
+          <button type="button" class="day-popup-card" data-index="${i}">
             <span class="event-tag-pill ${cls}">${ev.type}</span>
             <span class="dp-title">${ev.title}</span>
             <span class="dp-row">📍 ${ev.location || ''}</span>
             <span class="dp-row">🕒 ${ev.time || ''}</span>
-          </div>`;
+          </button>`;
       }).join('');
+
+      // カードをクリックしたらevent-calendar-page.htmlへ遷移
+      dayPopupListEl.querySelectorAll('.day-popup-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const idx = Number(card.dataset.index);
+          const ev = evs[idx];
+          hideDayPopupNow();
+          // event-calendar-page.htmlへ遷移し、該当の月・日へジャンプ
+          const url = `event-calendar-page.html?y=${year}&m=${month}&d=${day}`;
+          window.location.href = url;
+        });
+      });
 
       dayPopupOverlay.classList.add('open');
     }
