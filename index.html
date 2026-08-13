@@ -2959,14 +2959,16 @@
           </button>`;
       }).join('');
 
-      // カードをクリックしたらevent-calendar-page.htmlへ遷移
+      // カードをクリックしたらevent-calendar-page.htmlへ遷移し、
+      // その日のポップアップは経由せず、該当イベントのアコーディオンを直接開かせる。
+      // （どのイベントか特定できるよう、タイトルをtパラメータで渡す）
       dayPopupListEl.querySelectorAll('.day-popup-card').forEach(card => {
         card.addEventListener('click', () => {
           const idx = Number(card.dataset.index);
           const ev = evs[idx];
           hideDayPopupNow();
-          // event-calendar-page.htmlへ遷移し、該当の月・日へジャンプ
-          const url = `event-calendar-page.html?y=${year}&m=${month}&d=${day}`;
+          // event-calendar-page.htmlへ遷移し、該当の月・日・イベントへジャンプ
+          const url = `event-calendar-page.html?y=${year}&m=${month}&d=${day}&t=${encodeURIComponent(ev.title)}`;
           window.location.href = url;
         });
       });

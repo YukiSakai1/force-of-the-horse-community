@@ -28,13 +28,13 @@
             <span class="breadcrumb-sep">&gt;</span>
             <a href="certified-event-system.html">公認イベント制度について</a>
             <span class="breadcrumb-sep">&gt;</span>
-            <span>公認イベント申請</span>
+            <span id="apply-breadcrumb-current">公認イベント申請</span>
         </div>
 
         <div class="page-head">
-            <p class="page-eyebrow">APPLICATION</p>
-            <h1 class="page-title">Force of the Horse 公認イベント申請</h1>
-            <p class="page-desc">Force of the Horseの公認イベント・交流会・大会の開催申請フォームです。必要事項をご入力の上、申請してください。</p>
+            <p class="page-eyebrow" id="apply-eyebrow">APPLICATION</p>
+            <h1 class="page-title" id="apply-title">Force of the Horse 公認イベント申請</h1>
+            <p class="page-desc" id="apply-desc">Force of the Horseの公認イベント・交流会・大会の開催申請フォームです。必要事項をご入力の上、申請してください。</p>
         </div>
 
         <main class="form-card" id="apply-form-wrap">
@@ -167,19 +167,33 @@
                 </div>
             </div>
 
-            <div class="form-section">
+            <div class="form-section" id="agreement-section">
                 <h2>6. 確認事項</h2>
                 <div class="check-group">
-                    <label><input type="checkbox" required> <span>Force of the Horseコミュニティガイドラインに同意します</span></label>
-                    <label><input type="checkbox" required> <span>ハラスメント行為・差別行為を禁止します</span></label>
-                    <label><input type="checkbox" required> <span>開催後にイベントレポートを提出します</span></label>
-                    <label><input type="checkbox" required> <span>イベント情報が公式サイト・公式SNSで紹介される場合があることに同意します</span></label>
+                    <label><input type="checkbox" name="agreeGuideline" required> <span>Force of the Horseコミュニティガイドラインに同意します</span></label>
+                    <label><input type="checkbox" name="agreeHarassment" required> <span>ハラスメント行為・差別行為を禁止します</span></label>
+                    <label><input type="checkbox" name="agreeReport" required> <span>開催後にイベントレポートを提出します</span></label>
+                    <label><input type="checkbox" name="agreePublish" required> <span>イベント情報が公式サイト・公式SNSで紹介される場合があることに同意します</span></label>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block">申請する</button>
+            <button type="submit" class="btn btn-primary btn-block">確認画面へ</button>
         </form>
     </main>
+
+    <main class="form-card" id="apply-confirm-wrap" style="display:none;">
+        <div id="apply-confirm-body"></div>
+
+        <div class="notice-box" style="margin-top:24px;">
+            送信後は申請内容を変更できません。内容をご確認のうえ、申請してください。
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn btn-outline" id="apply-confirm-back">戻って修正する</button>
+            <button type="button" class="btn btn-primary" id="apply-confirm-submit">申請する</button>
+        </div>
+    </main>
+
 
     <main class="form-card" id="apply-complete" style="display:none;">
         <div class="success-box">

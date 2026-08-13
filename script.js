@@ -440,16 +440,25 @@ class EventCalendar {
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // TOPページのミニカレンダーから「?y=2026&m=8&d=23」のような形でリンクされてきた時、
-    // その月まで移動してから、その日のポップアップを自動的に開く。
-    goToDayFromLink(year, month, day) {
+    // TOPページのミニカレンダーのポップアップ内カードから「?y=2026&m=8&d=23&t=イベント名」の
+    // ような形でリンクされてきた時、日付ポップアップは経由せず、その月まで移動してから
+    // 該当イベントのアコーディオン項目を直接開く（TOP側で一覧→カード選択まで済んでいるため）。
+    // title未指定（後方互換）の場合は、その日の先頭のイベントを開く。
+    goToDayFromLink(year, month, day, title) {
         this.year = year;
         this.month = month;
         this.render();
         const byDay = getMonthEvents(year, month);
         const evs = byDay[day];
         if (evs && evs.length) {
-            showDayPopup(year, month, day, evs, (ev) => this.jumpToAccordionItem(year, month, day, ev));
+            let ev = evs[0];
+            if (title) {
+                // evs[].name は getMonthEvents() で escapeHtml 済みなので、比較対象も揃える
+                const escapedTitle = escapeHtml(title);
+                const found = evs.find(e => e.name === escapedTitle);
+                if (found) ev = found;
+            }
+            this.jumpToAccordionItem(year, month, day, ev);
         }
     }
 
@@ -607,14 +616,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 monthListPrevBtn: document.getElementById('month-list-prev')
             });
 
-            // TOPページのミニカレンダーから「?y=2026&m=8&d=23」の形でリンクされてきた場合、
-            // 該当の月へ移動し、その日のポップアップを自動的に開く。
+            // TOPページのミニカレンダーのポップアップから「?y=2026&m=8&d=23&t=イベント名」の
+            // 形でリンクされてきた場合、該当の月へ移動し、日付ポップアップは経由せず
+            // 該当イベントのアコーディオン項目を直接開く。
             const params = new URLSearchParams(window.location.search);
             const linkY = Number(params.get('y'));
             const linkM = Number(params.get('m')); // 1-12（TOPページのdata-month基準）
             const linkD = Number(params.get('d'));
+            const linkT = params.get('t');
             if (linkY && linkM && linkD) {
-                pageCalendar.goToDayFromLink(linkY, linkM - 1, linkD);
+                pageCalendar.goToDayFromLink(linkY, linkM - 1, linkD, linkT);
             }
         }
     });
@@ -780,39 +791,183 @@ document.addEventListener('DOMContentLoaded', function () {
         formatRadios.forEach(r => r.addEventListener('change', updateVenueFields));
         updateVenueFields();
 
-        applyForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+        // 申請フォームの入力内容を、確認画面用の「見出し + dt/dd」HTMLに組み立てる。
+        // 未入力の任意項目（Xアカウント・過去実績など）は行ごと表示しない。
+        const EVENT_TYPE_LABELS = {}; // eventTypeはoptionのテキストがそのまま値なので変換不要
+        function formatDateJP(iso) {
+            if (!iso) return '';
+            const [y, m, d] = iso.split('-');
+            if (!y || !m || !d) return iso;
+            return `${y}年${Number(m)}月${Number(d)}日`;
+        }
+        function buildApplyConfirmHtml(fd) {
+            const g = (name) => (fd.get(name) || '').toString().trim();
+            const format = g('eventFormat');
 
-            const submitBtn = applyForm.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '送信中...';
-
-            const formData = new FormData(applyForm);
-            const payload = { type: 'application', hp_verify: getHoneypotValue(applyForm) };
-            formData.forEach((value, key) => { payload[key] = value; });
-
-            const showSuccess = () => {
-                document.getElementById('apply-form-wrap').style.display = 'none';
-                document.getElementById('apply-complete').style.display = 'block';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            };
-
-            if (APPLY_DEMO_MODE) {
-                // テストモード: 実際には送信せず、少し待ってから完了画面だけ表示する
-                console.info('[APPLY_DEMO_MODE] 実際には送信していません。動作確認用の仮表示です。');
-                setTimeout(showSuccess, 500);
-                return;
+            const venueRows = [];
+            if (format === 'オフライン') {
+                venueRows.push(['会場名', g('venueNameOffline')]);
+                venueRows.push(['ご住所', g('venueAddressOffline')]);
+            } else if (format === 'オンライン') {
+                venueRows.push(['会場名（サーバー名など）', g('venueNameOnline')]);
+            } else if (format === 'ハイブリッド') {
+                venueRows.push(['現地会場名', g('venueNameHybridOnsite')]);
+                venueRows.push(['ご住所', g('venueAddressHybrid')]);
+                venueRows.push(['オンライン会場名', g('venueNameHybridOnline')]);
             }
 
-            submitToBackend(payload).then(result => {
-                if (!result || result.ok !== true) throw new Error(result && result.error);
-                showSuccess();
-            }).catch(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '申請する';
-                alert('送信に失敗しました。通信環境をご確認のうえ、時間をおいて再度お試しください。');
-            });
+            const sections = [
+                {
+                    title: '1. 主催者情報',
+                    rows: [
+                        ['主催者名', g('organizerName')],
+                        ['お問い合わせメールアドレス', g('organizerEmail')],
+                        ['Xアカウント', g('xAccount')],
+                        ['Discord ID', g('discordId')]
+                    ]
+                },
+                {
+                    title: '2. イベント基本情報',
+                    rows: [
+                        ['イベント名', g('eventName')],
+                        ['開催日', formatDateJP(g('eventDate'))],
+                        ['開始時間', g('startTime')],
+                        ['終了予定時間', g('endTime')]
+                    ]
+                },
+                {
+                    title: '3. 開催場所',
+                    rows: [['開催形式', format]].concat(venueRows)
+                },
+                {
+                    title: '4. イベント内容',
+                    rows: [
+                        ['イベント種別', g('eventType')],
+                        ['定員', g('capacity') ? g('capacity') + '名' : ''],
+                        ['参加費', g('fee') ? g('fee') + '円' : ''],
+                        ['イベント説明文', g('eventDescription')]
+                    ]
+                },
+                {
+                    title: '5. 主催者実績',
+                    rows: [
+                        ['過去開催回数', g('pastCount') ? g('pastCount') + '回' : ''],
+                        ['過去のイベントURL', g('pastUrl')]
+                    ]
+                }
+            ];
+
+            const sectionsHtml = sections.map(sec => {
+                const rowsHtml = sec.rows
+                    .filter(([, value]) => value)
+                    .map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`)
+                    .join('');
+                if (!rowsHtml) return '';
+                return `
+                    <div class="form-section">
+                        <h2>${escapeHtml(sec.title)}</h2>
+                        <dl class="preview-box">${rowsHtml}</dl>
+                    </div>`;
+            }).join('');
+
+            // 6. 確認事項: フォーム送信済み＝すべて同意済みなので、内容を再掲するだけの確認リストにする
+            const agreementLabels = Array.from(
+                applyForm.querySelectorAll('#agreement-section .check-group label span')
+            ).map(span => span.textContent.trim());
+            const agreementsHtml = agreementLabels.map(label =>
+                `<li>${escapeHtml(label)}</li>`
+            ).join('');
+
+            return `
+                ${sectionsHtml}
+                <div class="form-section">
+                    <h2>6. 確認事項</h2>
+                    <ul class="preview-box" style="list-style:disc; padding-left:1.2em;">${agreementsHtml}</ul>
+                </div>`;
+        }
+
+        const applyFormWrap = document.getElementById('apply-form-wrap');
+        const applyConfirmWrap = document.getElementById('apply-confirm-wrap');
+        const applyConfirmBody = document.getElementById('apply-confirm-body');
+        const applyEyebrow = document.getElementById('apply-eyebrow');
+        const applyTitle = document.getElementById('apply-title');
+        const applyDesc = document.getElementById('apply-desc');
+        const applyBreadcrumb = document.getElementById('apply-breadcrumb-current');
+        const applyConfirmSubmitBtn = document.getElementById('apply-confirm-submit');
+
+        function showApplyForm() {
+            applyConfirmWrap.style.display = 'none';
+            applyFormWrap.style.display = 'block';
+            if (applyEyebrow) applyEyebrow.textContent = 'APPLICATION';
+            if (applyTitle) applyTitle.textContent = 'Force of the Horse 公認イベント申請';
+            if (applyDesc) applyDesc.textContent = 'Force of the Horseの公認イベント・交流会・大会の開催申請フォームです。必要事項をご入力の上、申請してください。';
+            if (applyBreadcrumb) applyBreadcrumb.textContent = '公認イベント申請';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showApplyConfirm(fd) {
+            applyConfirmBody.innerHTML = buildApplyConfirmHtml(fd);
+            applyFormWrap.style.display = 'none';
+            applyConfirmWrap.style.display = 'block';
+            if (applyEyebrow) applyEyebrow.textContent = 'CONFIRM';
+            if (applyTitle) applyTitle.textContent = '入力内容の確認';
+            if (applyDesc) applyDesc.textContent = '以下の内容で申請を送信します。内容をご確認のうえ、「申請する」を押してください。';
+            if (applyBreadcrumb) applyBreadcrumb.textContent = '入力内容の確認';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 1ステップ目: フォーム送信 → 直接送信せず、確認画面を表示する
+        // （必須項目はHTML標準のrequired検証を通過済みなのでここでは組み立てだけ行う）
+        applyForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(applyForm);
+            showApplyConfirm(formData);
         });
+
+        const applyConfirmBackBtn = document.getElementById('apply-confirm-back');
+        if (applyConfirmBackBtn) {
+            applyConfirmBackBtn.addEventListener('click', showApplyForm);
+        }
+
+        // 2ステップ目: 確認画面の「申請する」 → ここで実際にバックエンドへ送信する
+        if (applyConfirmSubmitBtn) {
+            applyConfirmSubmitBtn.addEventListener('click', function () {
+                applyConfirmSubmitBtn.disabled = true;
+                applyConfirmSubmitBtn.textContent = '送信中...';
+                if (applyConfirmBackBtn) applyConfirmBackBtn.disabled = true;
+
+                const formData = new FormData(applyForm);
+                const payload = { type: 'application', hp_verify: getHoneypotValue(applyForm) };
+                formData.forEach((value, key) => { payload[key] = value; });
+
+                const showSuccess = () => {
+                    applyConfirmWrap.style.display = 'none';
+                    document.getElementById('apply-complete').style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+
+                const resetSubmitBtn = () => {
+                    applyConfirmSubmitBtn.disabled = false;
+                    applyConfirmSubmitBtn.textContent = '申請する';
+                    if (applyConfirmBackBtn) applyConfirmBackBtn.disabled = false;
+                };
+
+                if (APPLY_DEMO_MODE) {
+                    // テストモード: 実際には送信せず、少し待ってから完了画面だけ表示する
+                    console.info('[APPLY_DEMO_MODE] 実際には送信していません。動作確認用の仮表示です。');
+                    setTimeout(showSuccess, 500);
+                    return;
+                }
+
+                submitToBackend(payload).then(result => {
+                    if (!result || result.ok !== true) throw new Error(result && result.error);
+                    showSuccess();
+                }).catch(() => {
+                    resetSubmitBtn();
+                    alert('送信に失敗しました。通信環境をご確認のうえ、時間をおいて再度お試しください。');
+                });
+            });
+        }
     }
 
     // ---------- Vol detail pages: quick question form (no confirm modal) ----------
