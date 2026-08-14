@@ -143,7 +143,7 @@ function volKeyFromText(text) {
   if (t.indexOf('02') !== -1 || t.indexOf('英雄VS豪傑') !== -1) return 'vol2';
   if (t.indexOf('03') !== -1 || t.indexOf('砂の王') !== -1) return 'vol3';
   if (t.indexOf('04') !== -1 || t.indexOf('GO FASTER') !== -1) return 'vol4';
-  if (t.indexOf('05') !== -1 || t.indexOf('覚醒の蹄') !== -1) return 'vol5';
+  if (t.indexOf('05') !== -1 || t.indexOf('伝説への刻印') !== -1) return 'vol5';
   return '';
 }
 

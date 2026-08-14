@@ -31,6 +31,16 @@ const DEMO_MODE = true;
 // =====================================================================
 const APPLY_DEMO_MODE = true;
 
+// =====================================================================
+// ★★★ FAQ質問フォームの動作確認用モード ★★★
+// Google Apps Script側の準備がまだでも、FAQ質問フォーム（faq.html本体の
+// 投稿モーダル、および faq-starter.html / faq-vol1〜5.html 下部の質問フォーム）を
+// 送信すると（実際にはどこにも送信せず）投稿完了の表示がされるようにします。
+// Apps Scriptのデプロイ・動作確認が済んだら、この FAQ_DEMO_MODE を
+// false に変更してください（true のままだと、本番でも実際には送信されません）。
+// =====================================================================
+const FAQ_DEMO_MODE = true;
+
 // 開催場所（施設名+住所の自由入力）から都道府県名だけを取り出すためのヘルパー。
 // 申請フォームの「開催場所」欄は都道府県専用の入力欄になっていないため完全ではないが、
 // 一般的な入力（「東京都〜」「大阪府大阪市〜」など都道府県名が含まれる書き方）であれば拾える。
@@ -292,7 +302,7 @@ class EventCalendar {
         this.upcomingEl = opts.upcomingEl || null;       // simple compact list (unused on the calendar page)
         this.monthListEl = opts.monthListEl || null;     // accordion list for the displayed month only
         this.monthListHeadEl = opts.monthListHeadEl || null;
-        this.monthListNextBtn = opts.monthListNextBtn || null; // 「来月を見る」矢印（カレンダー本体とは独立して一覧だけ月送りする）
+        this.monthListNextBtn = opts.monthListNextBtn || null; // 「来月を見る」矢印（カレンダー本体と連動して両方まとめて月送りする）
         this.monthListPrevBtn = opts.monthListPrevBtn || null; // 「先月を見る」矢印（同上、逆方向）
 
         const now = new Date();
@@ -300,32 +310,23 @@ class EventCalendar {
         this.month = now.getMonth();
         this.today = now;
 
-        // 月間イベント一覧（アコーディオン）は、カレンダー本体の月送りとは独立して
-        // 動かせるように、専用の年月state（listYear/listMonth）を別に持たせる。
-        this.listYear = now.getFullYear();
-        this.listMonth = now.getMonth();
-
         if (this.prevBtn) this.prevBtn.addEventListener('click', () => this.shift(-1));
         if (this.nextBtn) this.nextBtn.addEventListener('click', () => this.shift(1));
-        if (this.monthListNextBtn) this.monthListNextBtn.addEventListener('click', () => this.shiftList(1));
-        if (this.monthListPrevBtn) this.monthListPrevBtn.addEventListener('click', () => this.shiftList(-1));
+        if (this.monthListNextBtn) this.monthListNextBtn.addEventListener('click', () => this.shift(1));
+        if (this.monthListPrevBtn) this.monthListPrevBtn.addEventListener('click', () => this.shift(-1));
 
         this.render();
         if (this.monthListEl) this.renderMonthAccordion();
     }
 
+    // カレンダー本体・月間イベント一覧のどちらの矢印から呼ばれても、同じ year/month を
+    // 進めてから両方を再描画する（calendar-header と month-col-head の動きを連動させる）。
     shift(delta) {
         this.month += delta;
         if (this.month < 0) { this.month = 11; this.year--; }
         if (this.month > 11) { this.month = 0; this.year++; }
         this.render();
-    }
-
-    shiftList(delta) {
-        this.listMonth += delta;
-        if (this.listMonth < 0) { this.listMonth = 11; this.listYear--; }
-        if (this.listMonth > 11) { this.listMonth = 0; this.listYear++; }
-        this.renderMonthAccordion();
+        if (this.monthListEl) this.renderMonthAccordion();
     }
 
     isToday(d) {
@@ -420,13 +421,14 @@ class EventCalendar {
 
     // ポップアップ内のカードをクリックすると、下の月間イベント一覧（アコーディオン）を
     // クリックした日の月に合わせてから、該当項目までスクロールして自動的に開く。
-    // （一覧側の矢印はカレンダー本体と独立して動くため、通常のカレンダー月送りでは
-    //   一覧の表示月は変わらない。ジャンプ時だけ一致させる。）
+    // （カレンダー本体と一覧は連動しているので、月が異なる場合はカレンダー側も
+    //   合わせて再描画する。）
     jumpToAccordionItem(year, month, day, ev) {
         if (!this.monthListEl) return;
-        if (this.listYear !== year || this.listMonth !== month) {
-            this.listYear = year;
-            this.listMonth = month;
+        if (this.year !== year || this.month !== month) {
+            this.year = year;
+            this.month = month;
+            this.render();
             this.renderMonthAccordion();
         }
         const items = this.monthListEl.querySelectorAll('.event-acc-item');
@@ -498,14 +500,14 @@ class EventCalendar {
     // 当月のイベントだけを、開催日時・タイトル・開催場所・参加費・募集人数・主催者名・
     // 問い合わせ先を含むアコーディオンとして表示する（空欄の項目は表示しない）。
     renderMonthAccordion() {
-        if (this.monthListHeadEl) this.monthListHeadEl.textContent = `${this.listYear}年${MONTH_NAMES[this.listMonth]}のイベント`;
-        const list = getMonthEventsFlat(this.listYear, this.listMonth);
+        if (this.monthListHeadEl) this.monthListHeadEl.textContent = `${this.year}年${MONTH_NAMES[this.month]}のイベント`;
+        const list = getMonthEventsFlat(this.year, this.month);
         this.monthListEl.innerHTML = '';
         if (list.length === 0) {
             this.monthListEl.innerHTML = '<p class="no-events">この月に開催予定のイベントはありません</p>';
             return;
         }
-        const year = this.listYear, month = this.listMonth;
+        const year = this.year, month = this.month;
         list.forEach(ev => {
             const item = document.createElement('div');
             item.className = 'acc-item event-acc-item';
@@ -732,14 +734,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 submitBtn.disabled = true;
                 submitBtn.textContent = '送信中...';
 
-                submitToBackend({
-                    type: 'faq',
-                    vol: volSelect.options[volSelect.selectedIndex].text,
-                    card: cardInput.value.trim(),
-                    content: contentInput.value.trim(),
-                    hp_verify: getHoneypotValue(postForm)
-                }).then(result => {
-                    if (!result || result.ok !== true) throw new Error(result && result.error);
+                const showModalSuccess = () => {
                     modalBody.innerHTML = `
                         <div class="success-box">
                             <div class="s-icon">✓</div>
@@ -749,6 +744,24 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>`;
                     postForm.reset();
                     document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
+                };
+
+                if (FAQ_DEMO_MODE) {
+                    // テストモード: 実際には送信せず、少し待ってから完了表示だけ行う
+                    console.info('[FAQ_DEMO_MODE] 実際には送信していません。動作確認用の仮表示です。');
+                    setTimeout(showModalSuccess, 500);
+                    return;
+                }
+
+                submitToBackend({
+                    type: 'faq',
+                    vol: volSelect.options[volSelect.selectedIndex].text,
+                    card: cardInput.value.trim(),
+                    content: contentInput.value.trim(),
+                    hp_verify: getHoneypotValue(postForm)
+                }).then(result => {
+                    if (!result || result.ok !== true) throw new Error(result && result.error);
+                    showModalSuccess();
                 }).catch(() => {
                     modalBody.innerHTML = `
                         <div class="success-box">
@@ -970,42 +983,103 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // ---------- Vol detail pages: quick question form (no confirm modal) ----------
+    // ---------- Vol detail pages: quick question form with confirmation popup ----------
+    // faq.html本体の投稿モーダル(#post-modal)と同じ構造を各Volページにも設置し、
+    // 送信前に内容を確認できるようにしている。
     document.querySelectorAll('.vol-question-form').forEach(form => {
+        const volModal = document.getElementById('post-modal');
+        const volModalBody = document.getElementById('post-modal-body');
+        if (!volModal || !volModalBody) return; // モーダルが無いページでは何もしない（保険）
+
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            const submitBtn = form.querySelector('button[type="submit"]');
+
+            const volField = form.querySelector('[name="vol"]');
+            const cardField = form.querySelector('[name="card"]');
             const contentField = form.querySelector('[name="content"]');
+
             if (!contentField.value.trim()) {
                 alert('質問内容を入力してください');
                 return;
             }
-            const volField = form.querySelector('[name="vol"]');
-            const cardField = form.querySelector('[name="card"]');
 
-            const originalLabel = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = '送信中...';
+            const volText = volField.options[volField.selectedIndex].text;
+            const cardText = cardField.value.trim();
+            const contentText = contentField.value.trim();
 
-            submitToBackend({
-                type: 'faq',
-                vol: volField.options[volField.selectedIndex].text,
-                card: cardField.value.trim(),
-                content: contentField.value.trim(),
-                hp_verify: getHoneypotValue(form)
-            }).then(result => {
-                if (!result || result.ok !== true) throw new Error(result && result.error);
-                submitBtn.textContent = '投稿しました ✓';
-                form.reset();
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalLabel;
-                }, 3000);
-            }).catch(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalLabel;
-                alert('送信に失敗しました。時間をおいて再度お試しください。');
+            volModalBody.innerHTML = `
+                <h3>投稿内容をご確認ください</h3>
+                <p class="modal-desc">以下の内容で投稿します。投稿後の内容変更はできません。</p>
+                <dl class="preview-box">
+                    <dt>対象弾</dt><dd>${escapeHtml(volText)}</dd>
+                    <dt>カード名</dt><dd>${escapeHtml(cardText) || '（未入力）'}</dd>
+                    <dt>質問内容</dt><dd>${escapeHtml(contentText)}</dd>
+                </dl>
+                <div class="check-group">
+                    <label><input type="checkbox" id="vol-chk1"> 入力内容に誤りはありません。</label>
+                    <label><input type="checkbox" id="vol-chk2"> 投稿内容は運営判断で編集・要約・非掲載・削除される場合があることに同意します。</label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="vol-modal-back">戻る</button>
+                    <button type="button" class="btn btn-primary" id="vol-modal-submit" disabled>投稿する</button>
+                </div>`;
+            volModal.classList.add('open');
+
+            const chk1 = document.getElementById('vol-chk1');
+            const chk2 = document.getElementById('vol-chk2');
+            const submitBtn = document.getElementById('vol-modal-submit');
+            const updateSubmit = () => { submitBtn.disabled = !(chk1.checked && chk2.checked); };
+            chk1.addEventListener('change', updateSubmit);
+            chk2.addEventListener('change', updateSubmit);
+
+            document.getElementById('vol-modal-back').addEventListener('click', () => volModal.classList.remove('open'));
+
+            submitBtn.addEventListener('click', () => {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '送信中...';
+
+                const showVolSuccess = () => {
+                    volModalBody.innerHTML = `
+                        <div class="success-box">
+                            <div class="s-icon">✓</div>
+                            <h3>投稿を受け付けました</h3>
+                            <p>ご投稿ありがとうございます。運営にて内容を確認のうえ、順次回答を掲載いたします。</p>
+                            <button type="button" class="btn btn-primary" id="vol-modal-close">閉じる</button>
+                        </div>`;
+                    form.reset();
+                    document.getElementById('vol-modal-close').addEventListener('click', () => volModal.classList.remove('open'));
+                };
+
+                if (FAQ_DEMO_MODE) {
+                    // テストモード: 実際には送信せず、少し待ってから完了表示だけ行う
+                    console.info('[FAQ_DEMO_MODE] 実際には送信していません。動作確認用の仮表示です。');
+                    setTimeout(showVolSuccess, 500);
+                    return;
+                }
+
+                submitToBackend({
+                    type: 'faq',
+                    vol: volText,
+                    card: cardText,
+                    content: contentText,
+                    hp_verify: getHoneypotValue(form)
+                }).then(result => {
+                    if (!result || result.ok !== true) throw new Error(result && result.error);
+                    showVolSuccess();
+                }).catch(() => {
+                    volModalBody.innerHTML = `
+                        <div class="success-box">
+                            <h3>送信に失敗しました</h3>
+                            <p>通信エラーが発生しました。お手数ですが、時間をおいて再度お試しください。</p>
+                            <button type="button" class="btn btn-outline" id="vol-modal-close">閉じる</button>
+                        </div>`;
+                    document.getElementById('vol-modal-close').addEventListener('click', () => volModal.classList.remove('open'));
+                });
             });
+        });
+
+        volModal.addEventListener('click', function (e) {
+            if (e.target === volModal) volModal.classList.remove('open');
         });
     });
 
