@@ -209,6 +209,44 @@ function submitToBackend(payload) {
     });
 }
 
+// バックエンド(Code.gs)から返るエラーコードを、ユーザー向けの分かりやすい文言に変換する。
+// title/messageの2つを返す（アラート表示・モーダル表示のどちらでも使えるように）。
+function getSubmitErrorText(err) {
+    const code = err && err.message;
+    switch (code) {
+        case 'rate_limited':
+            return {
+                title: '送信が集中しています',
+                message: '短時間に送信が集中したため、一時的に制限されています。しばらく時間をおいて再度お試しください。'
+            };
+        case 'invalid_email':
+            return {
+                title: 'メールアドレスをご確認ください',
+                message: 'お問い合わせメールアドレスの形式が正しくないようです。ご確認のうえ、再度お試しください。'
+            };
+        case 'invalid_url':
+            return {
+                title: 'URLをご確認ください',
+                message: '入力されたURLの形式が正しくないようです。http:// または https:// から始まるURLをご入力ください。'
+            };
+        case 'ng_word':
+            return {
+                title: '送信できませんでした',
+                message: '入力内容に掲載できない可能性のある表現が含まれています。お手数ですが表現を変えて再度お試しください。'
+            };
+        case 'too_many_urls':
+            return {
+                title: '送信できませんでした',
+                message: '入力内容に含まれるURLの数が多いため、送信できませんでした。URLの数を減らして再度お試しください。'
+            };
+        default:
+            return {
+                title: '送信に失敗しました',
+                message: '通信エラーが発生しました。お手数ですが、時間をおいて再度お試しください。'
+            };
+    }
+}
+
 // honeypot欄（name="hp_verify"）の値を拾う共通ヘルパー。
 // 人間には見えない/操作されない前提の欄なので、値が入っていたら送信ペイロードに
 // そのまま乗せてサーバー側(Code.gs)で弾く。
@@ -968,13 +1006,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 form.reset();
                 document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
             }).catch(err => {
-                const isRateLimited = err && err.message === 'rate_limited';
+                const t = getSubmitErrorText(err);
                 modalBody.innerHTML = `
                     <div class="success-box">
-                        <h3>${isRateLimited ? '送信が集中しています' : '送信に失敗しました'}</h3>
-                        <p>${isRateLimited
-                            ? '短時間に送信が集中したため、一時的に制限されています。しばらく時間をおいて再度お試しください。'
-                            : '通信エラーが発生しました。お手数ですが、時間をおいて再度お試しください。'}</p>
+                        <h3>${escapeHtml(t.title)}</h3>
+                        <p>${escapeHtml(t.message)}</p>
                         <button type="button" class="btn btn-outline" id="modal-close">閉じる</button>
                     </div>`;
                 document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
@@ -1068,12 +1104,27 @@ document.addEventListener('DOMContentLoaded', function () {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // ブラウザのtype="email"/type="url"検証を補う簡易チェック。
+        // 最終的な検証はCode.gs側（サーバー）で行っているが、確認画面まで進んでから
+        // エラーになるより、ここで早めに気づけた方が親切なため。
+        const APPLY_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const APPLY_URL_REGEX = /^https?:\/\/\S+$/i;
+
         applyForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const formData = new FormData(applyForm);
             const payload = { type: 'application', hp_verify: getHoneypotValue(applyForm) };
             formData.forEach((value, key) => { payload[key] = value; });
+
+            if (!APPLY_EMAIL_REGEX.test((payload.organizerEmail || '').trim())) {
+                alert('お問い合わせメールアドレスの形式が正しくないようです。ご確認ください。');
+                return;
+            }
+            if (payload.pastUrl && payload.pastUrl.trim() && !APPLY_URL_REGEX.test(payload.pastUrl.trim())) {
+                alert('過去のイベントURLの形式が正しくないようです。http:// または https:// から始まるURLをご入力ください。');
+                return;
+            }
 
             pendingApplyPayload = payload;
             showApplyConfirmStep(payload);
@@ -1118,9 +1169,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }).catch(err => {
                     applyConfirmSubmitBtn.disabled = false;
                     applyConfirmSubmitBtn.textContent = '申請する';
-                    alert(err && err.message === 'rate_limited'
-                        ? '短時間に送信が集中したため、一時的に制限されています。しばらく時間をおいて再度お試しください。'
-                        : '送信に失敗しました。通信環境をご確認のうえ、時間をおいて再度お試しください。');
+                    const t = getSubmitErrorText(err);
+                    alert(`${t.title}\n${t.message}`);
                 });
             });
         }

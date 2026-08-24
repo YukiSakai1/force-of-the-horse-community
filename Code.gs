@@ -114,6 +114,79 @@ function isOverLimit(cache, key, limit) {
   return false;
 }
 
+// ===== 入力フォーマットの検証 / 不適切投稿対策 =====
+// これらはすべてバックエンド（GAS側）でチェックしています。フォーム画面の
+// type="email"/type="url"やHTML側のチェックだけでは、直接このAPIを叩かれた場合に
+// 素通りしてしまうため、最終的な砦としてここで検証しています。
+
+// メールアドレスの簡易フォーマットチェック。実在確認まではできませんが、
+// 明らかにメールアドレスの形をしていない入力を弾く目的の簡易チェックです。
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function isValidEmail(value) {
+  return EMAIL_REGEX.test(String(value || '').trim());
+}
+
+// URLの簡易フォーマットチェック。http:// または https:// で始まっているかのみを確認する。
+// 主目的は、スプレッドシートを見た運営が誤ってクリックした際に危険な
+// javascript: スキーム等のリンクを弾くこと（厳密なURL構文検証ではありません）。
+// 空欄は任意項目として許容し、必須チェックは呼び出し側で別途行う。
+function isValidUrl(value) {
+  const v = String(value || '').trim();
+  if (!v) return true;
+  return /^https?:\/\/\S+$/i.test(v);
+}
+
+// ===== NGワードフィルタ（荒らし・スパム対策） =====
+// デフォルトの単語に加え、スクリプトプロパティ NG_WORDS_EXTRA
+// （カンマ区切りの文字列）で運営が単語を追加できます。コードを触らずに
+// 「プロジェクトの設定」→「スクリプトプロパティ」→ プロパティ名 NG_WORDS_EXTRA
+// 例の値: 出会い系,アダルト,詐欺まがい
+// ※このリストは「機械的に弾く／要確認にする」ための簡易フィルタであり、
+//   完璧な検閲ではありません。誤検知（false positive）もありえるため、
+//   最終的な公開判断は引き続き運営の目視確認（ステータス変更）に委ねています。
+const DEFAULT_NG_WORDS = [
+  '死ね', '殺す', 'ぶっ殺', 'きもい', 'きしょい', 'クズ', 'ゴミ野郎',
+  '出会い系', 'アダルト', '援交', '風俗',
+  '儲かる', '稼げる', '副業', '在宅ワーク', '投資勧誘', '仮想通貨必勝',
+  'カジノ', 'アフィリエイト', '格安', '激安通販',
+  'viagra', 'バイアグラ'
+];
+
+function getNgWords() {
+  const extra = PropertiesService.getScriptProperties().getProperty('NG_WORDS_EXTRA') || '';
+  const extraWords = extra.split(',').map(w => w.trim()).filter(Boolean);
+  return DEFAULT_NG_WORDS.concat(extraWords);
+}
+
+// テキスト中にNGワードが含まれていれば、その単語を返す（無ければnull）。
+function findNgWord(text) {
+  const t = String(text || '').toLowerCase();
+  if (!t) return null;
+  const words = getNgWords();
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i];
+    if (w && t.indexOf(w.toLowerCase()) !== -1) return w;
+  }
+  return null;
+}
+
+// ===== 過度なURLの検出（リンクスパム対策） =====
+// 自由記述欄に大量のURLが含まれる場合、SEOスパム・宣伝目的の投稿である可能性が
+// 高いため拒否する。1〜2個程度（自分のSNS等）は許容し、3個以上で拒否する。
+const MAX_URLS_IN_TEXT = 2;
+function countUrls(text) {
+  const matches = String(text || '').match(/https?:\/\/\S+/gi);
+  return matches ? matches.length : 0;
+}
+
+// 自由記述欄（説明文・質問内容など）に対する共通チェック。
+// 問題があれば理由コード（'ng_word' | 'too_many_urls'）を返し、無ければnullを返す。
+function checkFreeText(text) {
+  if (findNgWord(text)) return 'ng_word';
+  if (countUrls(text) > MAX_URLS_IN_TEXT) return 'too_many_urls';
+  return null;
+}
+
 // シート名（このままでOK。変える場合は下の定数も変更）
 const SHEET_APPLICATION = '申請';
 const SHEET_FAQ = 'FAQ質問';
@@ -368,6 +441,20 @@ function handleApplication(data) {
     return jsonResponse({ ok: false, error: 'missing required field: venue' });
   }
 
+  // メールアドレス・URLのフォーマットチェック
+  if (!isValidEmail(data.organizerEmail)) {
+    return jsonResponse({ ok: false, error: 'invalid_email' });
+  }
+  if (!isValidUrl(data.pastUrl)) {
+    return jsonResponse({ ok: false, error: 'invalid_url' });
+  }
+
+  // 自由記述欄（イベント名・説明文）に対するNGワード／過度なURLのチェック
+  const freeTextIssue = checkFreeText(data.eventName) || checkFreeText(data.eventDescription);
+  if (freeTextIssue) {
+    return jsonResponse({ ok: false, error: freeTextIssue });
+  }
+
   const sheet = getOrCreateSheet(SHEET_APPLICATION, APPLICATION_HEADERS);
   const row = [
     new Date(),
@@ -416,6 +503,12 @@ function handleApplication(data) {
 function handleFaq(data) {
   if (!data.vol || !data.content || !String(data.content).trim()) {
     return jsonResponse({ ok: false, error: 'missing required field' });
+  }
+
+  // 質問内容・カード名に対するNGワード／過度なURLのチェック
+  const freeTextIssue = checkFreeText(data.content) || checkFreeText(data.card);
+  if (freeTextIssue) {
+    return jsonResponse({ ok: false, error: freeTextIssue });
   }
 
   const sheet = getOrCreateSheet(SHEET_FAQ, FAQ_HEADERS);
