@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>公認イベント申請 - Force of the Horse</title>
+    <meta name="description" content="Force of the Horseの公認イベント（大会・交流会など）開催申請はこちらから。必要事項をご入力の上、お申し込みください。">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -28,10 +29,12 @@
             <span class="breadcrumb-sep">&gt;</span>
             <a href="certified-event-system.html">公認イベント制度について</a>
             <span class="breadcrumb-sep">&gt;</span>
-            <span>公認イベント申請</span>
+            <span>開催申請</span>
+            <span class="breadcrumb-sep" id="bc-confirm-sep" style="display:none;">&gt;</span>
+            <span id="bc-confirm-current" style="display:none;">入力内容の確認</span>
         </div>
 
-        <div class="page-head">
+        <div class="page-head" id="apply-page-head">
             <p class="page-eyebrow">APPLICATION</p>
             <h1 class="page-title">Force of the Horse 公認イベント申請</h1>
             <p class="page-desc">Force of the Horseの公認イベント・交流会・大会の開催申請フォームです。必要事項をご入力の上、申請してください。</p>
@@ -177,8 +180,25 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block">申請する</button>
+            <button type="submit" class="btn btn-primary btn-block">確認する</button>
         </form>
+    </main>
+
+    <main class="form-card" id="apply-confirm" style="display:none;">
+        <div class="page-head">
+            <p class="page-eyebrow">CONFIRM</p>
+            <h1 class="page-title">入力内容の確認</h1>
+            <p class="page-desc">以下の内容で申請を送信します。内容をご確認のうえ、「申請する」を押してください。</p>
+        </div>
+
+        <div id="apply-confirm-body"></div>
+
+        <div class="confirm-note-box">送信後は申請内容を変更できません。内容をご確認のうえ、申請してください。</div>
+
+        <div class="confirm-actions">
+            <button type="button" id="apply-confirm-back" class="btn btn-outline">戻って修正する</button>
+            <button type="button" id="apply-confirm-submit" class="btn btn-primary">申請する</button>
+        </div>
     </main>
 
     <main class="form-card" id="apply-complete" style="display:none;">

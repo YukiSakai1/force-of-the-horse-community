@@ -18,8 +18,7 @@
 // この値は script.js の CONFIG.FORM_TOKEN と必ず一致させてください。
 // 注意: これはURLを直接叩くような雑なスパム/botを弾くための簡易フィルタであり、
 //       本気の攻撃者に対する強固な認証ではありません（値はブラウザ側JSに書かれるため見えます）。
-//       重要なのは honeypot と組み合わせて「サイトを経由しない機械的な連投」を減らすことです。
-//       本格的な対策としては reCAPTCHA v3 の導入を推奨します。
+//       honeypot・reCAPTCHA v3・レート制限（いずれも下記）と組み合わせて多層的に対策しています。
 function getExpectedToken() {
   return PropertiesService.getScriptProperties().getProperty('FORM_TOKEN') || '';
 }
@@ -35,11 +34,83 @@ function clip(value, maxLen) {
   return s.slice(0, maxLen);
 }
 
-// リクエストの基本チェック（token不一致 or honeypot欄に入力あり → スパム扱いで拒否）
+// リクエストの基本チェック（token不一致 or honeypot欄に入力あり or reCAPTCHA判定NG → スパム扱いで拒否）
 function isSpammyRequest(data) {
   const expected = getExpectedToken();
   if (expected && data.token !== expected) return true;
   if (data.hp_verify) return true; // honeypot欄（人間の目には見えない想定の欄）に値が入っていたらbot
+  if (!verifyRecaptcha(data.recaptchaToken)) return true;
+  return false;
+}
+
+// ===== reCAPTCHA v3 =====
+// https://www.google.com/recaptcha/admin でサイト登録すると、サイトキー（script.js側に設定）と
+// シークレットキー（ここ、GAS側のみに設定）の2つが発行されます。
+// シークレットキーは絶対に script.js など公開されるファイルには書かないでください。
+// 設定方法: Apps Scriptエディタ左メニュー「プロジェクトの設定」→「スクリプトプロパティ」
+//          → プロパティ名 RECAPTCHA_SECRET_KEY / 値にシークレットキーを設定
+const RECAPTCHA_SCORE_THRESHOLD = 0.5; // 0.0〜1.0、低いほどbotらしいという判定。0.5前後が一般的な目安
+
+function getRecaptchaSecret() {
+  return PropertiesService.getScriptProperties().getProperty('RECAPTCHA_SECRET_KEY') || '';
+}
+
+// reCAPTCHAトークンをGoogleに照会し、人間らしいスコアだったかを判定する。
+// シークレットキーが未設定の間は「reCAPTCHA未導入」として何もチェックせず通す。
+function verifyRecaptcha(token) {
+  const secret = getRecaptchaSecret();
+  if (!secret) return true; // シークレットキー未設定 = 導入前なので判定しない
+  if (!token) return false; // シークレットキー設定済みなのにトークンが無いのは明らかに異常
+
+  try {
+    const res = UrlFetchApp.fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'post',
+      payload: { secret: secret, response: token },
+      muteHttpExceptions: true
+    });
+    const json = JSON.parse(res.getContentText());
+    return !!json.success && (typeof json.score !== 'number' || json.score >= RECAPTCHA_SCORE_THRESHOLD);
+  } catch (err) {
+    // Google側の障害等で判定不能な場合、誤って正規ユーザーの申請まで全拒否しないよう通す
+    console.error('[reCAPTCHA] 検証エラー: ' + err);
+    return true;
+  }
+}
+
+// ===== 送信頻度制限（レート制限） =====
+// Google Apps Scriptは呼び出し元のIPアドレスを取得できないため、代わりに
+// script.js側で発行するブラウザごとのランダムなclientIdを使って、
+// 「同じブラウザからの短時間の連続送信」を制限する。
+// これに加えて、clientIdの有無にかかわらず「サイト全体で短時間に大量送信」も制限する
+// （clientIdを送らない/毎回変える雑なスクリプトにも一定の歯止めをかけるため）。
+// 注意: ブラウザのlocalStorageを消す・別ブラウザやシークレットモードを使う等で
+// clientId単位の制限は回避されうる（完全なIPベースの制限ではない）。
+const RATE_LIMIT_PER_CLIENT = { windowSeconds: 60, maxRequests: 3 };  // 同一clientIdは1分間に3件まで
+const RATE_LIMIT_GLOBAL = { windowSeconds: 60, maxRequests: 30 };     // サイト全体で1分間に30件まで
+
+function isRateLimited(clientId) {
+  const cache = CacheService.getScriptCache();
+
+  if (isOverLimit(cache, 'rl_global', RATE_LIMIT_GLOBAL)) return true;
+  if (clientId && isOverLimit(cache, 'rl_client_' + clientId, RATE_LIMIT_PER_CLIENT)) return true;
+
+  return false;
+}
+
+// CacheServiceにはカウンタのインクリメント専用APIが無いため、直近のタイムスタンプを
+// カンマ区切りで保存し、ウィンドウ内に収まる件数を毎回数え直す簡易実装。
+function isOverLimit(cache, key, limit) {
+  const now = Date.now();
+  const windowMs = limit.windowSeconds * 1000;
+  const raw = cache.get(key);
+  let timestamps = raw ? raw.split(',').map(Number).filter(t => now - t < windowMs) : [];
+
+  if (timestamps.length >= limit.maxRequests) {
+    return true; // 制限超過。拒否されたリクエストで枠を消費させないよう、カウンタは更新しない
+  }
+
+  timestamps.push(now);
+  cache.put(key, timestamps.join(','), Math.min(limit.windowSeconds + 10, 21600)); // 保存期限は最大6時間まで指定可
   return false;
 }
 
@@ -92,6 +163,12 @@ function doPost(e) {
       return jsonResponse({ ok: false, error: 'rejected' });
     }
 
+    if (isRateLimited(data.clientId)) {
+      // 短時間の連続送信を検知。呼び出し側で「送信が集中しています」等、専用の文言を出せるよう
+      // 上のisSpammyRequestとはエラーコードを分けている。
+      return jsonResponse({ ok: false, error: 'rate_limited' });
+    }
+
     if (type === 'application') {
       return handleApplication(data);
     } else if (type === 'faq') {
@@ -107,14 +184,47 @@ function doPost(e) {
 // 動作確認用（ブラウザでURLを開くとこれが返る）
 // ?action=all を付けてアクセスすると、公開済みのFAQ・お知らせ・承認済みイベントを
 // JSONで返す（サイト側のscript.js/index.htmlが読みに来る）。
+// action=all のレスポンスをCacheServiceで短時間（30秒）キャッシュする。
+// スプレッドシートの読み取り自体はもともと軽い処理だが、これによりアクセスが集中した時に
+// 毎回スプレッドシートへ読みに行かずに済み、Apps Script側の処理時間を少し短縮できる。
+// 承認・回答などスプレッドシートを更新した直後は、最大30秒だけ反映が遅れる可能性がある点に注意
+// （それより早く確認したい場合は、単純に30秒待ってからページを再読み込みしてください）。
+const PUBLIC_DATA_CACHE_SECONDS = 30;
+const PUBLIC_DATA_CACHE_KEY = 'public_data_all_v1';
+
+function getPublicDataCached() {
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get(PUBLIC_DATA_CACHE_KEY);
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch (err) {
+      // 壊れたキャッシュは無視して作り直す
+    }
+  }
+
+  const fresh = {
+    faq: getPublishedFaq(),
+    announcements: getPublishedAnnouncements(),
+    events: getApprovedEvents()
+  };
+  try {
+    cache.put(PUBLIC_DATA_CACHE_KEY, JSON.stringify(fresh), PUBLIC_DATA_CACHE_SECONDS);
+  } catch (err) {
+    // キャッシュへの保存に失敗しても致命的ではないので無視して続行
+  }
+  return fresh;
+}
+
 function doGet(e) {
   const action = e && e.parameter && e.parameter.action;
   if (action === 'all') {
+    const data = getPublicDataCached();
     return jsonResponse({
       ok: true,
-      faq: getPublishedFaq(),
-      announcements: getPublishedAnnouncements(),
-      events: getApprovedEvents()
+      faq: data.faq,
+      announcements: data.announcements,
+      events: data.events
     });
   }
   return jsonResponse({ ok: true, message: 'Force of the Horse backend is running' });
@@ -143,7 +253,7 @@ function volKeyFromText(text) {
   if (t.indexOf('02') !== -1 || t.indexOf('英雄VS豪傑') !== -1) return 'vol2';
   if (t.indexOf('03') !== -1 || t.indexOf('砂の王') !== -1) return 'vol3';
   if (t.indexOf('04') !== -1 || t.indexOf('GO FASTER') !== -1) return 'vol4';
-  if (t.indexOf('05') !== -1 || t.indexOf('覚醒の蹄') !== -1) return 'vol5';
+  if (t.indexOf('05') !== -1 || t.indexOf('伝説への刻印') !== -1) return 'vol5';
   return '';
 }
 

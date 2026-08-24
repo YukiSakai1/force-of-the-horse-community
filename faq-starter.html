@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQ スターターキット - Force of the Horse</title>
+    <meta name="description" content="Force of the Horseスターターキット収録カードに関するルールQ&Aをまとめています。">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -34,7 +35,7 @@
         <div class="page-head">
             <p class="page-eyebrow">FAQ</p>
             <h1 class="page-title">スターターキット</h1>
-            <p class="page-desc" id="faq-count">読み込み中...</p>
+            <p class="page-desc">読み込み中...</p>
         </div>
     </div>
 
@@ -49,7 +50,7 @@
         </div>
 
         <div class="faq-section" id="faq-list" data-vol="starter">
-            <!-- FAQ items will be dynamically loaded here -->
+            <p class="faq-empty">読み込み中...</p>
         </div>
 
         <hr class="divider">
@@ -70,7 +71,7 @@
                             <option value="vol2">ブースターパックVol.02 『英雄VS豪傑』</option>
                             <option value="vol3">ブースターパックVol.03 『砂の王 降臨』</option>
                             <option value="vol4">ブースターパックVol.04 『GO FASTER』</option>
-                            <option value="vol5">ブースターパックVol.05 『覚醒の蹄』</option>
+                            <option value="vol5">ブースターパックVol.05 『伝説への刻印』</option>
                         </select>
                     </div>
                     <div class="form-field">
@@ -81,7 +82,7 @@
                         <label>質問内容</label>
                         <textarea rows="5" name="content" placeholder="カードのルールや裁定について質問を入力してください"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">投稿する</button>
+                    <button type="submit" class="btn btn-primary btn-block">投稿内容を確認する</button>
                 </form>
             </div>
 
@@ -97,6 +98,13 @@
             </div>
         </div>
     </main>
+
+    <!-- 投稿確認モーダル -->
+    <div id="post-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div id="post-modal-body"></div>
+        </div>
+    </div>
 
     <footer>
         <div class="footer-inner">

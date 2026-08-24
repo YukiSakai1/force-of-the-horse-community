@@ -7,11 +7,87 @@
 // (デプロイ後に発行されるURL。/mnt/user-data/outputs/apps-script/Code.gs の
 //  デプロイ手順を参照)
 const CONFIG = {
-    GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxa6-eG29iGiITzdjtJZ8rn-slapCmFZz-7EVvcgLadhe69zMkDjVqey0Zzh33IvFPi/exec',
+    GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxMl0EVZDiYByaBy3RQcR01GO7Z7Kw4xOnv6KKqDNy800aRdJyJ8CmblubWR3I8T0M/exec',
     // Code.gs の スクリプトプロパティ FORM_TOKEN と同じ値をここに設定してください。
     // （雑なURL直叩きスパムを減らすための簡易フィルタです。詳細はCode.gsのコメント参照）
-    FORM_TOKEN: '4b88a23d80d3eb2e2646dd6e847fab88'
+    FORM_TOKEN: '4b88a23d80d3eb2e2646dd6e847fab88',
+    // reCAPTCHA v3 のサイトキー（公開しても問題ない方の値。シークレットキーは絶対にここに書かない）。
+    // https://www.google.com/recaptcha/admin でサイト登録すると発行されます。
+    // 未設定（このままYOUR_RECAPTCHA_SITE_KEY_HEREの間）は reCAPTCHA なしで今まで通り動作します。
+    RECAPTCHA_SITE_KEY: 'YOUR_RECAPTCHA_SITE_KEY_HERE'
 };
+
+// reCAPTCHA v3 のスクリプトを読み込む（サイトキーが設定されている時だけ）。
+if (CONFIG.RECAPTCHA_SITE_KEY && CONFIG.RECAPTCHA_SITE_KEY !== 'YOUR_RECAPTCHA_SITE_KEY_HERE') {
+    const recaptchaScriptEl = document.createElement('script');
+    recaptchaScriptEl.src = `https://www.google.com/recaptcha/api.js?render=${CONFIG.RECAPTCHA_SITE_KEY}`;
+    document.head.appendChild(recaptchaScriptEl);
+}
+
+// フォーム送信の直前に呼び、reCAPTCHA v3のトークンを1つ発行してもらうヘルパー。
+// サイトキー未設定・読み込み前などは null を返し、送信自体は止めない。
+function getRecaptchaToken(action) {
+    if (!CONFIG.RECAPTCHA_SITE_KEY || CONFIG.RECAPTCHA_SITE_KEY === 'YOUR_RECAPTCHA_SITE_KEY_HERE') {
+        return Promise.resolve(null);
+    }
+    if (typeof grecaptcha === 'undefined') {
+        return Promise.resolve(null);
+    }
+    return new Promise(resolve => {
+        try {
+            grecaptcha.ready(() => {
+                grecaptcha.execute(CONFIG.RECAPTCHA_SITE_KEY, { action: action || 'submit' })
+                    .then(token => resolve(token))
+                    .catch(() => resolve(null));
+            });
+        } catch (err) {
+            resolve(null);
+        }
+    });
+}
+
+// =====================================================================
+// ★★★ 送信頻度制限（レート制限）用のクライアントID ★★★
+// Apps Scriptは呼び出し元のIPアドレスを取得できないため、代わりにブラウザごとに
+// ランダムなIDを1つ発行してlocalStorageに保存し、送信のたびに一緒に送る。
+// サーバー側(Code.gs)はこのIDを使って「同じブラウザからの短時間の連続送信」を制限する。
+// （localStorageを消す・別ブラウザ/シークレットモードを使う等で回避はできてしまうため、
+// 　完全なIPベースの制限ではなく、あくまで雑な連投・誤操作対策）
+// =====================================================================
+function getClientId() {
+    const KEY = 'foth_client_id';
+    try {
+        let id = localStorage.getItem(KEY);
+        if (!id) {
+            id = (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+            localStorage.setItem(KEY, id);
+        }
+        return id;
+    } catch (err) {
+        // localStorageが使えない環境（プライベートモード等）では毎回ランダムなIDになる
+        return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
+}
+
+// 直近の送信からあまり間を置かずに再送信しようとした場合、通信すら行わずその場で止める
+// （サーバー側のレート制限と二重の対策。こちらはネットワーク往復なしで即座にわかる分、
+// 　誤操作・連打によるムダな送信をより早く防げる）。
+// type: 'faq' | 'application'。cooldownSeconds: 何秒あければ再送信できるか。
+function checkClientCooldown(type, cooldownSeconds) {
+    const KEY = `foth_last_submit_${type}`;
+    try {
+        const last = Number(localStorage.getItem(KEY) || 0);
+        const remain = cooldownSeconds - (Date.now() - last) / 1000;
+        return remain > 0 ? Math.ceil(remain) : 0;
+    } catch (err) {
+        return 0;
+    }
+}
+function markClientSubmitted(type) {
+    try {
+        localStorage.setItem(`foth_last_submit_${type}`, String(Date.now()));
+    } catch (err) { /* localStorage不可の環境は無視 */ }
+}
 
 // =====================================================================
 // ★★★ 動作確認用の仮データ ★★★
@@ -20,7 +96,7 @@ const CONFIG = {
 // スプレッドシート側に本物の承認済みイベントが入ったら、この DEMO_MODE を
 // false に変更してください（true のままだと本番データより仮データが優先されます）。
 // =====================================================================
-const DEMO_MODE = true;
+const DEMO_MODE = false;
 
 // =====================================================================
 // ★★★ 申請フォームの動作確認用モード ★★★
@@ -29,7 +105,7 @@ const DEMO_MODE = true;
 // Apps Scriptのデプロイ・動作確認が済んだら、この APPLY_DEMO_MODE を
 // false に変更してください（true のままだと、本番でも実際には送信されません）。
 // =====================================================================
-const APPLY_DEMO_MODE = true;
+const APPLY_DEMO_MODE = false;
 
 // 開催場所（施設名+住所の自由入力）から都道府県名だけを取り出すためのヘルパー。
 // 申請フォームの「開催場所」欄は都道府県専用の入力欄になっていないため完全ではないが、
@@ -110,17 +186,27 @@ function buildDemoEvents() {
 // GASへJSONを送信する共通関数。
 // Content-Type を text/plain にすることでブラウザのCORSプリフライトを回避している
 // （GASのウェブアプリはOPTIONSリクエストにうまく応答できないため）。
-// token と honeypot(hp_verify) は全送信に共通で自動付与する。
+// token・honeypot(hp_verify)・reCAPTCHAトークン・clientId（レート制限用）は
+// 全送信に共通で自動付与する。
 function submitToBackend(payload) {
     if (!CONFIG.GAS_WEB_APP_URL || CONFIG.GAS_WEB_APP_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
         return Promise.reject(new Error('GAS_WEB_APP_URL未設定'));
     }
-    const fullPayload = Object.assign({ token: CONFIG.FORM_TOKEN }, payload);
-    return fetch(CONFIG.GAS_WEB_APP_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(fullPayload)
-    }).then(res => res.json());
+    return getRecaptchaToken(payload.type || 'submit').then(recaptchaToken => {
+        const fullPayload = Object.assign(
+            {
+                token: CONFIG.FORM_TOKEN,
+                recaptchaToken: recaptchaToken || '',
+                clientId: getClientId()
+            },
+            payload
+        );
+        return fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(fullPayload)
+        }).then(res => res.json());
+    });
 }
 
 // honeypot欄（name="hp_verify"）の値を拾う共通ヘルパー。
@@ -145,19 +231,75 @@ function escapeHtml(str) {
 
 // Code.gsの doGet?action=all を呼び、公開済みのFAQ・お知らせ・承認済みイベントを取得する。
 // スクリプト読み込み直後に呼び出しておくことで、DOMContentLoaded時点ではほぼ取得済みになる。
+function fetchPublicDataOnce(timeoutMs) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(`${CONFIG.GAS_WEB_APP_URL}?action=all`, { signal: controller.signal })
+        .then(res => res.json())
+        .then(json => (json && json.ok) ? json : null)
+        .catch(err => {
+            console.warn('[FAQ/お知らせ/イベント取得] 失敗しました:', err);
+            return null;
+        })
+        .finally(() => clearTimeout(timer));
+}
+
+// =====================================================================
+// FAQ/お知らせ/イベントデータのブラウザ内キャッシュ（sessionStorage）。
+// Apps ScriptのウェブアプリはURLを叩くたびに数秒かかることがあるため、直近に取得した
+// 内容を短時間だけ使い回し、同じセッション内でのページ間移動（TOP→カレンダー→FAQ等）を
+// 速くする。index.html側も同じキー・同じ有効期限で読み書きしているので、ページをまたいでも
+// キャッシュが効く。スプレッドシートを更新した直後はこの秒数だけ反映が遅れうる点に注意。
+// =====================================================================
+const PUBLIC_DATA_CACHE_KEY = 'foth_public_data_cache_v1';
+const PUBLIC_DATA_CACHE_MS = 60 * 1000; // 60秒
+
+function getCachedPublicData() {
+    try {
+        const raw = sessionStorage.getItem(PUBLIC_DATA_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed.savedAt !== 'number') return null;
+        if (Date.now() - parsed.savedAt > PUBLIC_DATA_CACHE_MS) return null;
+        return parsed.data;
+    } catch (err) {
+        return null;
+    }
+}
+
+function setCachedPublicData(data) {
+    try {
+        sessionStorage.setItem(PUBLIC_DATA_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+    } catch (err) {
+        // プライベートモード等でsessionStorageが使えない場合は諦めて無視（キャッシュなしで動く）
+    }
+}
+
+// 1回目が失敗・タイムアウトした場合、少し待ってからもう1回だけ再試行する。
 function fetchPublicData() {
     const empty = { faq: [], announcements: [], events: [] };
     if (!CONFIG.GAS_WEB_APP_URL || CONFIG.GAS_WEB_APP_URL === 'YOUR_GAS_WEB_APP_URL_HERE') {
         return Promise.resolve(empty);
     }
-    return fetch(`${CONFIG.GAS_WEB_APP_URL}?action=all`)
-        .then(res => res.json())
-        .then(json => ({
-            faq: (json && json.ok && Array.isArray(json.faq)) ? json.faq : [],
-            announcements: (json && json.ok && Array.isArray(json.announcements)) ? json.announcements : [],
-            events: (json && json.ok && Array.isArray(json.events)) ? json.events : []
-        }))
-        .catch(() => empty);
+
+    // 同じセッション内で少し前に取得済みならそれをそのまま使い、通信を省略する
+    const cached = getCachedPublicData();
+    if (cached) return Promise.resolve(cached);
+
+    const toResult = (json) => ({
+        faq: (json && Array.isArray(json.faq)) ? json.faq : [],
+        announcements: (json && Array.isArray(json.announcements)) ? json.announcements : [],
+        events: (json && Array.isArray(json.events)) ? json.events : []
+    });
+    return fetchPublicDataOnce(5000).then(json => {
+        if (json) return toResult(json);
+        return new Promise(resolve => setTimeout(resolve, 800))
+            .then(() => fetchPublicDataOnce(8000))
+            .then(toResult);
+    }).then(result => {
+        setCachedPublicData(result);
+        return result;
+    });
 }
 
 // ページ読み込み直後にリクエストを開始しておく（DOMContentLoadedで待つのは結果だけ）。
@@ -292,7 +434,7 @@ class EventCalendar {
         this.upcomingEl = opts.upcomingEl || null;       // simple compact list (unused on the calendar page)
         this.monthListEl = opts.monthListEl || null;     // accordion list for the displayed month only
         this.monthListHeadEl = opts.monthListHeadEl || null;
-        this.monthListNextBtn = opts.monthListNextBtn || null; // 「来月を見る」矢印（カレンダー本体とは独立して一覧だけ月送りする）
+        this.monthListNextBtn = opts.monthListNextBtn || null; // 「来月を見る」矢印（カレンダー本体の月送りと連動）
         this.monthListPrevBtn = opts.monthListPrevBtn || null; // 「先月を見る」矢印（同上、逆方向）
 
         const now = new Date();
@@ -300,18 +442,14 @@ class EventCalendar {
         this.month = now.getMonth();
         this.today = now;
 
-        // 月間イベント一覧（アコーディオン）は、カレンダー本体の月送りとは独立して
-        // 動かせるように、専用の年月state（listYear/listMonth）を別に持たせる。
-        this.listYear = now.getFullYear();
-        this.listMonth = now.getMonth();
-
         if (this.prevBtn) this.prevBtn.addEventListener('click', () => this.shift(-1));
         if (this.nextBtn) this.nextBtn.addEventListener('click', () => this.shift(1));
-        if (this.monthListNextBtn) this.monthListNextBtn.addEventListener('click', () => this.shiftList(1));
-        if (this.monthListPrevBtn) this.monthListPrevBtn.addEventListener('click', () => this.shiftList(-1));
+        // 月間イベント一覧側の矢印も、カレンダー本体と同じ shift() を呼ぶことで
+        // 常に同じ月を指すように連動させる（以前は一覧だけ独立して月送りできる仕様だった）。
+        if (this.monthListNextBtn) this.monthListNextBtn.addEventListener('click', () => this.shift(1));
+        if (this.monthListPrevBtn) this.monthListPrevBtn.addEventListener('click', () => this.shift(-1));
 
         this.render();
-        if (this.monthListEl) this.renderMonthAccordion();
     }
 
     shift(delta) {
@@ -319,13 +457,6 @@ class EventCalendar {
         if (this.month < 0) { this.month = 11; this.year--; }
         if (this.month > 11) { this.month = 0; this.year++; }
         this.render();
-    }
-
-    shiftList(delta) {
-        this.listMonth += delta;
-        if (this.listMonth < 0) { this.listMonth = 11; this.listYear--; }
-        if (this.listMonth > 11) { this.listMonth = 0; this.listYear++; }
-        this.renderMonthAccordion();
     }
 
     isToday(d) {
@@ -337,6 +468,9 @@ class EventCalendar {
         if (this.gridEl) this.renderGrid(byDay);
         if (this.labelEl) this.labelEl.textContent = `${this.year}年${MONTH_NAMES[this.month]}`;
         if (this.upcomingEl) this.renderUpcomingCompact();
+        // 月間イベント一覧（アコーディオン）はカレンダー本体と同じ月を常に表示するので、
+        // ここで一緒に再描画して連動させる。
+        if (this.monthListEl) this.renderMonthAccordion();
     }
 
     renderGrid(byDay) {
@@ -418,16 +552,14 @@ class EventCalendar {
         }
     }
 
-    // ポップアップ内のカードをクリックすると、下の月間イベント一覧（アコーディオン）を
-    // クリックした日の月に合わせてから、該当項目までスクロールして自動的に開く。
-    // （一覧側の矢印はカレンダー本体と独立して動くため、通常のカレンダー月送りでは
-    //   一覧の表示月は変わらない。ジャンプ時だけ一致させる。）
+    // ポップアップ内のカードをクリックすると、カレンダー本体・月間イベント一覧（アコーディオン）
+    // 両方をクリックした日の月に合わせてから、該当項目までスクロールして自動的に開く。
     jumpToAccordionItem(year, month, day, ev) {
         if (!this.monthListEl) return;
-        if (this.listYear !== year || this.listMonth !== month) {
-            this.listYear = year;
-            this.listMonth = month;
-            this.renderMonthAccordion();
+        if (this.year !== year || this.month !== month) {
+            this.year = year;
+            this.month = month;
+            this.render();
         }
         const items = this.monthListEl.querySelectorAll('.event-acc-item');
         let target = null;
@@ -451,6 +583,16 @@ class EventCalendar {
         if (evs && evs.length) {
             showDayPopup(year, month, day, evs, (ev) => this.jumpToAccordionItem(year, month, day, ev));
         }
+    }
+
+    // TOPページのミニカレンダーから「?y=2026&m=8&d=23&n=イベント名」の形でリンクされてきた時、
+    // その日のポップアップを経由せず、該当月へ移動した上で対象イベントのアコーディオン項目を
+    // 直接開く（jumpToAccordionItemと同じ検索ロジックだが、ポップアップのクリックを介さない）。
+    goToAccordionItemFromLink(year, month, day, name) {
+        this.year = year;
+        this.month = month;
+        this.render();
+        this.jumpToAccordionItem(year, month, day, { name: name });
     }
 
     getUpcoming(limit) {
@@ -481,7 +623,7 @@ class EventCalendar {
         }
         list.forEach(e => {
             const li = document.createElement('li');
-            li.innerHTML = `<span class="u-date">${e.year}/${formatDateShort(e.year, e.month, e.day)}</span><span class="u-name">${e.name}</span>`;
+            li.innerHTML = `<span class="u-date">${e.year}/${formatDateShort(e.year, e.month, e.day)}</span><span class="u-name">${escapeHtml(e.name)}</span>`;
             this.upcomingEl.appendChild(li);
         });
     }
@@ -489,14 +631,14 @@ class EventCalendar {
     // 当月のイベントだけを、開催日時・タイトル・開催場所・参加費・募集人数・主催者名・
     // 問い合わせ先を含むアコーディオンとして表示する（空欄の項目は表示しない）。
     renderMonthAccordion() {
-        if (this.monthListHeadEl) this.monthListHeadEl.textContent = `${this.listYear}年${MONTH_NAMES[this.listMonth]}のイベント`;
-        const list = getMonthEventsFlat(this.listYear, this.listMonth);
+        if (this.monthListHeadEl) this.monthListHeadEl.textContent = `${this.year}年${MONTH_NAMES[this.month]}のイベント`;
+        const list = getMonthEventsFlat(this.year, this.month);
         this.monthListEl.innerHTML = '';
         if (list.length === 0) {
             this.monthListEl.innerHTML = '<p class="no-events">この月に開催予定のイベントはありません</p>';
             return;
         }
-        const year = this.listYear, month = this.listMonth;
+        const year = this.year, month = this.month;
         list.forEach(ev => {
             const item = document.createElement('div');
             item.className = 'acc-item event-acc-item';
@@ -504,18 +646,18 @@ class EventCalendar {
             item.dataset.name = ev.name;
 
             const rows = [
-                ['開催日時', `${formatDateFull(year, month, ev.day)}${ev.time ? ' ' + ev.time : ''}`],
-                ['タイトル', ev.name]
+                ['開催日時', escapeHtml(`${formatDateFull(year, month, ev.day)}${ev.time ? ' ' + ev.time : ''}`)],
+                ['タイトル', escapeHtml(ev.name)]
             ];
-            if (ev.location) rows.push(['開催場所', ev.location]);
-            if (ev.fee) rows.push(['参加費', ev.fee + '円']);
-            if (ev.capacity) rows.push(['募集人数', ev.capacity + '名']);
-            if (ev.organizer) rows.push(['主催者名', ev.organizer]);
-            if (ev.contact) rows.push(['問い合わせ先', ev.contact]);
+            if (ev.location) rows.push(['開催場所', escapeHtml(ev.location)]);
+            if (ev.fee) rows.push(['参加費', escapeHtml(ev.fee) + '円']);
+            if (ev.capacity) rows.push(['募集人数', escapeHtml(ev.capacity) + '名']);
+            if (ev.organizer) rows.push(['主催者名', escapeHtml(ev.organizer)]);
+            if (ev.contact) rows.push(['問い合わせ先', escapeHtml(ev.contact)]);
 
             item.innerHTML = `
                 <div class="acc-head">
-                    <span><span class="event-tag-pill tag-${ev.cls}">${ev.tag}</span>${formatDateShort(year, month, ev.day)}　${ev.name}</span>
+                    <span><span class="event-tag-pill tag-${ev.cls}">${escapeHtml(ev.tag)}</span>${formatDateShort(year, month, ev.day)}　${escapeHtml(ev.name)}</span>
                     <span class="acc-toggle">▼</span>
                 </div>
                 <div class="acc-body">
@@ -566,6 +708,82 @@ function renderFaqList(container, items) {
     });
 }
 
+// ---------- Apply form: 確認画面（入力内容の確認）で表示する項目定義 ----------
+// key: FormDataのname属性 / label: 確認画面に出す見出し / suffix: 値の後ろに付ける単位（任意）
+// 値が空（未入力の任意項目や、選択した開催形式に応じて隠れている項目）はセクションごと・行ごとにスキップされる
+const APPLY_CONFIRM_SECTIONS = [
+    {
+        title: '1. 主催者情報',
+        fields: [
+            ['organizerName', '主催者名（ハンドルネーム可）'],
+            ['organizerEmail', 'お問い合わせメールアドレス'],
+            ['xAccount', 'Xアカウント'],
+            ['discordId', 'Discord ID']
+        ]
+    },
+    {
+        title: '2. イベント基本情報',
+        fields: [
+            ['eventName', 'イベント名'],
+            ['eventDate', '開催日'],
+            ['startTime', '開始時間'],
+            ['endTime', '終了予定時間']
+        ]
+    },
+    {
+        title: '3. 開催場所',
+        fields: [
+            ['eventFormat', '開催形式'],
+            ['venueNameOffline', '会場名'],
+            ['venueAddressOffline', 'ご住所'],
+            ['venueNameOnline', '会場名（サーバー名など）'],
+            ['venueNameHybridOnsite', '現地会場名'],
+            ['venueAddressHybrid', 'ご住所'],
+            ['venueNameHybridOnline', 'オンライン会場名']
+        ]
+    },
+    {
+        title: '4. イベント内容',
+        fields: [
+            ['eventType', 'イベント種別'],
+            ['capacity', '定員', '名'],
+            ['fee', '参加費', '円'],
+            ['eventDescription', 'イベント説明文']
+        ]
+    },
+    {
+        title: '5. 主催者実績',
+        fields: [
+            ['pastCount', '過去開催回数', '回'],
+            ['pastUrl', '過去のイベントURL']
+        ]
+    }
+];
+
+// FormDataから作ったpayloadオブジェクトを渡すと、確認画面用のHTML（セクション+項目）を組み立てる。
+// 空欄の項目・セクションは自動的に非表示になる（例：開催形式で選ばなかった会場欄など）。
+function buildApplyConfirmHtml(payload) {
+    return APPLY_CONFIRM_SECTIONS.map(section => {
+        const rows = section.fields
+            .map(([key, label, suffix]) => {
+                const raw = (payload[key] || '').toString().trim();
+                if (!raw) return null;
+                return { label, value: raw + (suffix || '') };
+            })
+            .filter(Boolean);
+        if (rows.length === 0) return '';
+        return `
+            <div class="form-section">
+                <h2>${escapeHtml(section.title)}</h2>
+                ${rows.map(row => `
+                    <div class="confirm-field">
+                        <span class="cf-label">${escapeHtml(row.label)}</span>
+                        <span class="cf-value">${escapeHtml(row.value)}</span>
+                    </div>`).join('')}
+            </div>`;
+    }).join('');
+}
+
 // ---------- Init on DOM ready ----------
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -609,22 +827,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // TOPページのミニカレンダーから「?y=2026&m=8&d=23」の形でリンクされてきた場合、
             // 該当の月へ移動し、その日のポップアップを自動的に開く。
+            // イベント名(n)まで指定されている場合は、日付ポップアップを経由せず、
+            // 該当イベントのアコーディオン項目を直接開く。
             const params = new URLSearchParams(window.location.search);
             const linkY = Number(params.get('y'));
             const linkM = Number(params.get('m')); // 1-12（TOPページのdata-month基準）
             const linkD = Number(params.get('d'));
+            const linkN = params.get('n');
             if (linkY && linkM && linkD) {
-                pageCalendar.goToDayFromLink(linkY, linkM - 1, linkD);
+                if (linkN) {
+                    pageCalendar.goToAccordionItemFromLink(linkY, linkM - 1, linkD, linkN);
+                } else {
+                    pageCalendar.goToDayFromLink(linkY, linkM - 1, linkD);
+                }
             }
         }
     });
 
-    // FAQ詳細ページ（faq-vol1〜5.html）の質問一覧を
+    // FAQ詳細ページ（faq-starter.html / faq-vol1〜5.html）の質問一覧を
     // スプレッドシートで「回答済み」にした内容から動的に表示する。
-    // ※ スターターキット（vol === 'starter'）は faq-starter.json から表示するため、
-    //   ここでは対象外にする（対象にすると下の処理と競合し、後勝ちで表示が消えてしまう）。
     const faqListEl = document.getElementById('faq-list');
-    if (faqListEl && faqListEl.dataset.vol !== 'starter') {
+    if (faqListEl) {
         const vol = faqListEl.dataset.vol;
         publicDataPromise.then(data => {
             const items = data.faq.filter(f => f.vol === vol);
@@ -675,12 +898,102 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // ---------- FAQ question posting form + confirmation modal ----------
+    // ---------- FAQ question posting: 確認モーダル（faq.html本体・各Vol詳細ページ共通） ----------
+    // モーダル本体（#post-modal / #post-modal-body）は各ページのHTMLに配置済み。
+    // 対象弾・カード名・質問内容を渡すと、確認画面を出してから実際に送信する。
+    function showQuestionConfirmModal(form, vol, card, content) {
+        const modal = document.getElementById('post-modal');
+        const modalBody = document.getElementById('post-modal-body');
+        if (!modal || !modalBody) return;
+
+        modalBody.innerHTML = `
+            <h3>投稿内容をご確認ください</h3>
+            <p class="modal-desc">以下の内容で投稿します。投稿後の内容変更はできません。</p>
+            <dl class="preview-box">
+                <dt>対象弾</dt><dd>${escapeHtml(vol)}</dd>
+                <dt>カード名</dt><dd>${escapeHtml(card) || '（未入力）'}</dd>
+                <dt>質問内容</dt><dd>${escapeHtml(content)}</dd>
+            </dl>
+            <div class="check-group">
+                <label><input type="checkbox" id="chk1"> 入力内容に誤りはありません。</label>
+                <label><input type="checkbox" id="chk2"> 投稿内容は運営判断で編集・要約・非掲載・削除される場合があることに同意します。</label>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="modal-back">戻る</button>
+                <button type="button" class="btn btn-primary" id="modal-submit" disabled>投稿する</button>
+            </div>`;
+        modal.classList.add('open');
+
+        const chk1 = document.getElementById('chk1');
+        const chk2 = document.getElementById('chk2');
+        const submitBtn = document.getElementById('modal-submit');
+        const updateSubmit = () => { submitBtn.disabled = !(chk1.checked && chk2.checked); };
+        chk1.addEventListener('change', updateSubmit);
+        chk2.addEventListener('change', updateSubmit);
+
+        document.getElementById('modal-back').addEventListener('click', () => modal.classList.remove('open'));
+
+        submitBtn.addEventListener('click', () => {
+            const waitSec = checkClientCooldown('faq', 30);
+            if (waitSec > 0) {
+                modalBody.innerHTML = `
+                    <div class="success-box">
+                        <h3>連続投稿はできません</h3>
+                        <p>短時間に連続して投稿することはできません。あと${waitSec}秒ほどお待ちいただき、再度お試しください。</p>
+                        <button type="button" class="btn btn-outline" id="modal-close">閉じる</button>
+                    </div>`;
+                document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '送信中...';
+
+            submitToBackend({
+                type: 'faq',
+                vol: vol,
+                card: card,
+                content: content,
+                hp_verify: getHoneypotValue(form)
+            }).then(result => {
+                if (!result || result.ok !== true) throw new Error((result && result.error) || 'unknown');
+                markClientSubmitted('faq');
+                modalBody.innerHTML = `
+                    <div class="success-box">
+                        <div class="s-icon">✓</div>
+                        <h3>投稿を受け付けました</h3>
+                        <p>ご投稿ありがとうございます。運営にて内容を確認のうえ、順次回答を掲載いたします。</p>
+                        <button type="button" class="btn btn-primary" id="modal-close">閉じる</button>
+                    </div>`;
+                form.reset();
+                document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
+            }).catch(err => {
+                const isRateLimited = err && err.message === 'rate_limited';
+                modalBody.innerHTML = `
+                    <div class="success-box">
+                        <h3>${isRateLimited ? '送信が集中しています' : '送信に失敗しました'}</h3>
+                        <p>${isRateLimited
+                            ? '短時間に送信が集中したため、一時的に制限されています。しばらく時間をおいて再度お試しください。'
+                            : '通信エラーが発生しました。お手数ですが、時間をおいて再度お試しください。'}</p>
+                        <button type="button" class="btn btn-outline" id="modal-close">閉じる</button>
+                    </div>`;
+                document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
+            });
+        });
+    }
+
+    // モーダルの背景クリックで閉じる（ページ内に#post-modalがある場合のみ）
+    const postModalEl = document.getElementById('post-modal');
+    if (postModalEl) {
+        postModalEl.addEventListener('click', function (e) {
+            if (e.target === postModalEl) postModalEl.classList.remove('open');
+        });
+    }
+
+    // FAQ一覧ページ（faq.html）本体の質問投稿フォーム
     const postForm = document.getElementById('question-form');
     if (postForm) {
         const confirmBtn = document.getElementById('confirm-post-btn');
-        const modal = document.getElementById('post-modal');
-        const modalBody = document.getElementById('post-modal-body');
         const volSelect = document.getElementById('q-vol');
         const cardInput = document.getElementById('q-card');
         const contentInput = document.getElementById('q-content');
@@ -690,68 +1003,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('対象弾と質問内容を入力してください');
                 return;
             }
-            modalBody.innerHTML = `
-                <h3>投稿内容をご確認ください</h3>
-                <p class="modal-desc">以下の内容で投稿します。投稿後の内容変更はできません。</p>
-                <dl class="preview-box">
-                    <dt>対象弾</dt><dd>${volSelect.options[volSelect.selectedIndex].text}</dd>
-                    <dt>カード名</dt><dd>${cardInput.value.trim() || '（未入力）'}</dd>
-                    <dt>質問内容</dt><dd>${contentInput.value.trim()}</dd>
-                </dl>
-                <div class="check-group">
-                    <label><input type="checkbox" id="chk1"> 入力内容に誤りはありません。</label>
-                    <label><input type="checkbox" id="chk2"> 投稿内容は運営判断で編集・要約・非掲載・削除される場合があることに同意します。</label>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-outline" id="modal-back">戻る</button>
-                    <button type="button" class="btn btn-primary" id="modal-submit" disabled>投稿する</button>
-                </div>`;
-            modal.classList.add('open');
-
-            const chk1 = document.getElementById('chk1');
-            const chk2 = document.getElementById('chk2');
-            const submitBtn = document.getElementById('modal-submit');
-            const updateSubmit = () => { submitBtn.disabled = !(chk1.checked && chk2.checked); };
-            chk1.addEventListener('change', updateSubmit);
-            chk2.addEventListener('change', updateSubmit);
-
-            document.getElementById('modal-back').addEventListener('click', () => modal.classList.remove('open'));
-
-            submitBtn.addEventListener('click', () => {
-                submitBtn.disabled = true;
-                submitBtn.textContent = '送信中...';
-
-                submitToBackend({
-                    type: 'faq',
-                    vol: volSelect.options[volSelect.selectedIndex].text,
-                    card: cardInput.value.trim(),
-                    content: contentInput.value.trim(),
-                    hp_verify: getHoneypotValue(postForm)
-                }).then(result => {
-                    if (!result || result.ok !== true) throw new Error(result && result.error);
-                    modalBody.innerHTML = `
-                        <div class="success-box">
-                            <div class="s-icon">✓</div>
-                            <h3>投稿を受け付けました</h3>
-                            <p>ご投稿ありがとうございます。運営にて内容を確認のうえ、順次回答を掲載いたします。</p>
-                            <button type="button" class="btn btn-primary" id="modal-close">閉じる</button>
-                        </div>`;
-                    postForm.reset();
-                    document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
-                }).catch(() => {
-                    modalBody.innerHTML = `
-                        <div class="success-box">
-                            <h3>送信に失敗しました</h3>
-                            <p>通信エラーが発生しました。お手数ですが、時間をおいて再度お試しください。</p>
-                            <button type="button" class="btn btn-outline" id="modal-close">閉じる</button>
-                        </div>`;
-                    document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('open'));
-                });
-            });
-        });
-
-        modal.addEventListener('click', function (e) {
-            if (e.target === modal) modal.classList.remove('open');
+            showQuestionConfirmModal(
+                postForm,
+                volSelect.options[volSelect.selectedIndex].text,
+                cardInput.value.trim(),
+                contentInput.value.trim()
+            );
         });
     }
 
@@ -780,46 +1037,99 @@ document.addEventListener('DOMContentLoaded', function () {
         formatRadios.forEach(r => r.addEventListener('change', updateVenueFields));
         updateVenueFields();
 
+        // 「入力 → 確認 → 送信」の3ステップ。
+        // フォーム送信（確認するボタン）ではまだバックエンドへ送らず、入力内容の確認画面を挟む。
+        // 実際の送信は確認画面の「申請する」ボタンを押した時点で行う。
+        const formWrap = document.getElementById('apply-form-wrap');
+        const confirmWrap = document.getElementById('apply-confirm');
+        const confirmBody = document.getElementById('apply-confirm-body');
+        const completeWrap = document.getElementById('apply-complete');
+        const pageHead = document.getElementById('apply-page-head');
+        const bcSep = document.getElementById('bc-confirm-sep');
+        const bcCurrent = document.getElementById('bc-confirm-current');
+        let pendingApplyPayload = null;
+
+        function showApplyFormStep() {
+            confirmWrap.style.display = 'none';
+            formWrap.style.display = 'block';
+            if (pageHead) pageHead.style.display = '';
+            if (bcSep) bcSep.style.display = 'none';
+            if (bcCurrent) bcCurrent.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showApplyConfirmStep(payload) {
+            confirmBody.innerHTML = buildApplyConfirmHtml(payload);
+            formWrap.style.display = 'none';
+            confirmWrap.style.display = 'block';
+            if (pageHead) pageHead.style.display = 'none';
+            if (bcSep) bcSep.style.display = '';
+            if (bcCurrent) bcCurrent.style.display = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         applyForm.addEventListener('submit', function (e) {
             e.preventDefault();
-
-            const submitBtn = applyForm.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '送信中...';
 
             const formData = new FormData(applyForm);
             const payload = { type: 'application', hp_verify: getHoneypotValue(applyForm) };
             formData.forEach((value, key) => { payload[key] = value; });
 
-            const showSuccess = () => {
-                document.getElementById('apply-form-wrap').style.display = 'none';
-                document.getElementById('apply-complete').style.display = 'block';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            };
-
-            if (APPLY_DEMO_MODE) {
-                // テストモード: 実際には送信せず、少し待ってから完了画面だけ表示する
-                console.info('[APPLY_DEMO_MODE] 実際には送信していません。動作確認用の仮表示です。');
-                setTimeout(showSuccess, 500);
-                return;
-            }
-
-            submitToBackend(payload).then(result => {
-                if (!result || result.ok !== true) throw new Error(result && result.error);
-                showSuccess();
-            }).catch(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '申請する';
-                alert('送信に失敗しました。通信環境をご確認のうえ、時間をおいて再度お試しください。');
-            });
+            pendingApplyPayload = payload;
+            showApplyConfirmStep(payload);
         });
+
+        const applyConfirmBackBtn = document.getElementById('apply-confirm-back');
+        if (applyConfirmBackBtn) {
+            applyConfirmBackBtn.addEventListener('click', showApplyFormStep);
+        }
+
+        const applyConfirmSubmitBtn = document.getElementById('apply-confirm-submit');
+        if (applyConfirmSubmitBtn) {
+            applyConfirmSubmitBtn.addEventListener('click', function () {
+                if (!pendingApplyPayload) return;
+
+                const waitSec = checkClientCooldown('application', 30);
+                if (waitSec > 0) {
+                    alert(`短時間に連続して送信することはできません。あと${waitSec}秒ほどお待ちいただき、再度お試しください。`);
+                    return;
+                }
+
+                applyConfirmSubmitBtn.disabled = true;
+                applyConfirmSubmitBtn.textContent = '送信中...';
+
+                const showSuccess = () => {
+                    markClientSubmitted('application');
+                    confirmWrap.style.display = 'none';
+                    completeWrap.style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                };
+
+                if (APPLY_DEMO_MODE) {
+                    // テストモード: 実際には送信せず、少し待ってから完了画面だけ表示する
+                    console.info('[APPLY_DEMO_MODE] 実際には送信していません。動作確認用の仮表示です。');
+                    setTimeout(showSuccess, 500);
+                    return;
+                }
+
+                submitToBackend(pendingApplyPayload).then(result => {
+                    if (!result || result.ok !== true) throw new Error((result && result.error) || 'unknown');
+                    showSuccess();
+                }).catch(err => {
+                    applyConfirmSubmitBtn.disabled = false;
+                    applyConfirmSubmitBtn.textContent = '申請する';
+                    alert(err && err.message === 'rate_limited'
+                        ? '短時間に送信が集中したため、一時的に制限されています。しばらく時間をおいて再度お試しください。'
+                        : '送信に失敗しました。通信環境をご確認のうえ、時間をおいて再度お試しください。');
+                });
+            });
+        }
     }
 
-    // ---------- Vol detail pages: quick question form (no confirm modal) ----------
+    // ---------- Vol detail pages: quick question form（投稿前に確認モーダルを挟む） ----------
     document.querySelectorAll('.vol-question-form').forEach(form => {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            const submitBtn = form.querySelector('button[type="submit"]');
             const contentField = form.querySelector('[name="content"]');
             if (!contentField.value.trim()) {
                 alert('質問内容を入力してください');
@@ -828,85 +1138,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const volField = form.querySelector('[name="vol"]');
             const cardField = form.querySelector('[name="card"]');
 
-            const originalLabel = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = '送信中...';
-
-            submitToBackend({
-                type: 'faq',
-                vol: volField.options[volField.selectedIndex].text,
-                card: cardField.value.trim(),
-                content: contentField.value.trim(),
-                hp_verify: getHoneypotValue(form)
-            }).then(result => {
-                if (!result || result.ok !== true) throw new Error(result && result.error);
-                submitBtn.textContent = '投稿しました ✓';
-                form.reset();
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalLabel;
-                }, 3000);
-            }).catch(() => {
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalLabel;
-                alert('送信に失敗しました。時間をおいて再度お試しください。');
-            });
+            showQuestionConfirmModal(
+                form,
+                volField.options[volField.selectedIndex].text,
+                cardField.value.trim(),
+                contentField.value.trim()
+            );
         });
     });
 
-    // ---------- FAQ JSON loading for starter kit ----------
-    const faqList = document.getElementById('faq-list');
-    const faqCount = document.getElementById('faq-count');
-    if (faqList && faqList.dataset.vol === 'starter') {
-        fetch('faq-starter.json')
-            .then(response => response.json())
-            .then(data => {
-                // Update count
-                if (faqCount) {
-                    faqCount.textContent = `${data.questions.length}件のQ&A`;
-                }
-
-                // Clear loading state
-                faqList.innerHTML = '';
-
-                // Render FAQ items
-                data.questions.forEach((item, index) => {
-                    const faqItem = document.createElement('div');
-                    faqItem.className = 'faq-item';
-                    faqItem.innerHTML = `
-                        <div class="faq-question">
-                            <span class="faq-icon">Q</span>
-                            <span class="faq-question-text">${escapeHtml(item.question)}</span>
-                            <span class="faq-toggle">▼</span>
-                        </div>
-                        <div class="faq-answer">
-                            <span class="faq-icon">A</span>
-                            <p>${escapeHtml(item.answer)}</p>
-                            <span class="answer-date">回答日: ${escapeHtml(item.answerDate)}</span>
-                        </div>
-                    `;
-                    faqList.appendChild(faqItem);
-
-                    // Add click handler for accordion
-                    // ※ 表示/非表示はCSS側の .faq-item.active で制御しているため
-                    //   'active' クラスをトグルする（'open' だとCSSと一致せず何も起きない）
-                    const question = faqItem.querySelector('.faq-question');
-                    question.addEventListener('click', function() {
-                        const isActive = faqItem.classList.contains('active');
-                        faqList.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-                        if (!isActive) faqItem.classList.add('active');
-                    });
-                });
-            })
-            .catch(error => {
-                console.error('FAQ JSONの読み込みに失敗しました:', error);
-                if (faqList) {
-                    faqList.innerHTML = '<p class="faq-empty">FAQの読み込みに失敗しました。</p>';
-                }
-                if (faqCount) {
-                    faqCount.textContent = '読み込みエラー';
-                }
-            });
-    }
 });
 

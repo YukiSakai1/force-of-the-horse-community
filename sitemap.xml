@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://あなたのドメイン/index.html</loc><priority>1.0</priority></url>
-  <url><loc>https://あなたのドメイン/certified-event-system.html</loc><priority>0.8</priority></url>
-  <url><loc>https://あなたのドメイン/guideline.html</loc><priority>0.8</priority></url>
-  <url><loc>https://あなたのドメイン/apply.html</loc><priority>0.7</priority></url>
-  <url><loc>https://あなたのドメイン/event-calendar-page.html</loc><priority>0.8</priority></url>
-  <url><loc>https://あなたのドメイン/faq.html</loc><priority>0.8</priority></url>
-  <url><loc>https://あなたのドメイン/faq-starter.html</loc><priority>0.6</priority></url>
-  <url><loc>https://あなたのドメイン/faq-vol1.html</loc><priority>0.6</priority></url>
-  <url><loc>https://あなたのドメイン/faq-vol2.html</loc><priority>0.6</priority></url>
-  <url><loc>https://あなたのドメイン/faq-vol3.html</loc><priority>0.6</priority></url>
-  <url><loc>https://あなたのドメイン/faq-vol4.html</loc><priority>0.6</priority></url>
-  <url><loc>https://あなたのドメイン/faq-vol5.html</loc><priority>0.6</priority></url>
-  <url><loc>https://あなたのドメイン/privacy.html</loc><priority>0.3</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/index.html</loc><priority>1.0</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/certified-event-system.html</loc><priority>0.8</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/guideline.html</loc><priority>0.8</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/apply.html</loc><priority>0.7</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/event-calendar-page.html</loc><priority>0.8</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/faq.html</loc><priority>0.8</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/faq-starter.html</loc><priority>0.6</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/faq-vol1.html</loc><priority>0.6</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/faq-vol2.html</loc><priority>0.6</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/faq-vol3.html</loc><priority>0.6</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/faq-vol4.html</loc><priority>0.6</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/faq-vol5.html</loc><priority>0.6</priority></url>
+  <url><loc>https://force-of-the-horse.com/community/privacy.html</loc><priority>0.3</priority></url>
 </urlset>
