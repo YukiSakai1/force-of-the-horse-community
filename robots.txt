@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://あなたのドメイン/sitemap.xml
+Sitemap: https://force-of-the-horse.com/community/sitemap.xml

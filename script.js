@@ -896,6 +896,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Tapping anywhere outside a calendar day closes an open tooltip (touch devices).
+    function hideCalendarTooltip() {
+        // カレンダーツールチップを非表示にする処理
+        const tooltip = document.querySelector('.calendar-tooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    }
+
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.calendar-day.event-day')) hideCalendarTooltip();
     });

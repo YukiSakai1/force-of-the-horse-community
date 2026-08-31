@@ -1,0 +1,44 @@
+# コミュニティサイト用 .htaccess
+# WordPressのリライトルールとの競合を防ぐための設定
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # HTTPSを強制する
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # このディレクトリ以下では、WordPress側（ルートの.htaccess）の
+    # パーマリンク用リライトルールを継続させない。
+    # 実在するファイル・ディレクトリはそのまま表示され、
+    # 存在しないURLは通常通り404として扱われる（index.htmlへの
+    # 強制リダイレクトは行わない）。
+    RewriteRule ^ - [L]
+</IfModule>
+
+# デフォルトドキュメントの設定
+DirectoryIndex index.html
+
+# WordPressの影響を受けないように明示的に設定
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+</IfModule>
+
+# セキュリティヘッダー
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# PHPを無効化（セキュリティ向上）
+# Apache 2.4系と2.2系の両方に対応できるよう、両方の書き方を用意しています。
+<FilesMatch "\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
