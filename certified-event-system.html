@@ -2,10 +2,34 @@
 <html lang="ja">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JZ09660SEQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-JZ09660SEQ');
+    </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>公認イベント制度について - Force of the Horse</title>
   <meta name="description" content="Force of the Horseの公認イベント制度についてご案内します。イベントの開催申請、ガイドライン、メリットなどをまとめています。">
+  
+  <!-- OGPタグ -->
+  <meta property="og:title" content="公認イベント制度について - Force of the Horse" />
+  <meta property="og:description" content="Force of the Horseの公認イベント制度についてご案内します。イベントの開催申請、ガイドライン、メリットなどをまとめています。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://force-of-the-horse.com/community/certified-event-system" />
+  <meta property="og:image" content="https://force-of-the-horse.com/wp-content/themes/foth/ogp.jpg" />
+  <meta property="og:site_name" content="Force of the Horse" />
+  <meta property="og:locale" content="ja_JP" />
+  
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="公認イベント制度について - Force of the Horse" />
+  <meta name="twitter:description" content="Force of the Horseの公認イベント制度についてご案内します。イベントの開催申請、ガイドライン、メリットなどをまとめています。" />
+  <meta name="twitter:image" content="https://force-of-the-horse.com/wp-content/themes/foth/ogp.jpg" />
   
   <!-- Favicon -->
   <link rel="icon" href="favicon.ico" />
@@ -1105,17 +1129,17 @@
     <!-- Navigation -->
     <header class="sticky top-0 z-50 bg-background border-b">
       <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
-        <a href="index.html"
+        <a href="/community/"
           class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors"
           style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">
           Force of the Horse
         </a>
 
         <nav class="hidden md:flex items-center gap-7">
-          <a href="index.html" class="nav-link">TOP</a>
-          <a href="certified-event-system.html" class="nav-link active">公認イベント制度</a>
-          <a href="event-calendar-page.html" class="nav-link">イベントカレンダー</a>
-          <a href="faq.html" class="nav-link">FAQ</a>
+          <a href="/community/" class="nav-link">TOP</a>
+          <a href="certified-event-system" class="nav-link active">公認イベント制度</a>
+          <a href="event-calendar-page" class="nav-link">イベントカレンダー</a>
+          <a href="faq" class="nav-link">FAQ</a>
         </nav>
 
         <button class="md:hidden p-1" onclick="toggleMobileMenu()">
@@ -1134,13 +1158,13 @@
       </div>
 
       <div id="mobile-menu" class="mobile-menu md:hidden bg-background border-t">
-        <a href="index.html" onclick="closeMobileMenu();"
+        <a href="/community/" onclick="closeMobileMenu();"
           class="block w-full text-left px-5 py-3 text-sm border-b nav-link">TOP</a>
-        <a href="certified-event-system.html" onclick="closeMobileMenu();"
+        <a href="certified-event-system" onclick="closeMobileMenu();"
           class="block w-full text-left px-5 py-3 text-sm border-b nav-link active">公認イベント制度</a>
-        <a href="event-calendar-page.html" onclick="closeMobileMenu();"
+        <a href="event-calendar-page" onclick="closeMobileMenu();"
           class="block w-full text-left px-5 py-3 text-sm border-b nav-link">イベントカレンダー</a>
-        <a href="faq.html" onclick="closeMobileMenu();"
+        <a href="faq" onclick="closeMobileMenu();"
           class="block w-full text-left px-5 py-3 text-sm border-b nav-link">FAQ</a>
       </div>
     </header>
@@ -1149,7 +1173,7 @@
     <main>
       <div class="max-w-5xl mx-auto px-5 py-6">
         <div class="breadcrumb">
-          <a href="index.html">TOP</a>
+          <a href="/community/">TOP</a>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
@@ -1190,7 +1214,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl quick-links-grid">
-          <a href="guideline.html" class="quick-link-card">
+          <a href="guideline" class="quick-link-card">
             <span class="icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -1213,7 +1237,7 @@
             </div>
           </a>
 
-          <a href="apply.html"
+          <a href="apply"
             class="text-left bg-primary text-primary-foreground rounded-lg p-6 hover:opacity-90 transition-all">
             <span
               class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-primary-foreground/10 mb-4 transition-colors">

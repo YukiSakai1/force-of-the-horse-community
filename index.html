@@ -1,19 +1,30 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JZ09660SEQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-JZ09660SEQ');
+    </script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Force of the Horse コミュニティサイト | 公式TCGコミュニティ</title>
+  <title>Force of the Horse Players Portal | 公式TCGコミュニティ</title>
   <meta name="description" content="Force of the Horseの公式コミュニティサイト。公認イベント制度、イベントカレンダー、カードのルールFAQなど、プレイヤー向けの最新情報をお届けします。" />
   <meta name="keywords" content="Force of the Horse,フォースオブザホース,カードゲーム,TCG,公認イベント,大会,FAQ,ルール,コミュニティ" />
   <meta name="author" content="FRAMELUNCH.INC" />
   <link rel="canonical" href="https://force-of-the-horse.com/community/" />
   
   <!-- OGPタグ -->
-  <meta property="og:title" content="Force of the Horse コミュニティサイト | 公式TCGコミュニティ" />
+  <meta property="og:title" content="Force of the Horse Players Portal | 公式TCGコミュニティ" />
   <meta property="og:description" content="Force of the Horseの公式コミュニティサイト。公認イベント制度、イベントカレンダー、カードのルールFAQなど、プレイヤー向けの最新情報をお届けします。" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://force-of-the-horse.com/community/" />
+  <meta property="og:image" content="https://force-of-the-horse.com/wp-content/themes/foth/ogp.jpg" />
   <meta property="og:site_name" content="Force of the Horse" />
   <meta property="og:locale" content="ja_JP" />
   
@@ -23,8 +34,9 @@
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Force of the Horse コミュニティサイト | 公式TCGコミュニティ" />
+  <meta name="twitter:title" content="Force of the Horse Players Portal | 公式TCGコミュニティ" />
   <meta name="twitter:description" content="Force of the Horseの公式コミュニティサイト。公認イベント制度、イベントカレンダー、カードのルールFAQなど。" />
+  <meta name="twitter:image" content="https://force-of-the-horse.com/wp-content/themes/foth/ogp.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@600&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
@@ -40,7 +52,7 @@
     "inLanguage": "ja",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://force-of-the-horse.com/community/faq.html",
+      "target": "https://force-of-the-horse.com/community/faq",
       "query-input": "required name=search_term_string"
     }
   }
@@ -1500,7 +1512,12 @@
       text-overflow: ellipsis;
     }
     .day-split-half.area { background-color: var(--tag-area); }
-    .day-split-half.meetup { background-color: var(--tag-social); }
+    .day-split-half.meetup {
+      background-color: #ffffff;
+      color: var(--muted-foreground);
+      border: none;
+      border-bottom: 2px solid var(--destructive);
+    }
     .day-split-half.main { background-color: var(--color-black); }
 
     /* -- 3件以上: カテゴリ色のドット+件数のみ -- */
@@ -1677,15 +1694,15 @@
     <!-- Navigation -->
     <header class="sticky top-0 z-50 bg-background border-b">
       <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
-        <a href="index.html" class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">
+        <a href="/community/" class="font-semibold text-sm tracking-widest uppercase text-foreground hover:text-accent transition-colors" style="font-family: 'Inter', 'Noto Sans JP', sans-serif; letter-spacing: 0.12em;">
           Force of the Horse
         </a>
 
         <nav class="hidden md:flex items-center gap-7">
-          <a href="index.html" class="nav-link active" data-page="top">TOP</a>
-          <a href="certified-event-system.html" class="nav-link" data-page="about">公認イベント制度</a>
-          <a href="event-calendar-page.html" class="nav-link" data-page="calendar">イベントカレンダー</a>
-          <a href="faq.html" class="nav-link" data-page="faq-index">FAQ</a>
+          <a href="/community/" class="nav-link active" data-page="top">TOP</a>
+          <a href="certified-event-system" class="nav-link" data-page="about">公認イベント制度</a>
+          <a href="event-calendar-page" class="nav-link" data-page="calendar">イベントカレンダー</a>
+          <a href="faq" class="nav-link" data-page="faq-index">FAQ</a>
         </nav>
 
         <button class="md:hidden p-1" onclick="toggleMobileMenu()">
@@ -1702,10 +1719,10 @@
       </div>
 
       <div id="mobile-menu" class="mobile-menu md:hidden bg-background border-t">
-        <a href="index.html" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link active">TOP</a>
-        <a href="certified-event-system.html" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">公認イベント制度</a>
-        <a href="event-calendar-page.html" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">イベントカレンダー</a>
-        <a href="faq.html" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">FAQ</a>
+        <a href="/community/" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link active">TOP</a>
+        <a href="certified-event-system" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">公認イベント制度</a>
+        <a href="event-calendar-page" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">イベントカレンダー</a>
+        <a href="faq" onclick="closeMobileMenu();" class="block w-full text-left px-5 py-3 text-sm border-b nav-link">FAQ</a>
       </div>
     </header>
 
@@ -1733,7 +1750,7 @@
         <div class="max-w-5xl mx-auto px-5 py-12">
           <!-- Quick links -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-14 quick-links-grid">
-            <a href="certified-event-system.html" class="quick-link-card">
+            <a href="certified-event-system" class="quick-link-card">
               <span class="icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -1747,7 +1764,7 @@
               <p class="text-xs text-muted-foreground leading-relaxed">公認イベント制度の概要・ガイドライン・申請はこちら</p>
             </a>
 
-            <a href="event-calendar-page.html" class="quick-link-card">
+            <a href="event-calendar-page" class="quick-link-card">
               <span class="icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -1760,7 +1777,7 @@
               <p class="text-xs text-muted-foreground leading-relaxed">公認大会・交流会の開催スケジュールを確認できます</p>
             </a>
 
-            <a href="faq.html" class="quick-link-card">
+            <a href="faq" class="quick-link-card">
               <span class="icon">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="10"></circle>
@@ -1796,7 +1813,7 @@
             <section class="lg:col-span-2">
               <div class="flex items-center justify-between mb-1">
                 <h2 class="text-base font-medium">イベントカレンダー</h2>
-                <a href="event-calendar-page.html" class="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
+                <a href="event-calendar-page" class="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
                   一覧
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
@@ -1872,7 +1889,7 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
-            <a href="guideline.html" class="quick-link-card">
+            <a href="guideline" class="quick-link-card">
               <span class="icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -1892,7 +1909,7 @@
               </div>
             </a>
 
-            <a href="apply.html" class="text-left bg-primary text-primary-foreground rounded-lg p-6 hover:opacity-90 transition-all">
+            <a href="apply" class="text-left bg-primary text-primary-foreground rounded-lg p-6 hover:opacity-90 transition-all">
               <span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-primary-foreground/10 mb-4 transition-colors">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary-foreground">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -2007,7 +2024,7 @@
           </header>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <a href="faq-starter.html" class="faq-card">
+            <a href="faq-starter" class="faq-card">
               <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">STARTER</p>
               <h3 class="text-base font-medium text-foreground mb-1">スターターキット</h3>
               <p class="text-xs text-muted-foreground">11件のQ&A</p>
@@ -2019,7 +2036,7 @@
               </div>
             </a>
 
-            <a href="faq-vol1.html" class="faq-card">
+            <a href="faq-vol1" class="faq-card">
               <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.01</p>
               <h3 class="text-base font-medium text-foreground mb-1">競馬、新章</h3>
               <p class="text-xs text-muted-foreground">1件のQ&A</p>
@@ -2031,7 +2048,7 @@
               </div>
             </a>
 
-            <a href="faq-vol2.html" class="faq-card">
+            <a href="faq-vol2" class="faq-card">
               <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.02</p>
               <h3 class="text-base font-medium text-foreground mb-1">英雄VS豪傑</h3>
               <p class="text-xs text-muted-foreground">0件のQ&A</p>
@@ -2043,7 +2060,7 @@
               </div>
             </a>
 
-            <a href="faq-vol3.html" class="faq-card">
+            <a href="faq-vol3" class="faq-card">
               <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.03</p>
               <h3 class="text-base font-medium text-foreground mb-1">砂の王 降臨</h3>
               <p class="text-xs text-muted-foreground">0件のQ&A</p>
@@ -2055,7 +2072,7 @@
               </div>
             </a>
 
-            <a href="faq-vol4.html" class="faq-card">
+            <a href="faq-vol4" class="faq-card">
               <p class="text-xs text-muted-foreground tracking-widest uppercase mb-2">Vol.04</p>
               <h3 class="text-base font-medium text-foreground mb-1">GO FASTER</h3>
               <p class="text-xs text-muted-foreground">0件のQ&A</p>
@@ -2900,6 +2917,58 @@
       return `${y}年${parseInt(m)}月${parseInt(d)}日`;
     }
 
+    function pad2Time(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function hhmmTokyo(d) {
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Tokyo',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).formatToParts(d);
+      const hour = parts.find(p => p.type === 'hour').value;
+      const minute = parts.find(p => p.type === 'minute').value;
+      return pad2Time(hour) + ':' + minute;
+    }
+
+    function formatEventTime(value) {
+      if (value === undefined || value === null || value === '') return '';
+      const asString = String(value);
+      if (/[〜~]/.test(asString)) {
+        return asString.split(/[〜~]/).map(part => formatTimePart(part.trim())).filter(Boolean).join('〜');
+      }
+      return formatTimePart(value);
+    }
+
+    function formatTimePart(value) {
+      if (value === undefined || value === null || value === '') return '';
+      if (value instanceof Date) {
+        if (isNaN(value.getTime())) return '';
+        return hhmmTokyo(value);
+      }
+      const str = String(value).trim();
+      if (!str) return '';
+
+      const plain = str.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+      if (plain) return pad2Time(parseInt(plain[1], 10)) + ':' + plain[2];
+
+      const dateStringLike = /\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/.test(str) || /GMT|JST|標準時/.test(str);
+      const embedded = str.match(/\b(\d{1,2}):(\d{2})(?::\d{2})?\b/);
+      if (dateStringLike && embedded) {
+        return pad2Time(parseInt(embedded[1], 10)) + ':' + embedded[2];
+      }
+
+      const ms = Date.parse(str);
+      if (!isNaN(ms)) {
+        const d = new Date(ms);
+        if (d.getFullYear() <= 1900 || /T\d{2}:\d{2}/.test(str)) return hhmmTokyo(d);
+      }
+      if (/1899/.test(str)) return '';
+      return str;
+    }
+
     function buildCalendarGrid(year, month) {
       const firstDay = new Date(year, month - 1, 1).getDay();
       const daysInMonth = new Date(year, month, 0).getDate();
@@ -2952,7 +3021,7 @@
         return `
           <button type="button" class="day-popup-card" data-index="${i}">
             <span class="event-tag-pill ${cls}">${ev.type}</span>
-            <span class="dp-title">${ev.title}</span>
+            <span class="dp-title">${ev.organizer || ev.title}</span>
             <span class="dp-row">📍 ${ev.location || ''}</span>
             <span class="dp-row">🕒 ${ev.time || ''}</span>
           </button>`;
@@ -2965,7 +3034,7 @@
         card.addEventListener('click', () => {
           const ev = evs[Number(card.dataset.index)];
           const name = encodeURIComponent(escapeHtmlTop(ev.title));
-          window.location.href = `event-calendar-page.html?y=${year}&m=${month}&d=${day}&n=${name}`;
+          window.location.href = `event-calendar-page?y=${year}&m=${month}&d=${day}&n=${name}`;
         });
       });
 
@@ -3027,26 +3096,27 @@
 
         html += `<div class="${cellClass}"${cellData}>`;
         html += `<span class="day-number${todayCell ? ' day-num-today' : ''}">${day}</span>`;
-        // 1件: 従来通り色付きの帯にイベント名を表示。
-        // 2件: セルを分割し、それぞれカテゴリ色の帯に「イベント名」を表示
-        //      （event-calendar-page.htmlと同じく、日付の後の情報＝ev.titleを使う。収まらない分は…で省略）。
+        // 1件: 従来通り色付きの帯に主催者名を表示。
+        // 2件: セルを分割し、それぞれカテゴリ色の帯に「主催者名（なければイベント名）」を表示
+        //      （収まらない分は…で省略）。
         // 3件以上: 内訳が伝わるよう、種別ごとの色付きドット+件数で表示。
         if (events.length === 1) {
           const cls = getEventTypeClass(events[0].type).replace('event-tag ', '');
-          html += `<span class="event-tag ${cls}">${events[0].title}</span>`;
+          html += `<span class="event-tag ${cls}">${events[0].organizer || events[0].title}</span>`;
         } else if (events.length === 2) {
           html += '<div class="day-split">';
           events.forEach(ev => {
             const cls = getEventTypeClass(ev.type).replace('event-tag ', '');
+            const label = ev.organizer || ev.title;
             const full = ev.location ? `${ev.type} - ${ev.location}` : ev.type;
-            html += `<span class="day-split-half ${cls}" title="${full}: ${ev.title}">${ev.title}</span>`;
+            html += `<span class="day-split-half ${cls}" title="${full}: ${label}">${label}</span>`;
           });
           html += '</div>';
         } else if (events.length >= 3) {
           html += '<div class="day-dots">';
           events.forEach(ev => {
             const cls = getEventTypeClass(ev.type).replace('event-tag ', '');
-            html += `<span class="day-dot ${cls}" title="${ev.type}: ${ev.title}"></span>`;
+            html += `<span class="day-dot ${cls}" title="${ev.type}: ${ev.organizer || ev.title}"></span>`;
           });
           html += '</div>';
           html += `<span class="day-count">${events.length}件</span>`;
@@ -3107,14 +3177,14 @@
       }
 
       container.innerHTML = monthEvents.map((ev, i) => {
-        const rows = [
-          ['開催日時', `${formatDate(ev.date)}${ev.time ? ' ' + ev.time : ''}`],
-          ['タイトル', ev.title]
-        ];
+        const rows = [];
+        if (ev.organizer) rows.push(['主催者名', ev.organizer]);
+        if (ev.title) rows.push(['タイトル', ev.title]);
+        rows.push(['開催日', formatDate(ev.date)]);
+        if (ev.time) rows.push(['開始時間', ev.time]);
         if (ev.location) rows.push(['開催場所', ev.location]);
         if (ev.fee) rows.push(['参加費', ev.fee + '円']);
         if (ev.capacity) rows.push(['募集人数', ev.capacity + '名']);
-        if (ev.organizer) rows.push(['主催者名', ev.organizer]);
         if (ev.contact) rows.push(['問い合わせ先', ev.contact]);
 
         return `
@@ -3123,7 +3193,7 @@
               <span class="eah-left">
                 <span class="${getEventTypeClass(ev.type)}" style="display:inline-block;">${ev.type}</span>
                 <span class="eah-date">${formatDate(ev.date)}</span>
-                <span class="eah-title">${ev.title}</span>
+                <span class="eah-title">${ev.organizer || ev.title}</span>
               </span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
@@ -3541,7 +3611,7 @@
 
     // このindex.htmlはscript.jsを読み込んでいない完全に独立したファイルなので、
     // 実データ取得も専用に用意する（他ページのscript.jsのfetchPublicDataと処理内容は同じ）。
-    const GAS_WEB_APP_URL_FOR_TOP_PAGE = 'https://script.google.com/macros/s/AKfycbxMl0EVZDiYByaBy3RQcR01GO7Z7Kw4xOnv6KKqDNy800aRdJyJ8CmblubWR3I8T0M/exec';
+    const GAS_WEB_APP_URL_FOR_TOP_PAGE = 'https://script.google.com/macros/s/AKfycbxBR8BARqvHbasp_IsqYlb0X29gvXOLePFVKd-zwTx4JkONJemBCOiK66f-G2kzYT8S/exec';
 
     // FAQ/お知らせ/イベントデータのブラウザ内キャッシュ（sessionStorage）。
     // event-calendar-page.html等（script.js）と同じキー・同じ有効期限で読み書きするので、
@@ -3617,7 +3687,7 @@
         title: e.title,
         location: e.location,
         type: (e.type === '公式大会' || e.type === 'ショップイベント') ? e.type : '公認イベント',
-        time: e.time || '',
+        time: formatEventTime(e.time || ''),
         fee: e.fee || '',
         capacity: e.capacity || '',
         organizer: e.organizer || '',

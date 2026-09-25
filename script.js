@@ -7,14 +7,14 @@
 // (デプロイ後に発行されるURL。/mnt/user-data/outputs/apps-script/Code.gs の
 //  デプロイ手順を参照)
 const CONFIG = {
-    GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxMl0EVZDiYByaBy3RQcR01GO7Z7Kw4xOnv6KKqDNy800aRdJyJ8CmblubWR3I8T0M/exec',
+    GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbxBR8BARqvHbasp_IsqYlb0X29gvXOLePFVKd-zwTx4JkONJemBCOiK66f-G2kzYT8S/exec',
     // Code.gs の スクリプトプロパティ FORM_TOKEN と同じ値をここに設定してください。
     // （雑なURL直叩きスパムを減らすための簡易フィルタです。詳細はCode.gsのコメント参照）
     FORM_TOKEN: '4b88a23d80d3eb2e2646dd6e847fab88',
     // reCAPTCHA v3 のサイトキー（公開しても問題ない方の値。シークレットキーは絶対にここに書かない）。
     // https://www.google.com/recaptcha/admin でサイト登録すると発行されます。
     // 未設定（このままYOUR_RECAPTCHA_SITE_KEY_HEREの間）は reCAPTCHA なしで今まで通り動作します。
-    RECAPTCHA_SITE_KEY: 'YOUR_RECAPTCHA_SITE_KEY_HERE'
+    RECAPTCHA_SITE_KEY: '6LcjQ6EtAAAAAJBjgKCpwlf5QvWV8IZ3jNJD7LdB'
 };
 
 // reCAPTCHA v3 のスクリプトを読み込む（サイトキーが設定されている時だけ）。
@@ -385,11 +385,13 @@ function getMonthEvents(year, month) {
                 cls: categoryClass(x.raw.type),
                 name: escapeHtml(x.raw.title),
                 location: escapeHtml(x.raw.location),
-                time: escapeHtml(x.raw.time || ''),
+                time: escapeHtml(formatEventTime(x.raw.time || '')),
                 fee: escapeHtml(x.raw.fee || ''),
                 capacity: escapeHtml(x.raw.capacity || ''),
                 organizer: escapeHtml(x.raw.organizer || ''),
-                contact: escapeHtml(x.raw.contact || '')
+                contact: escapeHtml(x.raw.contact || ''),
+                contactType: contactType(x.raw.contact || ''),
+                description: escapeHtml(x.raw.eventDescription || x.raw.description || '')
             };
             if (!byDay[day]) byDay[day] = [];
             byDay[day].push(ev);
@@ -409,8 +411,74 @@ function formatDateShort(year, month, day) {
     return `${month + 1}/${day}`;
 }
 
+// 「問い合わせ先」の値がメールアドレスなのかXアカウントなのか（あるいはそれ以外）を
+// 見た目のパターンから判定し、短い種別ラベル（メール／X／Discord）を返す。
+// ラベル自体は "問い合わせ先" のまま固定し、種別は値の横に小さく添えて表示する
+// （dt列の幅が狭いため、ラベル文言を長くすると折り返してしまうのを避けるため）。
+function contactType(contact) {
+    const v = String(contact || '').trim();
+    if (!v) return '';
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'メール';
+    if (v.startsWith('@')) return 'Xアカウント';
+    return 'Discord';
+}
+
 function formatDateFull(year, month, day) {
     return `${year}年${MONTH_NAMES[month]}${day}日`;
+}
+
+function pad2Time(n) {
+    return String(n).padStart(2, '0');
+}
+
+function hhmmTokyo(d) {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Tokyo',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    }).formatToParts(d);
+    const hour = parts.find(p => p.type === 'hour').value;
+    const minute = parts.find(p => p.type === 'minute').value;
+    return pad2Time(hour) + ':' + minute;
+}
+
+// スプレッドシート由来の時刻が Date のまま混ざると
+// 「2026年9月4日 Sat Dec 30 1899 19:00:00 GMT+0900 (日本標準時)」になる。
+function formatEventTime(value) {
+    if (value === undefined || value === null || value === '') return '';
+    const asString = String(value);
+    if (/[〜~]/.test(asString)) {
+        return asString.split(/[〜~]/).map(part => formatTimePart(part.trim())).filter(Boolean).join('〜');
+    }
+    return formatTimePart(value);
+}
+
+function formatTimePart(value) {
+    if (value === undefined || value === null || value === '') return '';
+    if (value instanceof Date) {
+        if (isNaN(value.getTime())) return '';
+        return hhmmTokyo(value);
+    }
+    const str = String(value).trim();
+    if (!str) return '';
+
+    const plain = str.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+    if (plain) return pad2Time(parseInt(plain[1], 10)) + ':' + plain[2];
+
+    const dateStringLike = /\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/.test(str) || /GMT|JST|標準時/.test(str);
+    const embedded = str.match(/\b(\d{1,2}):(\d{2})(?::\d{2})?\b/);
+    if (dateStringLike && embedded) {
+        return pad2Time(parseInt(embedded[1], 10)) + ':' + embedded[2];
+    }
+
+    const ms = Date.parse(str);
+    if (!isNaN(ms)) {
+        const d = new Date(ms);
+        if (d.getFullYear() <= 1900 || /T\d{2}:\d{2}/.test(str)) return hhmmTokyo(d);
+    }
+    if (/1899/.test(str)) return '';
+    return str;
 }
 
 // ---------- Day click popup (list of that day's events, shared across calendars) ----------
@@ -448,7 +516,7 @@ function showDayPopup(year, month, day, evs, onCardClick) {
     dayPopupListEl.innerHTML = evs.map((ev, i) => `
         <button type="button" class="day-popup-card" data-index="${i}">
             <span class="event-tag-pill tag-${ev.cls}">${ev.tag}</span>
-            <span class="dp-title">${ev.name}</span>
+            <span class="dp-title">${ev.organizer || ev.name}</span>
             <span class="dp-row">📍 ${ev.location}</span>
             <span class="dp-row">🕒 ${ev.time}</span>
         </button>`).join('');
@@ -543,23 +611,24 @@ class EventCalendar {
             num.textContent = d;
             el.appendChild(num);
 
-            // 1件: 従来通り色付きの帯にイベント名を表示。
-            // 2件: セルを上下に分割し、それぞれカテゴリ色の帯に「イベント名」を表示
-            //      （＝月間イベント一覧と同じく、日付の後の情報＝ev.nameを使う。収まらない分は…で省略）。
+            // 1件: 従来通り色付きの帯に主催者名を表示。
+            // 2件: セルを上下に分割し、それぞれカテゴリ色の帯に「主催者名（なければイベント名）」を表示
+            //      （収まらない分は…で省略）。
             // 3件以上: 内訳が伝わるよう、種別ごとの色付きドット+件数を表示（クリックでポップアップに全件表示）。
             if (evs.length === 1) {
                 const tag = document.createElement('span');
                 tag.className = 'event-tag tag-' + evs[0].cls;
-                tag.textContent = evs[0].name;
+                tag.textContent = evs[0].organizer || evs[0].name;
                 el.appendChild(tag);
             } else if (evs.length === 2) {
                 const split = document.createElement('div');
                 split.className = 'day-split';
                 evs.forEach(ev => {
+                    const label = ev.organizer || ev.name;
                     const half = document.createElement('span');
                     half.className = 'day-split-half tag-' + ev.cls;
-                    half.textContent = ev.name;
-                    half.title = `${ev.tag}${ev.location ? ' - ' + ev.location : ''}: ${ev.name}`;
+                    half.textContent = label;
+                    half.title = `${ev.tag}${ev.location ? ' - ' + ev.location : ''}: ${label}`;
                     split.appendChild(half);
                 });
                 el.appendChild(split);
@@ -569,7 +638,7 @@ class EventCalendar {
                 evs.forEach(ev => {
                     const dot = document.createElement('span');
                     dot.className = 'day-dot tag-' + ev.cls;
-                    dot.title = `${ev.tag}: ${ev.name}`;
+                    dot.title = `${ev.tag}: ${ev.organizer || ev.name}`;
                     dots.appendChild(dot);
                 });
                 el.appendChild(dots);
@@ -666,8 +735,9 @@ class EventCalendar {
         });
     }
 
-    // 当月のイベントだけを、開催日時・タイトル・開催場所・参加費・募集人数・主催者名・
-    // 問い合わせ先を含むアコーディオンとして表示する（空欄の項目は表示しない）。
+    // 当月のイベントだけを、主催者名・タイトル・開催日時・開催場所・参加費・募集人数・
+    // 問い合わせ先（値の横にメール／X／Discordの種別バッジを添える）を含む
+    // アコーディオンとして表示する（空欄の項目は表示しない）。
     renderMonthAccordion() {
         if (this.monthListHeadEl) this.monthListHeadEl.textContent = `${this.year}年${MONTH_NAMES[this.month]}のイベント`;
         const list = getMonthEventsFlat(this.year, this.month);
@@ -683,19 +753,23 @@ class EventCalendar {
             item.dataset.day = ev.day;
             item.dataset.name = ev.name;
 
-            const rows = [
-                ['開催日時', escapeHtml(`${formatDateFull(year, month, ev.day)}${ev.time ? ' ' + ev.time : ''}`)],
-                ['タイトル', escapeHtml(ev.name)]
-            ];
+            const rows = [];
+            if (ev.organizer) rows.push(['主催者名', escapeHtml(ev.organizer)]);
+            if (ev.name) rows.push(['タイトル', escapeHtml(ev.name)]);
+            rows.push(['開催日', escapeHtml(formatDateFull(year, month, ev.day))]);
+            if (ev.time) rows.push(['開始時間', escapeHtml(ev.time)]);
             if (ev.location) rows.push(['開催場所', escapeHtml(ev.location)]);
             if (ev.fee) rows.push(['参加費', escapeHtml(ev.fee) + '円']);
             if (ev.capacity) rows.push(['募集人数', escapeHtml(ev.capacity) + '名']);
-            if (ev.organizer) rows.push(['主催者名', escapeHtml(ev.organizer)]);
-            if (ev.contact) rows.push(['問い合わせ先', escapeHtml(ev.contact)]);
+            if (ev.contact) {
+                const badge = ev.contactType ? `<span class="contact-type-badge">${escapeHtml(ev.contactType)}</span>` : '';
+                rows.push(['問い合わせ先', `${escapeHtml(ev.contact)}${badge}`]);
+            }
+            if (ev.description) rows.push(['イベント説明', ev.description.replace(/\n/g, '<br>')]);
 
             item.innerHTML = `
                 <div class="acc-head">
-                    <span><span class="event-tag-pill tag-${ev.cls}">${escapeHtml(ev.tag)}</span>${formatDateShort(year, month, ev.day)}　${escapeHtml(ev.name)}</span>
+                    <span><span class="event-tag-pill tag-${ev.cls}">${escapeHtml(ev.tag)}</span>${formatDateShort(year, month, ev.day)}　${escapeHtml(ev.organizer || ev.name)}</span>
                     <span class="acc-toggle">▼</span>
                 </div>
                 <div class="acc-body">
@@ -835,7 +909,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // カレンダー系は「承認済み」の実イベントデータが揃ってから初期化する
     // （揃うまでは一瞬「開催予定のイベントはありません」と出るだけで、レイアウトは変わらない）。
     publicDataPromise.then(data => {
-        REAL_EVENTS = DEMO_MODE ? buildDemoEvents() : data.events;
+        REAL_EVENTS = (DEMO_MODE ? buildDemoEvents() : data.events).map(e => Object.assign({}, e, {
+            time: formatEventTime(e.time)
+        }));
 
         // TOP page compact calendar
         const topGrid = document.getElementById('top-calendar-grid');

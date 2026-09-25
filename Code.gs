@@ -207,7 +207,7 @@ const APPLICATION_HEADERS = [
 // ステータス列は '未回答' → '回答' 列に回答を書いた上で '回答済み' に変更すると、
 // 対応するFAQページ（faq-starter.html / faq-vol1〜4.html）に自動で表示されます。
 const FAQ_HEADERS = [
-  '受付日時', 'ステータス', '対象弾', 'カード名', '質問内容', '回答'
+  '受付日時', '回答日', 'ステータス', '対象弾', 'カード名', '質問内容', '回答'
 ];
 
 // お知らせシートの列見出し（このシートは自動では作られないため、初回は
@@ -262,7 +262,7 @@ function doPost(e) {
 // 毎回スプレッドシートへ読みに行かずに済み、Apps Script側の処理時間を少し短縮できる。
 // 承認・回答などスプレッドシートを更新した直後は、最大30秒だけ反映が遅れる可能性がある点に注意
 // （それより早く確認したい場合は、単純に30秒待ってからページを再読み込みしてください）。
-const PUBLIC_DATA_CACHE_SECONDS = 30;
+const PUBLIC_DATA_CACHE_SECONDS = 0;
 const PUBLIC_DATA_CACHE_KEY = 'public_data_all_v1';
 
 function getPublicDataCached() {
@@ -332,16 +332,117 @@ function volKeyFromText(text) {
 
 function formatDateJa(value) {
   if (!value) return '';
-  const d = (value instanceof Date) ? value : new Date(value);
-  if (isNaN(d.getTime())) return String(value);
-  return Utilities.formatDate(d, Session.getScriptTimeZone(), 'yyyy年M月d日');
+  
+  // すでに日本語フォーマットならそのまま返す
+  if (String(value).indexOf('年') !== -1 && String(value).indexOf('月') !== -1) {
+    return String(value);
+  }
+  
+  // Dateオブジェクトならそのまま使用
+  let d = (value instanceof Date) ? value : new Date(value);
+  
+  // Dateとして無効な場合、簡易フォーマットを試す
+  if (isNaN(d.getTime())) {
+    // "8/31" や "2026/08/31" のようなフォーマットを解析
+    const str = String(value).trim();
+    if (str.match(/^\d{1,2}\/\d{1,2}$/)) {
+      // "8/31" -> "2026/8/31" (年を補完)
+      const parts = str.split('/');
+      d = new Date(2026, parseInt(parts[0]) - 1, parseInt(parts[1]));
+    } else if (str.match(/^\d{4}\/\d{1,2}\/\d{1,2}$/)) {
+      // "2026/08/31"
+      d = new Date(str);
+    }
+  }
+  
+  if (isNaN(d.getTime())) {
+    return String(value);
+  }
+  
+  return Utilities.formatDate(d, 'Asia/Tokyo', 'yyyy年M月d日');
 }
 
 function formatDateISO(value) {
   if (!value) return '';
-  const d = (value instanceof Date) ? value : new Date(value);
+  
+  // すでにISOフォーマットならそのまま返す
+  if (String(value).match(/^\d{4}-\d{2}-\d{2}$/)) {
+    return String(value);
+  }
+  
+  // Dateオブジェクトならそのまま使用
+  let d = (value instanceof Date) ? value : new Date(value);
+  
+  // Dateとして無効な場合、簡易フォーマットを試す
+  if (isNaN(d.getTime())) {
+    const str = String(value).trim();
+    if (str.match(/^\d{1,2}\/\d{1,2}$/)) {
+      const parts = str.split('/');
+      d = new Date(2026, parseInt(parts[0]) - 1, parseInt(parts[1]));
+    } else if (str.match(/^\d{4}\/\d{1,2}\/\d{1,2}$/)) {
+      d = new Date(str);
+    }
+  }
+  
   if (isNaN(d.getTime())) return String(value);
-  return Utilities.formatDate(d, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  
+  return Utilities.formatDate(d, 'Asia/Tokyo', 'yyyy-MM-dd');
+}
+
+function pad2(n) {
+  return ('0' + n).slice(-2);
+}
+
+// スプレッドシートの時刻セルは Date（基準日 1899-12-30）として返る。
+// Date を join / String() すると
+// 「Sat Dec 30 1899 19:00:00 GMT+0900 (日本標準時)」が開催日時に混ざるため、
+// 必ず HH:mm だけを返す。
+function formatTime(value) {
+  if (value === '' || value === undefined || value === null) return '';
+  if (typeof value === 'string' && /[〜~]/.test(value)) {
+    return value.split(/[〜~]/).map(function (part) {
+      return formatTimePart(part.trim());
+    }).filter(Boolean).join('〜');
+  }
+  return formatTimePart(value);
+}
+
+function formatTimePart(value) {
+  if (value === '' || value === undefined || value === null) return '';
+
+  if (typeof value === 'number' && isFinite(value) && value >= 0 && value < 1) {
+    const totalMin = Math.round(value * 24 * 60);
+    return pad2(Math.floor(totalMin / 60) % 24) + ':' + pad2(totalMin % 60);
+  }
+
+  if (value instanceof Date) {
+    if (isNaN(value.getTime())) return '';
+    return Utilities.formatDate(value, 'Asia/Tokyo', 'HH:mm');
+  }
+
+  const str = String(value).trim();
+  if (!str) return '';
+
+  const plain = str.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (plain) {
+    return pad2(parseInt(plain[1], 10)) + ':' + plain[2];
+  }
+
+  // Date#toString() 由来（「Sat Dec 30 1899 19:00:00 GMT+0900 (日本標準時)」）
+  const dateStringLike = /\b(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/.test(str) ||
+    /GMT|JST|標準時/.test(str);
+  const embedded = str.match(/\b(\d{1,2}):(\d{2})(?::\d{2})?\b/);
+  if (dateStringLike && embedded) {
+    return pad2(parseInt(embedded[1], 10)) + ':' + embedded[2];
+  }
+
+  const d = new Date(str);
+  if (!isNaN(d.getTime()) && (d.getFullYear() <= 1900 || /T\d{2}:\d{2}/.test(str))) {
+    return Utilities.formatDate(d, 'Asia/Tokyo', 'HH:mm');
+  }
+
+  if (/1899/.test(str)) return '';
+  return str;
 }
 
 // 「FAQ質問」シートのうち、ステータスが「回答済み」かつ回答が入力済みの行だけを公開する
@@ -356,7 +457,8 @@ function getPublishedFaq() {
       card: r['カード名'] || '',
       question: r['質問内容'] || '',
       answer: r['回答'] || '',
-      date: formatDateJa(r['受付日時'])
+      // 回答日があればそれを使用し、なければ受付日時を使用
+      date: r['回答日'] ? formatDateJa(r['回答日']) : formatDateJa(r['受付日時'])
     }))
     .filter(r => r.vol); // 対象弾がどのVolか判別できないものは念のため除外
 }
@@ -398,13 +500,14 @@ function getApprovedEvents() {
       title: r['イベント名'] || '',
       location: r['開催場所'] || '',
       type: mapEventCategory(r['イベント種別']),
-      time: [r['開始時間'], r['終了時間']].filter(Boolean).join('〜'),
+      time: [formatTime(r['開始時間']), formatTime(r['終了時間'])].filter(Boolean).join('〜'),
       fee: r['参加費'] !== '' && r['参加費'] !== undefined ? String(r['参加費']) : '',
       capacity: r['定員'] !== '' && r['定員'] !== undefined ? String(r['定員']) : '',
       organizer: r['主催者名'] || '',
       // 個人情報保護のため、公開カレンダーには申請時のメールアドレスではなく
       // X/DiscordなどSNS上の連絡先のみを表示する（メールはスプレッドシート内のみで保管）。
-      contact: r['Xアカウント'] || r['DiscordID'] || ''
+      contact: r['Xアカウント'] || r['DiscordID'] || '',
+      eventDescription: r['イベント説明文'] || ''
     }));
 }
 
@@ -514,6 +617,7 @@ function handleFaq(data) {
   const sheet = getOrCreateSheet(SHEET_FAQ, FAQ_HEADERS);
   const row = [
     new Date(),
+    '', // 回答日（初期値は空欄）
     '未回答',
     clip(data.vol, MAX_LENGTHS.short),
     clip(data.card, MAX_LENGTHS.short),
@@ -586,6 +690,32 @@ function notifyEmail(subject, message) {
     // メール送信失敗はスプレッドシート保存自体を失敗させない
     console.error('Email notification failed: ' + err);
   }
+}
+
+// スプレッドシート編集時の自動処理
+// 回答列に値が入力され、かつ回答日が空欄の場合、自動的に回答日を記録する
+function onEdit(e) {
+  const sheet = e.source.getActiveSheet();
+  if (sheet.getName() !== SHEET_FAQ) return;
+
+  const range = e.range;
+  const row = range.getRow();
+  const col = range.getColumn();
+
+  // 回答列（7列目）の編集時のみ処理
+  if (col !== 7) return;
+
+  // 回答が入力されたか確認
+  const answer = range.getValue();
+  if (!answer || String(answer).trim() === '') return;
+
+  // 回答日列（2列目）が空欄か確認
+  const answerDateCell = sheet.getRange(row, 2);
+  const existingAnswerDate = answerDateCell.getValue();
+  if (existingAnswerDate) return; // 既に回答日が入力されている場合は何もしない
+
+  // 回答日を記録
+  answerDateCell.setValue(new Date());
 }
 
 function jsonResponse(obj) {
