@@ -945,6 +945,7 @@ main { padding-bottom: 60px; }
 
 .form-field input[type=text],
 .form-field input[type=email],
+.form-field input[type=tel],
 .form-field input[type=url],
 .form-field input[type=number],
 .form-field input[type=date],
@@ -972,6 +973,101 @@ main { padding-bottom: 60px; }
 
 .radio-group { display: flex; gap: 18px; }
 .radio-group label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 400; text-transform: none; }
+
+.application-mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.application-mode-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .15s, background-color .15s;
+}
+
+.application-mode-card:has(input:checked) {
+    border-color: var(--accent-dark);
+    background: var(--bg-soft);
+}
+
+.application-mode-card input { margin-top: 3px; flex-shrink: 0; }
+.application-mode-card strong { display: block; font-size: 14px; color: var(--text); margin-bottom: 4px; }
+.application-mode-card small { display: block; font-size: 12px; line-height: 1.6; color: var(--text-muted); font-weight: 400; }
+
+.section-heading-note {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.schedule-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.15fr .8fr .8fr 1.2fr .65fr .75fr auto;
+    gap: 10px;
+    align-items: end;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.schedule-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.schedule-field .req { color: var(--red); }
+.schedule-field input,
+.schedule-field select {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+}
+.schedule-field input:focus,
+.schedule-field select:focus { outline: none; border-color: var(--accent); }
+.schedule-field input.input-error,
+.schedule-field select.input-error { border-color: var(--red); }
+
+.remove-schedule-btn {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+}
+.remove-schedule-btn:hover { border-color: var(--red); color: var(--red); }
+.add-schedule-btn { padding: 10px 16px; }
+.form-error { min-height: 1.4em; margin-top: 8px; color: var(--red); font-size: 12px; }
 
 .venue-fields { margin-top: 10px; }
 .venue-fields label.mt-2 { margin-top: 12px; }
@@ -1045,6 +1141,15 @@ main { padding-bottom: 60px; }
 .confirm-actions .btn { flex: 1; }
 @media (max-width: 560px) {
     .confirm-actions { flex-direction: column-reverse; }
+}
+
+@media (max-width: 760px) {
+    .application-mode-grid { grid-template-columns: 1fr; }
+    .schedule-row { grid-template-columns: 1fr 1fr; padding-top: 46px; }
+    .schedule-field.schedule-date,
+    .schedule-field.schedule-type { grid-column: 1 / -1; }
+    .remove-schedule-btn { position: absolute; top: 10px; right: 10px; }
+    .section-heading-note { display: block; margin: 4px 0 0; }
 }
 
 /* FAQ vol cards */
