@@ -552,8 +552,9 @@ function applicationRowFromRecord(headers, record) {
 
 function handleApplication(data) {
   const isMultiSchedulePayload = Array.isArray(data.schedules);
-  const organizationName = String(data.organizationName || data.organizerName || '').trim();
-  const contactName = String(data.contactName || data.organizerName || '').trim();
+  const organizerName = String(data.organizerName || data.organizationName || '').trim();
+  const organizationName = String(data.organizationName || '').trim();
+  const contactName = String(data.contactName || '').trim();
   const applicationMode = data.applicationMode === 'recurring' ? 'recurring' : 'single';
 
   // 共通情報の必須項目チェック。旧フォームからの単一日程payloadも引き続き受け付ける。
@@ -563,11 +564,7 @@ function handleApplication(data) {
       return jsonResponse({ ok: false, error: 'missing required field: ' + key });
     }
   }
-  if (!organizationName) return jsonResponse({ ok: false, error: 'missing required field: organizationName' });
-  if (isMultiSchedulePayload && !contactName) return jsonResponse({ ok: false, error: 'missing required field: contactName' });
-  if (isMultiSchedulePayload && !String(data.contactPhone || '').trim()) {
-    return jsonResponse({ ok: false, error: 'missing required field: contactPhone' });
-  }
+  if (!organizerName) return jsonResponse({ ok: false, error: 'missing required field: organizerName' });
 
   const schedules = isMultiSchedulePayload ? data.schedules : [{
     eventDate: data.eventDate,
@@ -640,7 +637,7 @@ function handleApplication(data) {
     const rows = schedules.map((schedule, index) => applicationRowFromRecord(headers, {
       '受付日時': receivedAt,
       'ステータス': '未確認',
-      '主催者名': clip(organizationName, MAX_LENGTHS.short),
+      '主催者名': clip(organizerName, MAX_LENGTHS.short),
       'お問い合わせメールアドレス': clip(data.organizerEmail, MAX_LENGTHS.short),
       'Xアカウント': clip(data.xAccount, MAX_LENGTHS.short),
       'DiscordID': clip(data.discordId, MAX_LENGTHS.short),
@@ -681,7 +678,7 @@ function handleApplication(data) {
     `申請方法: ${applicationMode === 'recurring' ? '複数日程' : '単発'}（${schedules.length}件）\n` +
     `開催日程:\n${scheduleSummary}\n` +
     `開催場所: ${venueText || '-'}\n` +
-    `主催者: ${organizationName || '-'} / ${contactName || '-'} (${data.organizerEmail || '-'})`
+    `主催者: ${organizerName || '-'} (${data.organizerEmail || '-'})`
   );
 
   notifyEmail(
@@ -690,7 +687,7 @@ function handleApplication(data) {
     `申請方法: ${applicationMode === 'recurring' ? '複数日程' : '単発'}（${schedules.length}件）\n` +
     `開催日程:\n${scheduleSummary}\n` +
     `開催場所: ${venueText || '-'}\n` +
-    `主催者: ${organizationName || '-'} / ${contactName || '-'} (${data.organizerEmail || '-'})\n\n` +
+    `主催者: ${organizerName || '-'} (${data.organizerEmail || '-'})\n\n` +
     `スプレッドシートの「申請」シートで詳細を確認し、内容に問題なければステータスを「承認済み」に変更してください。`
   );
 

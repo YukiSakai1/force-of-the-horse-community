@@ -17,13 +17,10 @@
 {
   "type": "application",
   "applicationMode": "single | recurring",
-  "organizationName": "店舗・団体名（個人は主催者名）",
-  "contactName": "担当者名",
+  "organizerName": "主催者名（ハンドルネーム可）",
   "organizerEmail": "contact@example.com",
-  "contactPhone": "090-0000-0000",
   "xAccount": "@account",
   "discordId": "account",
-  "websiteUrl": "https://example.com",
   "eventName": "イベント名",
   "eventFormat": "オフライン | オンライン | ハイブリッド",
   "eventDescription": "説明",
@@ -43,7 +40,7 @@
 }
 ```
 
-開催場所は従来どおり、開催形式に応じた `venueName*` / `venueAddress*` の各フィールドを送る。旧フォームとの互換用に、フロントエンドは `organizerName` にも `organizationName` と同じ値を設定する。
+開催場所は従来どおり、開催形式に応じた `venueName*` / `venueAddress*` の各フィールドを送る。主催者情報も従来どおり、`organizerName`、`organizerEmail`、`xAccount`、`discordId` を使用する。
 
 ## スプレッドシートと承認フロー
 
@@ -67,6 +64,8 @@
 8. 日程数
 9. 特典対応
 
+店舗・団体名、担当者名、電話番号、Webサイト・SNS URLの列は、先行版フォームとの互換性と既存データ保持のため削除しない。従来構成へ戻したフォームからの新規申請では空欄になる。
+
 既存の単一日程payloadも受信できるため、フォームとApps Scriptのデプロイに時間差があっても従来申請を取りこぼさない。
 
 ## サーバー検証
@@ -74,6 +73,6 @@
 - `single` は日程1件、`recurring` は1〜12件。
 - 各日程で開催日、開始・終了時刻、イベント種別、定員、参加費を必須にする。
 - 終了時刻は開始時刻より後、定員は1以上、参加費は0以上。
-- 店舗・団体名、担当者名、メールアドレス、電話番号を必須にする。
+- 主催者名とメールアドレスを必須にする。
 - URL、メールアドレス、NGワード、URL件数、reCAPTCHA、honeypot、送信頻度は従来の検証を維持する。
 - 発送先住所は申請payloadや「申請」シートへ保存しない。
