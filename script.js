@@ -838,15 +838,12 @@ const APPLY_CONFIRM_SECTIONS = [
         ]
     },
     {
-        title: '2. 店舗・主催者情報',
+        title: '2. 主催者情報',
         fields: [
-            ['organizationName', '店舗名・団体名'],
-            ['contactName', '担当者名'],
+            ['organizerName', '主催者名'],
             ['organizerEmail', 'お問い合わせメールアドレス'],
-            ['contactPhone', '電話番号'],
             ['xAccount', 'Xアカウント'],
-            ['discordId', 'Discord ID'],
-            ['websiteUrl', 'Webサイト・SNS URL']
+            ['discordId', 'Discord ID']
         ]
     },
     {
@@ -902,7 +899,7 @@ function buildApplyConfirmHtml(payload) {
             .map(([key, label, suffix]) => {
                 let raw = (payload[key] || '').toString().trim();
                 if (key === 'applicationMode') {
-                    raw = raw === 'recurring' ? '複数日程をまとめて申請' : '1イベントを申請';
+                    raw = raw === 'recurring' ? '複数日程をまとめて申請' : '単一の日程で申請';
                 }
                 if (!raw) return null;
                 return { label, value: raw + (suffix || '') };
@@ -1353,7 +1350,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = new FormData(applyForm);
             const payload = { type: 'application', hp_verify: getHoneypotValue(applyForm) };
             formData.forEach((value, key) => { payload[key] = value; });
-            payload.organizerName = payload.organizationName;
             payload.schedules = scheduleResult.schedules;
             payload.benefitFulfillment = 'email_after_approval';
 
@@ -1365,11 +1361,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('過去のイベントURLの形式が正しくないようです。http:// または https:// から始まるURLをご入力ください。');
                 return;
             }
-            if (payload.websiteUrl && payload.websiteUrl.trim() && !APPLY_URL_REGEX.test(payload.websiteUrl.trim())) {
-                alert('Webサイト・SNS URLの形式が正しくないようです。http:// または https:// から始まるURLをご入力ください。');
-                return;
-            }
-
             pendingApplyPayload = payload;
             showApplyConfirmStep(payload);
         });
