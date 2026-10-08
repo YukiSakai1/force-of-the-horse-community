@@ -229,6 +229,13 @@ function getSubmitErrorText(err) {
                 title: 'URLをご確認ください',
                 message: '入力されたURLの形式が正しくないようです。http:// または https:// から始まるURLをご入力ください。'
             };
+        case 'invalid_schedules':
+        case 'invalid_schedule_time':
+        case 'invalid_schedule_number':
+            return {
+                title: '開催日程をご確認ください',
+                message: '開催日程の件数、時間、定員、参加費のいずれかが正しくありません。内容をご確認ください。'
+            };
         case 'ng_word':
             return {
                 title: '送信できませんでした',
@@ -825,25 +832,32 @@ function renderFaqList(container, items) {
 // 値が空（未入力の任意項目や、選択した開催形式に応じて隠れている項目）はセクションごと・行ごとにスキップされる
 const APPLY_CONFIRM_SECTIONS = [
     {
-        title: '1. 主催者情報',
+        title: '1. 申請方法',
         fields: [
-            ['organizerName', '主催者名（ハンドルネーム可）'],
-            ['organizerEmail', 'お問い合わせメールアドレス'],
-            ['xAccount', 'Xアカウント'],
-            ['discordId', 'Discord ID']
+            ['applicationMode', '申請方法']
         ]
     },
     {
-        title: '2. イベント基本情報',
+        title: '2. 店舗・主催者情報',
+        fields: [
+            ['organizationName', '店舗名・団体名'],
+            ['contactName', '担当者名'],
+            ['organizerEmail', 'お問い合わせメールアドレス'],
+            ['contactPhone', '電話番号'],
+            ['xAccount', 'Xアカウント'],
+            ['discordId', 'Discord ID'],
+            ['websiteUrl', 'Webサイト・SNS URL']
+        ]
+    },
+    {
+        title: '3. イベント共通情報',
         fields: [
             ['eventName', 'イベント名'],
-            ['eventDate', '開催日'],
-            ['startTime', '開始時間'],
-            ['endTime', '終了予定時間']
+            ['eventDescription', 'イベント説明文']
         ]
     },
     {
-        title: '3. 開催場所',
+        title: '4. 開催場所',
         fields: [
             ['eventFormat', '開催形式'],
             ['venueNameOffline', '会場名'],
@@ -855,16 +869,11 @@ const APPLY_CONFIRM_SECTIONS = [
         ]
     },
     {
-        title: '4. イベント内容',
-        fields: [
-            ['eventType', 'イベント種別'],
-            ['capacity', '定員', '名'],
-            ['fee', '参加費', '円'],
-            ['eventDescription', 'イベント説明文']
-        ]
+        title: '5. 開催日程',
+        schedules: true
     },
     {
-        title: '5. 主催者実績',
+        title: '6. 主催者実績',
         fields: [
             ['pastCount', '過去開催回数', '回'],
             ['pastUrl', '過去のイベントURL']
@@ -876,9 +885,25 @@ const APPLY_CONFIRM_SECTIONS = [
 // 空欄の項目・セクションは自動的に非表示になる（例：開催形式で選ばなかった会場欄など）。
 function buildApplyConfirmHtml(payload) {
     return APPLY_CONFIRM_SECTIONS.map(section => {
+        if (section.schedules) {
+            const schedules = Array.isArray(payload.schedules) ? payload.schedules : [];
+            if (schedules.length === 0) return '';
+            return `
+                <div class="form-section">
+                    <h2>${escapeHtml(section.title)}</h2>
+                    ${schedules.map((schedule, index) => `
+                        <div class="confirm-field">
+                            <span class="cf-label">日程 ${index + 1}</span>
+                            <span class="cf-value">${escapeHtml(`${schedule.eventDate} ${schedule.startTime}〜${schedule.endTime}\n${schedule.eventType} / 定員 ${schedule.capacity}名 / 参加費 ${schedule.fee}円`)}</span>
+                        </div>`).join('')}
+                </div>`;
+        }
         const rows = section.fields
             .map(([key, label, suffix]) => {
-                const raw = (payload[key] || '').toString().trim();
+                let raw = (payload[key] || '').toString().trim();
+                if (key === 'applicationMode') {
+                    raw = raw === 'recurring' ? '複数日程をまとめて申請' : '1イベントを申請';
+                }
                 if (!raw) return null;
                 return { label, value: raw + (suffix || '') };
             })
@@ -1135,6 +1160,127 @@ document.addEventListener('DOMContentLoaded', function () {
     // ---------- Apply form (公認イベント申請) ----------
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
+        const scheduleList = document.getElementById('schedule-list');
+        const addScheduleBtn = document.getElementById('add-schedule-btn');
+        const scheduleModeNote = document.getElementById('schedule-mode-note');
+        const scheduleError = document.getElementById('schedule-error');
+        const eventTypes = ['公認大会', '交流会', '初心者体験会', '観戦会', '配信イベント', 'その他'];
+
+        function updateScheduleControls() {
+            const recurring = applyForm.elements.applicationMode.value === 'recurring';
+            if (addScheduleBtn) {
+                addScheduleBtn.style.display = recurring ? '' : 'none';
+                addScheduleBtn.disabled = scheduleList.children.length >= 12;
+            }
+            if (scheduleModeNote) {
+                scheduleModeNote.textContent = recurring
+                    ? '1行に1回分を入力してください（最大12回）'
+                    : '1回分を入力してください';
+            }
+            scheduleList.querySelectorAll('.remove-schedule-btn').forEach(button => {
+                button.style.display = recurring && scheduleList.children.length > 1 ? '' : 'none';
+            });
+        }
+
+        function addSchedule(values) {
+            if (scheduleList.children.length >= 12) return;
+            const initial = values || {};
+            const row = document.createElement('div');
+            row.className = 'schedule-row';
+            row.innerHTML = `
+                <div class="schedule-field schedule-date">
+                    <label>開催日 <span class="req">必須</span></label>
+                    <input type="date" data-schedule-field="eventDate" value="${escapeHtml(initial.eventDate || '')}" required>
+                </div>
+                <div class="schedule-field">
+                    <label>開始 <span class="req">必須</span></label>
+                    <input type="time" data-schedule-field="startTime" value="${escapeHtml(initial.startTime || '')}" required>
+                </div>
+                <div class="schedule-field">
+                    <label>終了 <span class="req">必須</span></label>
+                    <input type="time" data-schedule-field="endTime" value="${escapeHtml(initial.endTime || '')}" required>
+                </div>
+                <div class="schedule-field schedule-type">
+                    <label>イベント種別 <span class="req">必須</span></label>
+                    <select data-schedule-field="eventType" required>
+                        <option value="">選択してください</option>
+                        ${eventTypes.map(type => `<option${initial.eventType === type ? ' selected' : ''}>${type}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="schedule-field">
+                    <label>定員 <span class="req">必須</span></label>
+                    <input type="number" data-schedule-field="capacity" min="1" value="${escapeHtml(initial.capacity || '')}" required>
+                </div>
+                <div class="schedule-field">
+                    <label>参加費 <span class="req">必須</span></label>
+                    <input type="number" data-schedule-field="fee" min="0" placeholder="0" value="${initial.fee ?? ''}" required>
+                </div>
+                <button type="button" class="remove-schedule-btn" aria-label="この日程を削除" title="この日程を削除">×</button>`;
+            row.querySelector('.remove-schedule-btn').addEventListener('click', () => {
+                if (scheduleList.children.length > 1) {
+                    row.remove();
+                    updateScheduleControls();
+                }
+            });
+            scheduleList.appendChild(row);
+            updateScheduleControls();
+        }
+
+        function collectSchedules() {
+            const schedules = [];
+            let valid = true;
+            scheduleList.querySelectorAll('.schedule-row').forEach(row => {
+                const get = key => row.querySelector(`[data-schedule-field="${key}"]`);
+                const fields = Array.from(row.querySelectorAll('[data-schedule-field]'));
+                fields.forEach(field => field.classList.remove('input-error'));
+                const schedule = {
+                    eventDate: get('eventDate').value.trim(),
+                    startTime: get('startTime').value.trim(),
+                    endTime: get('endTime').value.trim(),
+                    eventType: get('eventType').value.trim(),
+                    capacity: Number(get('capacity').value),
+                    fee: Number(get('fee').value)
+                };
+                fields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('input-error');
+                        valid = false;
+                    }
+                });
+                if (schedule.capacity < 1) {
+                    get('capacity').classList.add('input-error');
+                    valid = false;
+                }
+                if (schedule.fee < 0) {
+                    get('fee').classList.add('input-error');
+                    valid = false;
+                }
+                if (schedule.startTime && schedule.endTime && schedule.endTime <= schedule.startTime) {
+                    get('startTime').classList.add('input-error');
+                    get('endTime').classList.add('input-error');
+                    valid = false;
+                }
+                schedules.push(schedule);
+            });
+            const mode = applyForm.elements.applicationMode.value;
+            if ((mode === 'single' && schedules.length !== 1) || schedules.length < 1 || schedules.length > 12) valid = false;
+            if (scheduleError) {
+                scheduleError.textContent = valid ? '' : '各日程の必須項目を入力し、終了時間を開始時間より後にしてください。';
+            }
+            return { valid, schedules };
+        }
+
+        addSchedule();
+        if (addScheduleBtn) addScheduleBtn.addEventListener('click', () => addSchedule());
+        applyForm.querySelectorAll('input[name="applicationMode"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'single' && radio.checked) {
+                    Array.from(scheduleList.children).slice(1).forEach(row => row.remove());
+                }
+                updateScheduleControls();
+            });
+        });
+
         // 開催形式（オフライン/オンライン/ハイブリッド）に応じて、開催場所の入力欄を
         // 切り替える。表示中の欄だけを必須にし、隠れている欄の値は送信時に空のまま送る
         // （Code.gs側でも同じ組み合わせを検証しているので、二重のチェックになる）。
@@ -1197,9 +1343,19 @@ document.addEventListener('DOMContentLoaded', function () {
         applyForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
+            const scheduleResult = collectSchedules();
+            if (!scheduleResult.valid) {
+                const firstError = scheduleList.querySelector('.input-error');
+                if (firstError) firstError.focus();
+                return;
+            }
+
             const formData = new FormData(applyForm);
             const payload = { type: 'application', hp_verify: getHoneypotValue(applyForm) };
             formData.forEach((value, key) => { payload[key] = value; });
+            payload.organizerName = payload.organizationName;
+            payload.schedules = scheduleResult.schedules;
+            payload.benefitFulfillment = 'email_after_approval';
 
             if (!APPLY_EMAIL_REGEX.test((payload.organizerEmail || '').trim())) {
                 alert('お問い合わせメールアドレスの形式が正しくないようです。ご確認ください。');
@@ -1207,6 +1363,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (payload.pastUrl && payload.pastUrl.trim() && !APPLY_URL_REGEX.test(payload.pastUrl.trim())) {
                 alert('過去のイベントURLの形式が正しくないようです。http:// または https:// から始まるURLをご入力ください。');
+                return;
+            }
+            if (payload.websiteUrl && payload.websiteUrl.trim() && !APPLY_URL_REGEX.test(payload.websiteUrl.trim())) {
+                alert('Webサイト・SNS URLの形式が正しくないようです。http:// または https:// から始まるURLをご入力ください。');
                 return;
             }
 
@@ -1282,4 +1442,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
-

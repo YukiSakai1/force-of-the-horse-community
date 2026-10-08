@@ -200,7 +200,9 @@ const APPLICATION_HEADERS = [
   '主催者名', 'お問い合わせメールアドレス', 'Xアカウント', 'DiscordID',
   'イベント名', '開催日', '開始時間', '終了時間', '開催形式', '開催場所',
   'イベント種別', '定員', '参加費', 'イベント説明文',
-  '過去開催回数', '過去イベントURL'
+  '過去開催回数', '過去イベントURL',
+  '申請グループID', '申請方法', '店舗・団体名', '担当者名', '電話番号',
+  'Webサイト・SNS URL', '日程番号', '日程数', '特典対応'
 ];
 
 // FAQ質問フォームの列見出し
@@ -503,7 +505,7 @@ function getApprovedEvents() {
       time: [formatTime(r['開始時間']), formatTime(r['終了時間'])].filter(Boolean).join('〜'),
       fee: r['参加費'] !== '' && r['参加費'] !== undefined ? String(r['参加費']) : '',
       capacity: r['定員'] !== '' && r['定員'] !== undefined ? String(r['定員']) : '',
-      organizer: r['主催者名'] || '',
+      organizer: r['店舗・団体名'] || r['主催者名'] || '',
       // 個人情報保護のため、公開カレンダーには申請時のメールアドレスではなく
       // X/DiscordなどSNS上の連絡先のみを表示する（メールはスプレッドシート内のみで保管）。
       contact: r['Xアカウント'] || r['DiscordID'] || '',
@@ -529,13 +531,80 @@ function buildVenueText(data) {
   return '';
 }
 
+// 既存の「申請」シートを壊さず、新しい列だけを末尾へ追加する。
+// これにより従来の1申請1行データと、複数日程申請の行を同じシートで扱える。
+function ensureApplicationHeaders(sheet) {
+  const lastColumn = sheet.getLastColumn();
+  const existing = lastColumn > 0
+    ? sheet.getRange(1, 1, 1, lastColumn).getValues()[0].map(String)
+    : [];
+  const missing = APPLICATION_HEADERS.filter(header => existing.indexOf(header) === -1);
+  if (missing.length) {
+    sheet.getRange(1, existing.length + 1, 1, missing.length).setValues([missing]);
+    sheet.getRange(1, existing.length + 1, 1, missing.length).setFontWeight('bold');
+  }
+  return existing.concat(missing);
+}
+
+function applicationRowFromRecord(headers, record) {
+  return headers.map(header => Object.prototype.hasOwnProperty.call(record, header) ? record[header] : '');
+}
+
 function handleApplication(data) {
-  // 必須項目チェック（フロント側のrequiredをすり抜けて直接送られてきた場合の保険）
-  const required = ['organizerName', 'organizerEmail', 'eventName', 'eventDate', 'startTime', 'endTime', 'eventFormat', 'eventType', 'capacity', 'fee', 'eventDescription'];
+  const isMultiSchedulePayload = Array.isArray(data.schedules);
+  const organizationName = String(data.organizationName || data.organizerName || '').trim();
+  const contactName = String(data.contactName || data.organizerName || '').trim();
+  const applicationMode = data.applicationMode === 'recurring' ? 'recurring' : 'single';
+
+  // 共通情報の必須項目チェック。旧フォームからの単一日程payloadも引き続き受け付ける。
+  const required = ['organizerEmail', 'eventName', 'eventFormat', 'eventDescription'];
   for (const key of required) {
     if (!data[key] || !String(data[key]).trim()) {
       return jsonResponse({ ok: false, error: 'missing required field: ' + key });
     }
+  }
+  if (!organizationName) return jsonResponse({ ok: false, error: 'missing required field: organizationName' });
+  if (isMultiSchedulePayload && !contactName) return jsonResponse({ ok: false, error: 'missing required field: contactName' });
+  if (isMultiSchedulePayload && !String(data.contactPhone || '').trim()) {
+    return jsonResponse({ ok: false, error: 'missing required field: contactPhone' });
+  }
+
+  const schedules = isMultiSchedulePayload ? data.schedules : [{
+    eventDate: data.eventDate,
+    startTime: data.startTime,
+    endTime: data.endTime,
+    eventType: data.eventType,
+    capacity: data.capacity,
+    fee: data.fee
+  }];
+  if (schedules.length < 1 || schedules.length > 12 || (applicationMode === 'single' && schedules.length !== 1)) {
+    return jsonResponse({ ok: false, error: 'invalid_schedules' });
+  }
+  const seenSchedules = {};
+  for (let i = 0; i < schedules.length; i++) {
+    const schedule = schedules[i] || {};
+    const scheduleRequired = ['eventDate', 'startTime', 'endTime', 'eventType', 'capacity', 'fee'];
+    for (const key of scheduleRequired) {
+      if (schedule[key] === undefined || schedule[key] === null || !String(schedule[key]).trim()) {
+        return jsonResponse({ ok: false, error: 'missing required schedule field: ' + key });
+      }
+    }
+    if (String(schedule.endTime) <= String(schedule.startTime)) {
+      return jsonResponse({ ok: false, error: 'invalid_schedule_time' });
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(schedule.eventDate)) ||
+        !/^\d{2}:\d{2}$/.test(String(schedule.startTime)) ||
+        !/^\d{2}:\d{2}$/.test(String(schedule.endTime))) {
+      return jsonResponse({ ok: false, error: 'invalid_schedules' });
+    }
+    const capacity = Number(schedule.capacity);
+    const fee = Number(schedule.fee);
+    if (!Number.isFinite(capacity) || !Number.isFinite(fee) || capacity < 1 || fee < 0) {
+      return jsonResponse({ ok: false, error: 'invalid_schedule_number' });
+    }
+    const scheduleKey = [schedule.eventDate, schedule.startTime, schedule.endTime, schedule.eventType].join('|');
+    if (seenSchedules[scheduleKey]) return jsonResponse({ ok: false, error: 'invalid_schedules' });
+    seenSchedules[scheduleKey] = true;
   }
 
   // 開催形式ごとに必要な開催場所の項目が入力されているかを確認する
@@ -551,6 +620,9 @@ function handleApplication(data) {
   if (!isValidUrl(data.pastUrl)) {
     return jsonResponse({ ok: false, error: 'invalid_url' });
   }
+  if (!isValidUrl(data.websiteUrl)) {
+    return jsonResponse({ ok: false, error: 'invalid_url' });
+  }
 
   // 自由記述欄（イベント名・説明文）に対するNGワード／過度なURLのチェック
   const freeTextIssue = checkFreeText(data.eventName) || checkFreeText(data.eventDescription);
@@ -559,48 +631,70 @@ function handleApplication(data) {
   }
 
   const sheet = getOrCreateSheet(SHEET_APPLICATION, APPLICATION_HEADERS);
-  const row = [
-    new Date(),
-    '未確認',
-    clip(data.organizerName, MAX_LENGTHS.short),
-    clip(data.organizerEmail, MAX_LENGTHS.short),
-    clip(data.xAccount, MAX_LENGTHS.short),
-    clip(data.discordId, MAX_LENGTHS.short),
-    clip(data.eventName, MAX_LENGTHS.short),
-    clip(data.eventDate, MAX_LENGTHS.short),
-    clip(data.startTime, MAX_LENGTHS.short),
-    clip(data.endTime, MAX_LENGTHS.short),
-    clip(data.eventFormat, MAX_LENGTHS.short),
-    clip(venueText, MAX_LENGTHS.short),
-    clip(data.eventType, MAX_LENGTHS.short),
-    clip(data.capacity, MAX_LENGTHS.short),
-    clip(data.fee, MAX_LENGTHS.short),
-    clip(data.eventDescription, MAX_LENGTHS.long),
-    clip(data.pastCount, MAX_LENGTHS.short),
-    clip(data.pastUrl, MAX_LENGTHS.short)
-  ];
-  sheet.appendRow(row);
+  const receivedAt = new Date();
+  const groupId = Utilities.getUuid();
+  const writeLock = LockService.getScriptLock();
+  writeLock.waitLock(10000);
+  try {
+    const headers = ensureApplicationHeaders(sheet);
+    const rows = schedules.map((schedule, index) => applicationRowFromRecord(headers, {
+      '受付日時': receivedAt,
+      'ステータス': '未確認',
+      '主催者名': clip(organizationName, MAX_LENGTHS.short),
+      'お問い合わせメールアドレス': clip(data.organizerEmail, MAX_LENGTHS.short),
+      'Xアカウント': clip(data.xAccount, MAX_LENGTHS.short),
+      'DiscordID': clip(data.discordId, MAX_LENGTHS.short),
+      'イベント名': clip(data.eventName, MAX_LENGTHS.short),
+      '開催日': clip(schedule.eventDate, MAX_LENGTHS.short),
+      '開始時間': clip(schedule.startTime, MAX_LENGTHS.short),
+      '終了時間': clip(schedule.endTime, MAX_LENGTHS.short),
+      '開催形式': clip(data.eventFormat, MAX_LENGTHS.short),
+      '開催場所': clip(venueText, MAX_LENGTHS.short),
+      'イベント種別': clip(schedule.eventType, MAX_LENGTHS.short),
+      '定員': clip(schedule.capacity, MAX_LENGTHS.short),
+      '参加費': clip(schedule.fee, MAX_LENGTHS.short),
+      'イベント説明文': clip(data.eventDescription, MAX_LENGTHS.long),
+      '過去開催回数': clip(data.pastCount, MAX_LENGTHS.short),
+      '過去イベントURL': clip(data.pastUrl, MAX_LENGTHS.short),
+      '申請グループID': groupId,
+      '申請方法': applicationMode,
+      '店舗・団体名': clip(organizationName, MAX_LENGTHS.short),
+      '担当者名': clip(contactName, MAX_LENGTHS.short),
+      '電話番号': clip(data.contactPhone, MAX_LENGTHS.short),
+      'Webサイト・SNS URL': clip(data.websiteUrl, MAX_LENGTHS.short),
+      '日程番号': index + 1,
+      '日程数': schedules.length,
+      '特典対応': '承認後メール'
+    }));
+    sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, headers.length).setValues(rows);
+  } finally {
+    writeLock.releaseLock();
+  }
+
+  const scheduleSummary = schedules.map(schedule =>
+    `${schedule.eventDate || '-'} ${schedule.startTime || ''}〜${schedule.endTime || ''} / ${schedule.eventType || '-'} / 定員${schedule.capacity}名 / ${schedule.fee}円`
+  ).join('\n');
 
   notifySlack(
     `📅 新しいイベント申請が届きました\n` +
     `イベント名: ${data.eventName || '(未入力)'}\n` +
-    `開催日: ${data.eventDate || '-'} ${data.startTime || ''}〜${data.endTime || ''}\n` +
+    `申請方法: ${applicationMode === 'recurring' ? '複数日程' : '単発'}（${schedules.length}件）\n` +
+    `開催日程:\n${scheduleSummary}\n` +
     `開催場所: ${venueText || '-'}\n` +
-    `主催者: ${data.organizerName || '-'} (${data.organizerEmail || '-'})\n` +
-    `種別: ${data.eventType || '-'}`
+    `主催者: ${organizationName || '-'} / ${contactName || '-'} (${data.organizerEmail || '-'})`
   );
 
   notifyEmail(
     '新しいイベント申請が届きました',
     `イベント名: ${data.eventName || '(未入力)'}\n` +
-    `開催日: ${data.eventDate || '-'} ${data.startTime || ''}〜${data.endTime || ''}\n` +
+    `申請方法: ${applicationMode === 'recurring' ? '複数日程' : '単発'}（${schedules.length}件）\n` +
+    `開催日程:\n${scheduleSummary}\n` +
     `開催場所: ${venueText || '-'}\n` +
-    `主催者: ${data.organizerName || '-'} (${data.organizerEmail || '-'})\n` +
-    `種別: ${data.eventType || '-'}\n\n` +
+    `主催者: ${organizationName || '-'} / ${contactName || '-'} (${data.organizerEmail || '-'})\n\n` +
     `スプレッドシートの「申請」シートで詳細を確認し、内容に問題なければステータスを「承認済み」に変更してください。`
   );
 
-  return jsonResponse({ ok: true });
+  return jsonResponse({ ok: true, occurrenceCount: schedules.length });
 }
 
 function handleFaq(data) {
